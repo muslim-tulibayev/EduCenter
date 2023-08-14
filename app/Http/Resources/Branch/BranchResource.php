@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Branch;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BranchResourceForAdmin extends JsonResource
+class BranchResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -13,10 +13,6 @@ class BranchResourceForAdmin extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "location" => $this->location,
-            "created_by" => $this->created_by,
-            "updated_by" => $this->updated_by,
-            "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
         ];
     }
 }

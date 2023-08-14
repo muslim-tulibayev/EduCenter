@@ -18,6 +18,7 @@ class GroupFactory extends Factory
     {
         return [
             'name' => fake()->text(30),
+            'status' => fake()->boolean(),
             'completed_lessons' => rand(1, 10),
             'teacher_id' => rand(1, 10),
             'assistant_teacher_id' => rand(1, 10),

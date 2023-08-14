@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Room extends Model
 {
@@ -16,8 +17,13 @@ class Room extends Model
         "branch_id",
     ];
 
-    public function name()
+    public function branch(): BelongsTo
     {
-        return 'Branch: ' . Branch::find($this->branch_id)->name . ', Room: ' . $this->name;
+        return $this->belongsTo(Branch::class);
     }
+
+    // public function name()
+    // {
+    //     return 'Branch: ' . Branch::find($this->branch_id)->name . ', Room: ' . $this->name;
+    // }
 }

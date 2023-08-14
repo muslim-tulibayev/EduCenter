@@ -1994,7 +1994,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/student/logout": {
@@ -2015,6 +2020,55 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Student logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/student/search": {
+            "post": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Search",
+                "description": "Search by student firstname or lastname",
+                "operationId": "studentSearch",
+                "requestBody": {
+                    "description": "Pass student credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "data"
+                                ],
+                                "properties": {
+                                    "data": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "Luka"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong email address or password. Please try again"
                                         }
                                     },
                                     "type": "object"

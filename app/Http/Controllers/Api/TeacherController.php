@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\TeacherResource;
-use App\Http\Resources\TeacherResourceForAdmin;
+use App\Http\Resources\Teacher\TeacherResource;
 use App\Models\Role;
 use App\Models\Teacher;
 use App\Models\User;
@@ -43,8 +42,8 @@ class TeacherController extends Controller
     {
         $teachers = Teacher::orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return TeacherResourceForAdmin::collection($teachers);
+        // if (auth('api')->user())
+        //     return TeacherResourceForAdmin::collection($teachers);
 
         return TeacherResource::collection($teachers);
     }
@@ -151,8 +150,8 @@ class TeacherController extends Controller
         if ($teacher === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('api')->user())
-            return new TeacherResourceForAdmin($teacher);
+        // if (auth('api')->user())
+        //     return new TeacherResource($teacher);
 
         return new TeacherResource($teacher);
     }

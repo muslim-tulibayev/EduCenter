@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ScheduleResource;
-use App\Http\Resources\ScheduleResourceForAdmin;
+use App\Http\Resources\Schedule\ScheduleResource;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -37,12 +36,14 @@ class ScheduleController extends Controller
 
     public function index()
     {
-        $schedules = Schedule::orderByDesc('id')->paginate();
+        $schedules = Schedule::with('group', 'weekday', 'session', 'room.branch')->orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return ScheduleResourceForAdmin::collection($schedules);
+        // if (auth('api')->user())
+        //     return ScheduleResource::collection($schedules);
 
         return ScheduleResource::collection($schedules);
+        
+        // return response()->json($schedules);
     }
 
     /**
@@ -136,8 +137,8 @@ class ScheduleController extends Controller
         if ($schedule === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('api')->user())
-            return new ScheduleResourceForAdmin($schedule);
+        // if (auth('api')->user())
+        //     return new ScheduleResource($schedule);
 
         return new ScheduleResource($schedule);
     }

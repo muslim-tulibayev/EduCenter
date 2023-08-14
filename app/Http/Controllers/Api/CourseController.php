@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CourseLessonResource;
-use App\Http\Resources\CourseLessonResourceForAdmin;
-use App\Http\Resources\CourseResource;
-use App\Http\Resources\CourseResourceForAdmin;
+use App\Http\Resources\Course\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -41,8 +38,8 @@ class CourseController extends Controller
     {
         $courses = Course::orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return CourseResourceForAdmin::collection($courses);
+        // if (auth('api')->user())
+        //     return CourseResource::collection($courses);
 
         return CourseResource::collection($courses);
     }
@@ -135,8 +132,8 @@ class CourseController extends Controller
         if ($course === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('api')->user())
-            return new CourseResourceForAdmin($course);
+        // if (auth('api')->user())
+        //     return new CourseResource($course);
 
         return new CourseResource($course);
     }
@@ -291,9 +288,9 @@ class CourseController extends Controller
 
         $lessons = $course->lessons()->orderBy('sequence_number')->paginate();
 
-        if (auth('api')->user())
-            return CourseLessonResourceForAdmin::collection($lessons);
+        // if (auth('api')->user())
+        //     return CourseLessonResourceForAdmin::collection($lessons);
 
-        return CourseLessonResource::collection($lessons);
+        return LessonResource::collection($lessons);
     }
 }

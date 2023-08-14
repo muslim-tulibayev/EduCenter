@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\GroupResource;
-use App\Http\Resources\GroupResourceForAdmin;
-use App\Http\Resources\GroupStudentsResource;
-use App\Http\Resources\GroupStudentsResourceForAdmin;
+use App\Http\Resources\Group\GroupResource;
+use App\Http\Resources\Schedule\StudentResource;
 use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -41,8 +39,8 @@ class GroupController extends Controller
     {
         $groups = Group::orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return GroupResourceForAdmin::collection($groups);
+        // if (auth('api')->user())
+        //     return GroupResource::collection($groups);
 
         return GroupResource::collection($groups);
     }
@@ -84,6 +82,7 @@ class GroupController extends Controller
     {
         $validator = Validator::make($req->all(), [
             "name" => 'required|string',
+            "status" => 'boolean',
             "teacher_id" => 'required|exists:teachers,id',
             "assistant_teacher_id" => 'required|exists:teachers,id',
             "course_id" => 'required|exists:courses,id',
@@ -96,6 +95,7 @@ class GroupController extends Controller
 
         $newGroup = Group::create([
             "name" => $req->name,
+            "status" => $req->status ?? false,
             "completed_lessons" => 0,
             "teacher_id" => $req->teacher_id,
             "assistant_teacher_id" => $req->assistant_teacher_id,
@@ -151,8 +151,8 @@ class GroupController extends Controller
         if ($group === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('api')->user())
-            return new GroupResourceForAdmin($group);
+        // if (auth('api')->user())
+        //     return new GroupResource($group);
 
         return new GroupResource($group);
     }
@@ -208,6 +208,7 @@ class GroupController extends Controller
 
         $validator = Validator::make($req->all(), [
             "name" => 'required|string',
+            "status" => 'required|boolean',
             "completed_lessons" => 'required|numeric',
             "teacher_id" => 'required|exists:teachers,id',
             "assistant_teacher_id" => 'required|exists:teachers,id',
@@ -221,6 +222,7 @@ class GroupController extends Controller
 
         $group->update([
             "name" => $req->name,
+            "status" => $req->status,
             "completed_lessons" => $req->completed_lessons,
             "teacher_id" => $req->teacher_id,
             "assistant_teacher_id" => $req->assistant_teacher_id,
@@ -328,10 +330,10 @@ class GroupController extends Controller
 
         $students = $group->students()->orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return GroupStudentsResourceForAdmin::collection($students);
+        // if (auth('api')->user())
+        //     return StudentResource::collection($students);
 
-        return GroupStudentsResource::collection($students);
+        return StudentResource::collection($students);
     }
 
     /**

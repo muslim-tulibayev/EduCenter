@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\StudentResourceForAdmin;
-use App\Http\Resources\StudentResourceForParent;
-use App\Http\Resources\StudentResourceForStudent;
-use App\Http\Resources\StudentResourceForTeacher;
+use App\Http\Resources\Student\StudentResource;
+use App\Http\Resources\Student\StudentResourceForSearch;
 use App\Models\Stparent;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
@@ -45,17 +44,19 @@ class StudentController extends Controller
     {
         $students = Student::with('groups')->with('stparents')->orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return StudentResourceForAdmin::collection($students);
+        // if (auth('api')->user())
+        //     return StudentResourceForAdmin::collection($students);
 
-        if (auth('teacher')->user())
-            return StudentResourceForTeacher::collection($students);
+        // if (auth('teacher')->user())
+        //     return StudentResourceForTeacher::collection($students);
 
-        if (auth('parent')->user())
-            return StudentResourceForParent::collection($students);
+        // if (auth('parent')->user())
+        //     return StudentResourceForParent::collection($students);
 
-        if (auth('student')->user())
-            return StudentResourceForStudent::collection($students);
+        // if (auth('student')->user())
+        //     return StudentResourceForStudent::collection($students);
+
+        return StudentResource::collection($students);
     }
 
     /**
@@ -110,6 +111,7 @@ class StudentController extends Controller
             'email' => 'required|email|unique:students,email',
             // 'password' => 'required|confirmed|string|min:8',
             'contact_no' => 'required|string',
+            'is_paid' => 'boolean',
             'status' => 'boolean',
             'group_id' => 'numeric|exists:groups,id',
             'parents' => 'array',
@@ -130,7 +132,10 @@ class StudentController extends Controller
             'email' => $req->email,
             'password' => Hash::make('12345678'),
             'contact_no' => $req->contact_no,
-            'status' => $req->status ?? false
+            'is_paid' => $req->is_paid ?? false,
+            'status' => $req->status ?? false,
+            'created_by' => auth('api')->user()->id,
+            'created_at' => date('Y-m-d h:i:s')
         ]);
 
         if ($req->has('group_id'))
@@ -203,17 +208,19 @@ class StudentController extends Controller
         if ($student === null)
             return response()->json(['error' => 'Not found']);
 
-        if (auth('api')->user())
-            return new StudentResourceForAdmin($student);
+        // if (auth('api')->user())
+        //     return new StudentResourceForAdmin($student);
 
-        if (auth('teacher')->user())
-            return new StudentResourceForTeacher($student);
+        // if (auth('teacher')->user())
+        //     return new StudentResourceForTeacher($student);
 
-        if (auth('parent')->user())
-            return new StudentResourceForParent($student);
+        // if (auth('parent')->user())
+        //     return new StudentResourceForParent($student);
 
-        if (auth('student')->user())
-            return new StudentResourceForStudent($student);
+        // if (auth('student')->user())
+        //     return new StudentResourceForStudent($student);
+
+        return new StudentResource($student);
     }
 
     /**
@@ -274,6 +281,7 @@ class StudentController extends Controller
             'email' => 'required|email',
             'password' => 'confirmed|string|min:8',
             'contact_no' => 'required|string',
+            'is_paid' => 'boolean',
             'status' => 'boolean',
             // 'group_id' => 'numeric|exists:groups,id',
             // 'parents' => 'array',
@@ -301,6 +309,11 @@ class StudentController extends Controller
 
         if ($req->has('password') && (auth('student')->user() !== null)) {
             $student->password = Hash::make($req->password);
+            $student->save();
+        }
+
+        if ($req->has('is_paid') && (auth('api')->user() !== null)) {
+            $student->is_paid = $req->is_paid;
             $student->save();
         }
 
@@ -393,6 +406,7 @@ class StudentController extends Controller
      * description="Login by email, password",
      * operationId="studentLogin",
      * tags={"Student"},
+     * security={ {"bearerAuth": {} }},
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass student credentials",
@@ -437,7 +451,6 @@ class StudentController extends Controller
      * description="Logout",
      * operationId="studentLogout",
      * tags={"Student"},
-     * security={ {"bearerAuth": {} }},
      * @OA\Response(
      *    response=200,
      *    description="Success",
@@ -452,5 +465,61 @@ class StudentController extends Controller
     {
         auth('student')->logout();
         return response()->json(['message' => 'Student logged out'], 201);
+    }
+
+    public function certificates(string $id)
+    {
+        $student = Student::find($id);
+
+        if (!$student)
+            return response()->json(["error" => "Not found"]);
+
+        return response()->json([
+            "data" => $student->certificates
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     * path="/api/student/search",
+     * summary="Search",
+     * description="Search by student firstname or lastname",
+     * operationId="studentSearch",
+     * tags={"Student"},
+     * security={ {"bearerAuth": {} }},
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass student credentials",
+     *    @OA\JsonContent(
+     *       required={"data"},
+     *       @OA\Property(property="data", type="string", format="text", example="Luka")
+     *    ),
+     * ),
+     * @OA\Response(
+     *    response=422,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
+     *        )
+     *     )
+     * )
+     */
+
+    public function search(Request $req)
+    {
+        $validator = Validator::make($req->all(), [
+            "data" => 'required|string'
+        ]);
+
+        if ($validator->fails())
+            return response()->json($validator->messages());
+
+        $students = Student::where('firstname', 'LIKE', "%$req->data%")
+            ->orWhere('lastname', 'LIKE', "%$req->data%")
+            ->take(10)
+            ->get();
+
+        // return response()->json($students);
+        return StudentResourceForSearch::collection($students);
     }
 }

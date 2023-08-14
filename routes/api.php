@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\BranchController;
+use App\Http\Controllers\Api\CertificateController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\LessonController;
@@ -9,16 +10,7 @@ use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\ScheduleController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
-use App\Models\Change;
 use Illuminate\Support\Facades\Route;
-
-Route::get('test', function () {
-
-    $changes = Change::with('changeable')->with('linkedable')->get();
-
-    return response()->json($changes);
-
-});
 
 Route::group(['prefix' => '/user'], function () {
     Route::post('/register', [UserController::class, 'register']);
@@ -26,7 +18,6 @@ Route::group(['prefix' => '/user'], function () {
     Route::get('/logout', [UserController::class, 'logout']);
     Route::post('/emailverification', [UserController::class, 'emailverification']);
 });
-
 
 Route::post('/teacher/login', [TeacherController::class, 'login']);
 Route::get('/teacher/logout', [TeacherController::class, 'logout']);
@@ -38,6 +29,8 @@ Route::apiResource('/parent', ParentController::class);
 
 Route::post('/student/login', [StudentController::class, 'login']);
 Route::get('/student/logout', [StudentController::class, 'logout']);
+Route::post('/student/search', [StudentController::class, 'search']);
+Route::get('/student/{id}/certificates', [StudentController::class, 'certificates']);
 Route::apiResource('/student', StudentController::class);
 
 Route::apiResource('/course', CourseController::class);
@@ -55,6 +48,14 @@ Route::apiResource('/branch', BranchController::class);
 
 Route::apiResource('/schedule', ScheduleController::class);
 
+Route::apiResource('/certificate', CertificateController::class);
+
 Route::get('/login', function () {
     return response()->json(["error" => "Unauthenticated"], 401);
 })->name('login');
+
+
+// Route::get('test', function () {
+//     $changes = Change::with('changeable')->with('linkedable')->get();
+//     return response()->json($changes);
+// });

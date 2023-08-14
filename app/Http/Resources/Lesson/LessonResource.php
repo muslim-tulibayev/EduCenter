@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Lesson;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CourseLessonResourceForAdmin extends JsonResource
+class LessonResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -14,10 +14,6 @@ class CourseLessonResourceForAdmin extends JsonResource
             "sequence_number" => $this->sequence_number,
             "name" => $this->name,
             "course_id" => $this->course_id,
-            "created_by" => $this->created_by,
-            "updated_by" => $this->updated_by,
-            "created_at" => $this->created_at, 
-            "updated_at" => $this->updated_at,
         ];
     }
 }

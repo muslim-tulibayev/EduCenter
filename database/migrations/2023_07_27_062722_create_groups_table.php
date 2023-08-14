@@ -14,16 +14,12 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->boolean('status');
             $table->unsignedBigInteger('completed_lessons')->default(0);
             $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('assistant_teacher_id');
             $table->foreign('assistant_teacher_id')->references('id')->on('teachers');
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
-            // $table->unsignedBigInteger('created_by')->nullable();
-            // $table->unsignedBigInteger('updated_by')->nullable();
-            // $table->foreign('created_by')->references('id')->on('users');
-            // $table->foreign('updated_by')->references('id')->on('users');
-            // $table->timestamps();
         });
     }
 

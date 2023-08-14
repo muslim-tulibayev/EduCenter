@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BranchResource;
-use App\Http\Resources\BranchResourceForAdmin;
+use App\Http\Resources\Branch\BranchResource;
 use App\Models\Branch;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -40,8 +39,8 @@ class BranchController extends Controller
     {
         $branches = Branch::orderByDesc('id')->paginate();
 
-        if (auth('api')->user())
-            return BranchResourceForAdmin::collection($branches);
+        // if (auth('api')->user())
+        //     return BranchResource::collection($branches);
 
         return BranchResource::collection($branches);
     }
@@ -134,8 +133,8 @@ class BranchController extends Controller
         if ($branch === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('api')->user())
-            return new BranchResourceForAdmin($branch);
+        // if (auth('api')->user())
+        //     return new BranchResource($branch);
 
         return new BranchResource($branch);
     }

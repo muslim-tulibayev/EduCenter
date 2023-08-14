@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Failedgroups;
+use App\Models\Failedsts;
 use App\Models\Group;
 use App\Models\Lesson;
 use App\Models\Room;
 use App\Models\Schedule;
+use App\Models\Certificate;
 use App\Models\Stparent;
 use App\Models\Student;
 use App\Models\Teacher;
@@ -25,7 +28,6 @@ class DatabaseSeeder extends Seeder
             SessionSeeder::class,
             BranchSeeder::class,
         ]);
-
 
         User::factory(10)->create();
         Teacher::factory(10)->create();
@@ -47,5 +49,20 @@ class DatabaseSeeder extends Seeder
         }
         Room::factory(100)->create();
         Schedule::factory(100)->create();
+        for ($i = 0; $i < 100; $i++) {
+            DB::table('branch_teacher')->insert([
+                'branch_id' => rand(1, 3),
+                'teacher_id' => rand(1, 10),
+            ]);
+        }
+        for ($i = 0; $i < 100; $i++) {
+            DB::table('branch_student')->insert([
+                'branch_id' => rand(1, 3),
+                'student_id' => rand(1, 100),
+            ]);
+        }
+        Certificate::factory(100)->create();
+        Failedsts::factory(50)->create();
+        Failedgroups::factory(3)->create();
     }
 }

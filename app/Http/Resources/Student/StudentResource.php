@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Student;
 
 use App\Models\Course;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StudentResourceForAdmin extends JsonResource
+class StudentResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -51,9 +51,7 @@ class StudentResourceForAdmin extends JsonResource
             "contact_no" => $this->contact_no,
             "status" => $this->status,
             "created_by" => $this->created_by,
-            "updated_by" => $this->updated_by,
             "created_at" => $this->created_at,
-            "updated_at" => $this->updated_at,
             "groups" => $groups,
             "parents" => $parents,
         ];

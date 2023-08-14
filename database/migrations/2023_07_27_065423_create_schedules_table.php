@@ -17,11 +17,6 @@ return new class extends Migration
             $table->foreignId('weekday_id')->constrained()->cascadeOnDelete();
             $table->foreignId('session_id')->constrained()->cascadeOnDelete();
             $table->foreignId('room_id')->constrained()->cascadeOnDelete();
-            // $table->unsignedBigInteger('created_by')->nullable();
-            // $table->unsignedBigInteger('updated_by')->nullable();
-            // $table->foreign('created_by')->references('id')->on('users');
-            // $table->foreign('updated_by')->references('id')->on('users');
-            // $table->timestamps();
         });
     }
 
