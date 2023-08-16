@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('completed_lessons')->default(0);
             $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('assistant_teacher_id');
-            $table->foreign('assistant_teacher_id')->references('id')->on('teachers');
+            $table->foreign('assistant_teacher_id')->references('id')->on('teachers')->cascadeOnDelete();
             $table->foreignId('course_id')->constrained()->cascadeOnDelete();
         });
     }
