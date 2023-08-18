@@ -59,6 +59,7 @@ class GroupController extends Controller
      *    @OA\JsonContent(
      *       required={"name", "teacher_id", "assistant_teacher_id", "course_id"},
      *       @OA\Property(property="name", type="string", example="user@gmail.com"),
+     *       @OA\Property(property="status", type="boolean", example=true),
      *       @OA\Property(property="teacher_id", type="numeric", example=1),
      *       @OA\Property(property="assistant_teacher_id", type="numeric", example=1),
      *       @OA\Property(property="course_id", type="numeric", example=1),
@@ -95,7 +96,7 @@ class GroupController extends Controller
 
         $newGroup = Group::create([
             "name" => $req->name,
-            "status" => $req->status ?? false,
+            "status" => $req->status ?? true,
             "completed_lessons" => 0,
             "teacher_id" => $req->teacher_id,
             "assistant_teacher_id" => $req->assistant_teacher_id,
@@ -179,6 +180,7 @@ class GroupController extends Controller
      *    description="Pass user credentials",
      *    @OA\JsonContent(
      *       @OA\Property(property="name", type="string", example="New Lesson"),
+     *       @OA\Property(property="status", type="string", example=true),
      *       @OA\Property(property="completed_lessons", type="numeric", example=1),
      *       @OA\Property(property="teacher_id", type="numeric", example=1),
      *       @OA\Property(property="assistant_teacher_id", type="numeric", example=1),

@@ -22,12 +22,21 @@ class TeacherController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/teacher",
+     * path="/api/teacher?role={role}",
      * summary="Get all teachers data",
      * description="Teacher index",
      * operationId="indexTeacher",
      * tags={"Teacher"},
      * security={ {"bearerAuth": {} }},
+     *      
+     * @OA\Parameter(
+     *    in="path",
+     *    name="role",
+     *    required=false,
+     *    description="Role to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
      * @OA\Response(
      *    response=401,
      *    description="Wrong credentials response",
@@ -38,9 +47,18 @@ class TeacherController extends Controller
      * )
      */
 
-    public function index()
+    public function index(Request $req)
     {
-        $teachers = Teacher::orderByDesc('id')->paginate();
+        if (isset($req->role)) {
+            if ($req->role === 'assistant')
+                $teachers = Teacher::where('is_assistant', true)->orderByDesc('id')->paginate();
+            elseif ($req->role === 'main')
+                $teachers = Teacher::where('is_assistant', false)->orderByDesc('id')->paginate();
+            else
+                $teachers = Teacher::orderByDesc('id')->paginate();
+        } else {
+            $teachers = Teacher::orderByDesc('id')->paginate();
+        }
 
         // if (auth('api')->user())
         //     return TeacherResourceForAdmin::collection($teachers);
@@ -56,6 +74,7 @@ class TeacherController extends Controller
      * operationId="storeTeacher",
      * tags={"Teacher"},
      * security={ {"bearerAuth": {} }},
+     * 
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass user credentials",

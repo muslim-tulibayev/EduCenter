@@ -15,6 +15,7 @@ class Group extends Model
 
     protected $fillable = [
         "name",
+        "status",
         "completed_lessons",
         "teacher_id",
         "assistant_teacher_id",

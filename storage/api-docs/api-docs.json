@@ -703,6 +703,10 @@
                                         "type": "string",
                                         "example": "user@gmail.com"
                                     },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
                                     "teacher_id": {
                                         "type": "numeric",
                                         "example": 1
@@ -825,6 +829,10 @@
                                     "name": {
                                         "type": "string",
                                         "example": "New Lesson"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": true
                                     },
                                     "completed_lessons": {
                                         "type": "numeric",
@@ -2084,7 +2092,7 @@
                 ]
             }
         },
-        "/api/teacher": {
+        "/api/teacher?role={role}": {
             "get": {
                 "tags": [
                     "Teacher"
@@ -2092,6 +2100,17 @@
                 "summary": "Get all teachers data",
                 "description": "Teacher index",
                 "operationId": "indexTeacher",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "Role to fetch the targeted campaigns.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "401": {
                         "description": "Wrong credentials response",
@@ -2115,7 +2134,9 @@
                         "bearerAuth": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/teacher": {
             "post": {
                 "tags": [
                     "Teacher"
