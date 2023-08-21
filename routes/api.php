@@ -44,6 +44,7 @@ Route::apiResource('/group', GroupController::class);
 
 Route::get('/branch/{branch}/rooms', [BranchController::class, 'rooms']);
 Route::post('/branch/{branch}/rooms', [BranchController::class, 'addRooms']);
+Route::post('/branch/schedule', [BranchController::class, 'getSchedule']);
 Route::apiResource('/branch', BranchController::class);
 
 Route::apiResource('/schedule', ScheduleController::class);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Branch\BranchResource;
+use App\Http\Resources\Schedule\ScheduleResource;
+use App\Http\Resources\Schedule\ScheduleResourceThroughBranch;
 use App\Models\Branch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,22 +19,22 @@ class BranchController extends Controller
     }
 
     /**
-      * @OA\Get(
-      * path="/api/branch",
-      * summary="Branch index",
-      * description="Get all branches data",
-      * operationId="index",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *        )
-      *     )
-      * )
-      */
+     * @OA\Get(
+     * path="/api/branch",
+     * summary="Branch index",
+     * description="Get all branches data",
+     * operationId="index",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function index()
     {
@@ -45,31 +47,31 @@ class BranchController extends Controller
     }
 
     /**
-      * @OA\Post(
-      * path="/api/branch",
-      * summary="Branch store",
-      * description="Set new branch",
-      * operationId="store",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      * @OA\RequestBody(
-      *    required=true,
-      *    description="Pass user credentials",
-      *    @OA\JsonContent(
-      *       required={"name","location"},
-      *       @OA\Property(property="name", type="string", format="text", example="Bukhara"),
-      *       @OA\Property(property="location", type="string", format="text", example="address"),
-      *    ),
-      * ),
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *        )
-      *     )
-      * )
-      */
+     * @OA\Post(
+     * path="/api/branch",
+     * summary="Branch store",
+     * description="Set new branch",
+     * operationId="store",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"name","location"},
+     *       @OA\Property(property="name", type="string", format="text", example="Bukhara"),
+     *       @OA\Property(property="location", type="string", format="text", example="address"),
+     *    ),
+     * ),
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function store(Request $req)
     {
@@ -99,31 +101,31 @@ class BranchController extends Controller
     }
 
     /**
-      * @OA\Get(
-      * path="/api/branch/{id}",
-      * summary="Branch show",
-      * description="Get specific branch data",
-      * operationId="show",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      *
-      * @OA\Parameter(
-      *    in="path",
-      *    name="id",
-      *    required=true,
-      *    description="ID to fetch the targeted campaigns.",
-      *    @OA\Schema(type="string")
-      * ),
-      *
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *        )
-      *     )
-      * )
-      */
+     * @OA\Get(
+     * path="/api/branch/{id}",
+     * summary="Branch show",
+     * description="Get specific branch data",
+     * operationId="show",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function show(string $id)
     {
@@ -139,40 +141,40 @@ class BranchController extends Controller
     }
 
     /**
-      * @OA\Put(
-      * path="/api/branch/{id}",
-      * summary="Branch update",
-      * description="Update specific branch",
-      * operationId="update",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      *
-      * @OA\Parameter(
-      *    in="path",
-      *    name="id",
-      *    required=true,
-      *    description="ID to fetch the targeted campaigns.",
-      *    @OA\Schema(type="string")
-      * ),
-      *
-      * @OA\RequestBody(
-      *    required=true,
-      *    description="Pass user credentials",
-      *    @OA\JsonContent(
-      *       required={"name","location"},
-      *       @OA\Property(property="name", type="string", format="text", example="Bukhara"),
-      *       @OA\Property(property="location", type="string", format="text", example="address"),
-      *    ),
-      * ),
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *        )
-      *     )
-      * )
-      */
+     * @OA\Put(
+     * path="/api/branch/{id}",
+     * summary="Branch update",
+     * description="Update specific branch",
+     * operationId="update",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"name","location"},
+     *       @OA\Property(property="name", type="string", format="text", example="Bukhara"),
+     *       @OA\Property(property="location", type="string", format="text", example="address"),
+     *    ),
+     * ),
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function update(Request $req, string $id)
     {
@@ -207,31 +209,31 @@ class BranchController extends Controller
     }
 
     /**
-      * @OA\Delete(
-      * path="/api/branch/{id}",
-      * summary="Branch delete",
-      * description="Delete specific branch",
-      * operationId="destroy",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      *
-      * @OA\Parameter(
-      *    in="path",
-      *    name="id",
-      *    required=true,
-      *    description="ID to fetch the targeted campaigns.",
-      *    @OA\Schema(type="string")
-      * ),
-      *
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *        )
-      *     )
-      * )
-      */
+     * @OA\Delete(
+     * path="/api/branch/{id}",
+     * summary="Branch delete",
+     * description="Delete specific branch",
+     * operationId="destroy",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function destroy(string $id)
     {
@@ -251,35 +253,35 @@ class BranchController extends Controller
         return response()->json([
             "message" => "Branch deleted successfully",
             "branch" => $id,
-        ]);        
+        ]);
     }
 
     /**
-      * @OA\Get(
-      * path="/api/branch/{id}/rooms",
-      * summary="Branch rooms",
-      * description="Get specific branch rooms",
-      * operationId="rooms",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      *
-      * @OA\Parameter(
-      *    in="path",
-      *    name="id",
-      *    required=true,
-      *    description="ID to fetch the targeted campaigns.",
-      *    @OA\Schema(type="string")
-      * ),
-      *
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *        )
-      *     )
-      * )
-      */
+     * @OA\Get(
+     * path="/api/branch/{id}/rooms",
+     * summary="Branch rooms",
+     * description="Get specific branch rooms",
+     * operationId="rooms",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function rooms(string $id)
     {
@@ -294,43 +296,43 @@ class BranchController extends Controller
     }
 
     /**
-      * @OA\Post(
-      * path="/api/branch/{id}/rooms",
-      * summary="Branch addRooms",
-      * description="Set rooms the specific branch",
-      * operationId="addRooms",
-      * tags={"Branch"},
-      * security={ {"bearerAuth": {} }},
-      *
-      * @OA\Parameter(
-      *    in="path",
-      *    name="id",
-      *    required=true,
-      *    description="ID to fetch the targeted campaigns.",
-      *    @OA\Schema(type="string")
-      * ),
-      *
-      * @OA\RequestBody(
-      *    required=true,
-      *    description="Pass user credentials",
-      *    @OA\JsonContent(
-      *       required={"rooms"},
-      *       @OA\Property(
-      *         property="rooms", type="array", collectionFormat="multi",
-      *         @OA\Items(type="string", example="hello"),
-      *      ),
-      *    ),
-      * ),
-      *
-      * @OA\Response(
-      *    response=401,
-      *    description="Wrong credentials response",
-      *    @OA\JsonContent(
-      *       @OA\Property(property="message", type="string", example="Unauthorized")
-      *     )
-      *   )
-      * )
-      */
+     * @OA\Post(
+     * path="/api/branch/{id}/rooms",
+     * summary="Branch addRooms",
+     * description="Set rooms the specific branch",
+     * operationId="addRooms",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"rooms"},
+     *       @OA\Property(
+     *         property="rooms", type="array", collectionFormat="multi",
+     *         @OA\Items(type="string", example="hello"),
+     *      ),
+     *    ),
+     * ),
+     *
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *     )
+     *   )
+     * )
+     */
 
     public function addRooms(Request $req, string $id)
     {
@@ -361,5 +363,50 @@ class BranchController extends Controller
         return response()->json([
             "message" => "Rooms has been added successfully"
         ]);
+    }
+
+    /**
+     * @OA\Post(
+     * path="/api/branch/schedule",
+     * summary="Branch getSchedules",
+     * description="Get branch's specific schedules",
+     * operationId="getSchedules",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"branch_id", "weekday_id"},
+     *       @OA\Property(property="branch_id", type="string", format="text", example="1"),
+     *       @OA\Property(property="weekday_id", type="string", format="text", example="1"),
+     *    ),
+     * ),
+     *
+     * @OA\Response(
+     *    response=401,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *     )
+     *   )
+     * )
+     */
+
+
+    public function getSchedule(Request $req)
+    {
+        $validator = Validator::make($req->all(), [
+            "branch_id" => 'required|exists:branches,id',
+            "weekday_id" => 'required|exists:weekdays,id',
+        ]);
+
+        if ($validator->fails())
+            return response()->json($validator->messages());
+
+        $schedules = Branch::find($req->branch_id)->schedules()->where('weekday_id', $req->weekday_id)->get();
+
+        return ScheduleResourceThroughBranch::collection($schedules);
     }
 }

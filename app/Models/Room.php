@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Room extends Model
 {
@@ -22,8 +23,8 @@ class Room extends Model
         return $this->belongsTo(Branch::class);
     }
 
-    // public function name()
-    // {
-    //     return 'Branch: ' . Branch::find($this->branch_id)->name . ', Room: ' . $this->name;
-    // }
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

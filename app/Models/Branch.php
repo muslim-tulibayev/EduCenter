@@ -17,8 +17,13 @@ class Branch extends Model
         "location",
     ];
 
-    public function rooms():HasMany
+    public function rooms(): HasMany
     {
         return $this->hasMany(Room::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasManyThrough(Schedule::class, Room::class);
     }
 }
