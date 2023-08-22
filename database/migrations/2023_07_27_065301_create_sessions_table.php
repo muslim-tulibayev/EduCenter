@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->id();
-            $table->string('duration');
+            $table->string('duration')->unique();
         });
     }
 

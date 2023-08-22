@@ -1711,6 +1711,252 @@
                 ]
             }
         },
+        "/api/session": {
+            "get": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Session index",
+                "description": "Get all Sessions data",
+                "operationId": "indexSession",
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Session store",
+                "description": "Set new Session",
+                "operationId": "storeSession",
+                "requestBody": {
+                    "description": "Pass session credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "from",
+                                    "to"
+                                ],
+                                "properties": {
+                                    "from": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "08:30"
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "16:30"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/session/{id}": {
+            "get": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Session show",
+                "description": "Get specific session data",
+                "operationId": "showSession",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Session update",
+                "description": "Update specific session",
+                "operationId": "updateSession",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "from",
+                                    "to"
+                                ],
+                                "properties": {
+                                    "from": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "08:30"
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "16:30"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Session"
+                ],
+                "summary": "Session delete",
+                "description": "Delete specific session",
+                "operationId": "destroySession",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/student": {
             "get": {
                 "tags": [
@@ -2811,6 +3057,10 @@
         {
             "name": "Teacher",
             "description": "Teacher"
+        },
+        {
+            "name": "Session",
+            "description": "Session"
         }
     ]
 }

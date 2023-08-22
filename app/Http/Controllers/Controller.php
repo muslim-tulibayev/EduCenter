@@ -63,6 +63,11 @@ use Illuminate\Routing\Controller as BaseController;
  *      description = "Teacher",
  *  ),
  * 
+ *  @OA\Tag(
+ *      name = "Session",
+ *      description = "Session",
+ *  ),
+ * 
  * )
  */
 

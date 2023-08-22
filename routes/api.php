@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\LessonController;
 use App\Http\Controllers\Api\ParentController;
 use App\Http\Controllers\Api\ScheduleController;
+use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,8 @@ Route::get('/branch/{branch}/rooms', [BranchController::class, 'rooms']);
 Route::post('/branch/{branch}/rooms', [BranchController::class, 'addRooms']);
 Route::post('/branch/schedule', [BranchController::class, 'getSchedule']);
 Route::apiResource('/branch', BranchController::class);
+
+Route::apiResource('/session', SessionController::class);
 
 Route::apiResource('/schedule', ScheduleController::class);
 
