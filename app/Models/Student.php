@@ -26,6 +26,7 @@ class Student extends Authenticatable implements JWTSubject
         'contact_no',
         'status',
         'password',
+        'payment_token',
         'updated_by',
         'created_by',
     ];
@@ -47,6 +48,11 @@ class Student extends Authenticatable implements JWTSubject
     public function changes(): MorphMany
     {
         return $this->morphMany(Change::class, 'changeable');
+    }
+
+    public function accesses()
+    {
+        return $this->hasMany(Access::class);
     }
 
     public function makeChanges($description, $data_key, $linkedable): Change

@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\ScheduleController;
 use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Models\Student;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => '/user'], function () {
@@ -54,10 +56,23 @@ Route::apiResource('/schedule', ScheduleController::class);
 
 Route::apiResource('/certificate', CertificateController::class);
 
-Route::get('/login', function () {
+Route::post('/payment/addcard', [PaymentController::class, 'addCard']);
+Route::get('/payment/cashier', [PaymentController::class, 'cashierId']);
+Route::post('/payment/pay', [PaymentController::class, 'pay']);
+
+// Route::get('/login', function () {
+//     return response()->json(["error" => "Unauthenticated"], 401);
+// })->name('login');
+
+Route::any('/login', function () {
     return response()->json(["error" => "Unauthenticated"], 401);
 })->name('login');
 
+// Route::get('test', function () {
+//     $st = Student::find(2);
+//     $accesses = $st->accesses;
+//     return response()->json($accesses);
+// });
 
 // Route::get('test', function () {
 //     $changes = Change::with('changeable')->with('linkedable')->get();

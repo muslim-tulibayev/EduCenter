@@ -1491,6 +1491,157 @@
                 ]
             }
         },
+        "/api/payment/addcard": {
+            "post": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Add new card for parent or student",
+                "description": "Payment store",
+                "operationId": "addCardPayment",
+                "requestBody": {
+                    "description": "Pass payment credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "payment_token"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "example": "student"
+                                    },
+                                    "id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_token": {
+                                        "type": "string",
+                                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEzNzo4MDAwL2FwaS91c2VyL2VtYWlsdmVyaWZpY2F0aW9uIiwiaWF0IjoxNjkyOTYyMTI5LCJleHAiOjE2OTMwMDUzMj"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/cashier": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Get cashier's id",
+                "description": "Cashier id",
+                "operationId": "cashierId",
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/pay": {
+            "post": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Buy new courses or extend their expire date",
+                "description": "Payment pay",
+                "operationId": "payPayment",
+                "requestBody": {
+                    "description": "Pass payment credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "course_id"
+                                ],
+                                "properties": {
+                                    "student_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "course_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/schedule": {
             "get": {
                 "tags": [
@@ -1686,6 +1837,48 @@
                         }
                     }
                 },
+                "responses": {
+                    "401": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Schedule"
+                ],
+                "summary": "Schedule delete",
+                "description": "Delete specific Schedule",
+                "operationId": "destroySchedule",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "401": {
                         "description": "Wrong credentials response",
@@ -3061,6 +3254,10 @@
         {
             "name": "Session",
             "description": "Session"
+        },
+        {
+            "name": "Payment",
+            "description": "Payment"
         }
     ]
 }

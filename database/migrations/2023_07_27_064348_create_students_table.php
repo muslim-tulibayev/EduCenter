@@ -18,8 +18,12 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->string('contact_no');
-            $table->boolean('is_paid')->default(false);
+            // $table->boolean('is_paid')->default(false);
+            // $table->foreign('access')->references('id')->on('accesses');
             $table->boolean('status')->default(false);
+            // balance
+            // access for spesific courses
+            $table->text('payment_token')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users');
             $table->dateTime('created_at');

@@ -68,6 +68,11 @@ use Illuminate\Routing\Controller as BaseController;
  *      description = "Session",
  *  ),
  * 
+ *  @OA\Tag(
+ *      name = "Payment",
+ *      description = "Payment",
+ *  ),
+ * 
  * )
  */
 

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Access;
 use App\Models\Failedgroups;
 use App\Models\Failedsts;
 use App\Models\Group;
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
             WeekdaySeeder::class,
             SessionSeeder::class,
             BranchSeeder::class,
+            CashierSeeder::class,
         ]);
 
         User::factory(10)->create();
@@ -64,5 +66,6 @@ class DatabaseSeeder extends Seeder
         Certificate::factory(100)->create();
         Failedsts::factory(50)->create();
         Failedgroups::factory(3)->create();
+        // Access::factory(50)->create();
     }
 }

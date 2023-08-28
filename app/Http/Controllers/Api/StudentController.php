@@ -111,7 +111,7 @@ class StudentController extends Controller
             'email' => 'required|email|unique:students,email',
             // 'password' => 'required|confirmed|string|min:8',
             'contact_no' => 'required|string',
-            'is_paid' => 'boolean',
+            // 'is_paid' => 'boolean',
             'status' => 'boolean',
             'group_id' => 'numeric|exists:groups,id',
             'parents' => 'array',
@@ -132,7 +132,7 @@ class StudentController extends Controller
             'email' => $req->email,
             'password' => Hash::make('12345678'),
             'contact_no' => $req->contact_no,
-            'is_paid' => $req->is_paid ?? false,
+            // 'is_paid' => $req->is_paid ?? false,
             'status' => $req->status ?? false,
             'created_by' => auth('api')->user()->id,
             'created_at' => date('Y-m-d h:i:s')
@@ -281,7 +281,7 @@ class StudentController extends Controller
             'email' => 'required|email',
             'password' => 'confirmed|string|min:8',
             'contact_no' => 'required|string',
-            'is_paid' => 'boolean',
+            // 'is_paid' => 'boolean',
             'status' => 'boolean',
             // 'group_id' => 'numeric|exists:groups,id',
             // 'parents' => 'array',
@@ -312,10 +312,10 @@ class StudentController extends Controller
             $student->save();
         }
 
-        if ($req->has('is_paid') && (auth('api')->user() !== null)) {
-            $student->is_paid = $req->is_paid;
-            $student->save();
-        }
+        // if ($req->has('is_paid') && (auth('api')->user() !== null)) {
+        //     $student->is_paid = $req->is_paid;
+        //     $student->save();
+        // }
 
         if ($req->has('status') && (auth('api')->user() !== null)) {
             $student->status = $req->status;
