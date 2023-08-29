@@ -15,9 +15,10 @@ class TeacherController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student', ["except" => ['login']]);
-        $this->middleware('auth:api', ["only" => ['store', 'update', 'destroy']]);
-        $this->middleware('auth:teacher', ["only" => ['logout']]);
+        $this->middleware('auth:api,teacher,parent,student');
+        // $this->middleware('auth:api,teacher', ["only" => ['update']]);
+        // $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
+        parent::__construct('teachers'); // Call parent constructor
     }
 
     /**
@@ -38,7 +39,7 @@ class TeacherController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -88,7 +89,7 @@ class TeacherController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -153,7 +154,7 @@ class TeacherController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -205,7 +206,7 @@ class TeacherController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -222,7 +223,7 @@ class TeacherController extends Controller
 
         if (auth('teacher')->user() !== null) {
             if (auth('teacher')->user()->id != $id) {
-                return response()->json(["error" => "Unauthorized"], 401);
+                return response()->json(["error" => "Unauthorized"], 403);
             }
         }
 
@@ -304,7 +305,7 @@ class TeacherController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -346,73 +347,5 @@ class TeacherController extends Controller
             "teacher" => $teacher->id,
             "status" => 200,
         ]);
-    }
-
-    /**
-     * @OA\Post(
-     * path="/api/teacher/login",
-     * summary="Login",
-     * description="Login by email, password",
-     * operationId="teacherLogin",
-     * tags={"Teacher"},
-     * @OA\RequestBody(
-     *    required=true,
-     *    description="Pass user credentials",
-     *    @OA\JsonContent(
-     *       required={"email","password"},
-     *       @OA\Property(property="email", type="string", format="email", example="user@gmail.com"),
-     *       @OA\Property(property="password", type="string", format="password", example="12345678")
-     *    ),
-     * ),
-     * @OA\Response(
-     *    response=401,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="error", type="string", example="Unauthorized")
-     *        )
-     *     )
-     * )
-     */
-
-    public function login(Request $req)
-    {
-        $validator = Validator::make($req->all(), [
-            'email' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails())
-            return response()->json($validator->messages(), 422);
-
-        $token = auth('teacher')->setTTL(60 * 12)->attempt($validator->validated());
-
-        if (!$token)
-            return response()->json(['error' => 'Unauthorized'], 401);
-
-        return response(['token' => $token]);
-    }
-
-    /**
-     * @OA\Get(
-     * path="/api/teacher/logout",
-     * summary="Logout",
-     * description="Logout",
-     * operationId="teacherLogout",
-     * tags={"Teacher"},
-     * security={ {"bearerAuth": {} }},
-     * @OA\Response(
-     *    response=200,
-     *    description="Success",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Teacher logged out")
-     *        )
-     *     )
-     * )
-     */
-
-    public function logout()
-    {
-        auth('teacher')->logout();
-        return response()->json(['message' => 'Teacher logged out'], 201);
     }
 }

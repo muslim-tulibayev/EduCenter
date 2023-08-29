@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 // // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,7 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Teacher extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, RoleTrait;
 
     public $timestamps = false;
 
@@ -22,6 +23,7 @@ class Teacher extends Authenticatable implements JWTSubject
         "email",
         "password",
         "contact_no",
+        'role_id',
         "is_assistant"
     ];
 

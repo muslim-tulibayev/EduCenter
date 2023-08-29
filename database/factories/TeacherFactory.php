@@ -23,6 +23,7 @@ class TeacherFactory extends Factory
             'email' => fake()->safeEmail(),
             'password' => Hash::make('12345678'),
             'contact_no' => fake()->phoneNumber(),
+            'role_id' => 2,
             'is_assistant' => fake()->boolean(),
         ];
     }

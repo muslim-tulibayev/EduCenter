@@ -5,6 +5,248 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registration",
+                "description": "Register by email, password",
+                "operationId": "authRegister",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password",
+                                    "firstname",
+                                    "lastname",
+                                    "contact_no",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "John"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "format": "text",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "format": "phone number",
+                                        "example": "+998 93 819 88 43"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password, min:8",
+                                        "example": "12345678"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong email address or password. Please try again"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/emailverification": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Email Verification",
+                "description": "Verificate by email, verification_number",
+                "operationId": "authEmailVerification",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "verification_number"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "verification_number": {
+                                        "type": "string",
+                                        "format": "numeric",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User created successfully"
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "hfbluwgyp3rfb24rewubfp3iy4gfp34febqiyhk"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Something went wrong"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "description": "Login by email, password",
+                "operationId": "authLogin",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345678"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong email address or password. Please try again"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "description": "Logout",
+                "operationId": "authLogout",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/branch": {
             "get": {
                 "tags": [
@@ -14,7 +256,7 @@
                 "description": "Get all branches data",
                 "operationId": "index",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -72,7 +314,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -116,7 +358,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -185,7 +427,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -227,7 +469,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -271,7 +513,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -337,7 +579,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -397,7 +639,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -430,7 +672,7 @@
                 "description": "Course index",
                 "operationId": "indexCourse",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -486,7 +728,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -530,7 +772,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -597,7 +839,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -639,7 +881,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -683,7 +925,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -716,7 +958,7 @@
                 "description": "Group index",
                 "operationId": "indexGroup",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -794,7 +1036,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -838,7 +1080,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -925,7 +1167,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -967,7 +1209,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1011,7 +1253,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1077,7 +1319,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1139,7 +1381,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1212,7 +1454,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1254,7 +1496,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1337,7 +1579,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1379,7 +1621,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1388,94 +1630,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/parent/login": {
-            "post": {
-                "tags": [
-                    "Parent"
-                ],
-                "summary": "Login",
-                "description": "Login by email, password",
-                "operationId": "parentLogin",
-                "requestBody": {
-                    "description": "Pass Parent credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "12345678"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "422": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Sorry, wrong email address or password. Please try again"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/parent/logout": {
-            "get": {
-                "tags": [
-                    "Parent"
-                ],
-                "summary": "Logout",
-                "description": "Logout",
-                "operationId": "parentLogout",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Parent logged out"
                                         }
                                     },
                                     "type": "object"
@@ -1528,7 +1682,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1561,7 +1715,7 @@
                 "description": "Cashier id",
                 "operationId": "cashierId",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1618,7 +1772,419 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/role": {
+            "get": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Get all Roles data",
+                "description": "Role index",
+                "operationId": "indexRole",
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Set new Role",
+                "description": "Role store",
+                "operationId": "storeRole",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "roles",
+                                    "users",
+                                    "teachers",
+                                    "courses",
+                                    "lessons",
+                                    "groups",
+                                    "students",
+                                    "stparents",
+                                    "sessions",
+                                    "branches",
+                                    "rooms",
+                                    "schedules",
+                                    "cashiers",
+                                    "access_for_courses",
+                                    "student_search",
+                                    "payment_addcard",
+                                    "payment_cashier",
+                                    "payment_pay"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "editor"
+                                    },
+                                    "roles": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "users": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "teachers": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "courses": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "lessons": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "groups": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "students": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "stparents": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "sessions": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "branches": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "rooms": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "schedules": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "cashiers": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "access_for_courses": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "student_search": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_addcard": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_cashier": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_pay": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/role/{id}": {
+            "get": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Get specific Role data",
+                "description": "Role show",
+                "operationId": "showRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Update specific Role",
+                "description": "Role update",
+                "operationId": "updateRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "roles",
+                                    "users",
+                                    "teachers",
+                                    "courses",
+                                    "lessons",
+                                    "groups",
+                                    "students",
+                                    "stparents",
+                                    "sessions",
+                                    "branches",
+                                    "rooms",
+                                    "schedules",
+                                    "cashiers",
+                                    "access_for_courses",
+                                    "student_search",
+                                    "payment_addcard",
+                                    "payment_cashier",
+                                    "payment_pay"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "editor"
+                                    },
+                                    "roles": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "users": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "teachers": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "courses": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "lessons": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "groups": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "students": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "stparents": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "sessions": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "branches": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "rooms": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "schedules": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "cashiers": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "access_for_courses": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "student_search": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_addcard": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_cashier": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "payment_pay": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "Delete specific Role",
+                "description": "Role delete",
+                "operationId": "destroyRole",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1651,7 +2217,7 @@
                 "description": "Schedule index",
                 "operationId": "indexSchedule",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1717,7 +2283,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1761,7 +2327,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1838,7 +2404,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1880,7 +2446,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1913,7 +2479,7 @@
                 "description": "Get all Sessions data",
                 "operationId": "indexSession",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -1971,7 +2537,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2015,7 +2581,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2084,7 +2650,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2126,7 +2692,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2159,7 +2725,7 @@
                 "description": "Student index",
                 "operationId": "indexStudent",
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2254,7 +2820,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2298,7 +2864,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2383,7 +2949,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2425,7 +2991,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2447,94 +3013,6 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/student/login": {
-            "post": {
-                "tags": [
-                    "Student"
-                ],
-                "summary": "Login",
-                "description": "Login by email, password",
-                "operationId": "studentLogin",
-                "requestBody": {
-                    "description": "Pass student credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "12345678"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "422": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Sorry, wrong email address or password. Please try again"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/student/logout": {
-            "get": {
-                "tags": [
-                    "Student"
-                ],
-                "summary": "Logout",
-                "description": "Logout",
-                "operationId": "studentLogout",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Student logged out"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
             }
         },
         "/api/student/search": {
@@ -2611,7 +3089,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2684,7 +3162,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2728,7 +3206,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2809,7 +3287,7 @@
                     }
                 },
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2851,7 +3329,7 @@
                     }
                 ],
                 "responses": {
-                    "401": {
+                    "403": {
                         "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
@@ -2860,336 +3338,6 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/teacher/login": {
-            "post": {
-                "tags": [
-                    "Teacher"
-                ],
-                "summary": "Login",
-                "description": "Login by email, password",
-                "operationId": "teacherLogin",
-                "requestBody": {
-                    "description": "Pass user credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "12345678"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "401": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/teacher/logout": {
-            "get": {
-                "tags": [
-                    "Teacher"
-                ],
-                "summary": "Logout",
-                "description": "Logout",
-                "operationId": "teacherLogout",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Teacher logged out"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/user/register": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Registration",
-                "description": "Register by email, password",
-                "operationId": "authRegister",
-                "requestBody": {
-                    "description": "Pass user credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password",
-                                    "firstname",
-                                    "lastname",
-                                    "contact_no",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "firstname": {
-                                        "type": "string",
-                                        "format": "text",
-                                        "example": "John"
-                                    },
-                                    "lastname": {
-                                        "type": "string",
-                                        "format": "text",
-                                        "example": "Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "contact_no": {
-                                        "type": "string",
-                                        "format": "phone number",
-                                        "example": "+998 93 819 88 43"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password, min:8",
-                                        "example": "12345678"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "12345678"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "422": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Sorry, wrong email address or password. Please try again"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/emailverification": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Email Verification",
-                "description": "Verificate by email, verification_number",
-                "operationId": "authEmailVerification",
-                "requestBody": {
-                    "description": "Pass user credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "verification_number"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "verification_number": {
-                                        "type": "string",
-                                        "format": "numeric",
-                                        "example": "123456"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User created successfully"
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "hfbluwgyp3rfb24rewubfp3iy4gfp34febqiyhk"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Something went wrong"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/login": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login",
-                "description": "Login by email, password",
-                "operationId": "authLogin",
-                "requestBody": {
-                    "description": "Pass user credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "12345678"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "422": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Sorry, wrong email address or password. Please try again"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/logout": {
-            "get": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Logout",
-                "description": "Logout",
-                "operationId": "authLogout",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User logged out"
                                         }
                                     },
                                     "type": "object"
@@ -3258,6 +3406,10 @@
         {
             "name": "Payment",
             "description": "Payment"
+        },
+        {
+            "name": "Role",
+            "description": "Role"
         }
     ]
 }

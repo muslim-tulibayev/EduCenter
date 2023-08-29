@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 // // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\RoleTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,7 +12,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Stparent extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, RoleTrait;
 
     public $timestamps = false;
 
@@ -22,6 +22,7 @@ class Stparent extends Authenticatable implements JWTSubject
         'email',
         'password',
         'contact_no',
+        'role_id',
         'payment_token',
     ];
 
@@ -33,22 +34,6 @@ class Stparent extends Authenticatable implements JWTSubject
     {
         return $this->firstname . ' ' . $this->lastname;
     }
-
-    // public function changes(): MorphMany
-    // {
-    //     return $this->morphMany(Change::class, 'changeable');
-    // }
-
-    // public function makeChanges($description, $data_key, $linkedable): Change
-    // {
-    //     return $this->changes()->create([
-    //         "linkedable_id" => $linkedable->id,
-    //         "linkedable_type" => get_class($linkedable),
-    //         "change_description" => $description,
-    //         "data_key" => $data_key,
-    //         "created_at" => date('Y-m-d h:i:s'),
-    //     ]);
-    // }
 
     public function changes()
     {

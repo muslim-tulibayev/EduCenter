@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('contact_no');
             $table->boolean('is_assistant');
+            $table->foreignId('role_id')->constrained();
         });
     }
 

@@ -11,9 +11,47 @@ return new class extends Migration
      */
     public function up(): void
     {
+        /*
+         * 0 - nothing
+         * 1 - read
+         * 2 - update
+         * 3 - create
+         * 4 - delete
+         * 
+         */
+
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+
+            // access for tables (CRUD)
+            $table->string('name', 50)->unique();
+            $table->unsignedTinyInteger('roles')->default(0);
+            $table->unsignedTinyInteger('users')->default(0);
+            // $table->unsignedTinyInteger('weekdays')->default(0);
+            $table->unsignedTinyInteger('teachers')->default(0);
+            $table->unsignedTinyInteger('courses')->default(0);
+            $table->unsignedTinyInteger('lessons')->default(0);
+            $table->unsignedTinyInteger('groups')->default(0);
+            $table->unsignedTinyInteger('students')->default(0);
+            $table->unsignedTinyInteger('stparents')->default(0);
+            $table->unsignedTinyInteger('sessions')->default(0);
+            $table->unsignedTinyInteger('branches')->default(0);
+            $table->unsignedTinyInteger('rooms')->default(0);
+            $table->unsignedTinyInteger('schedules')->default(0);
+            // $table->unsignedTinyInteger('changes')->default(0);
+            // $table->unsignedTinyInteger('certificates')->default(0);
+            // $table->unsignedTinyInteger('failedsts')->default(0);
+            // $table->unsignedTinyInteger('failedgroups')->default(0);
+            $table->unsignedTinyInteger('cashiers')->default(0);
+            $table->unsignedTinyInteger('access_for_courses')->default(0);
+
+            // access for functionalities
+            $table->unsignedTinyInteger('student_search')->default(0);
+            $table->unsignedTinyInteger('payment_addcard')->default(0);
+            $table->unsignedTinyInteger('payment_cashier')->default(0);
+            $table->unsignedTinyInteger('payment_pay')->default(0);
+
+            // $table->index(['name']);
         });
     }
 

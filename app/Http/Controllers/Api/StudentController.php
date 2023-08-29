@@ -10,16 +10,25 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student', ["except" => ['login']]);
-        $this->middleware('auth:api,student', ["only" => ['update']]);
-        $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
-        $this->middleware('auth:student', ["only" => ['logout']]);
+        $this->middleware('auth:api,teacher,parent,student');
+        // $this->middleware('auth:api,student', ["only" => ['update']]);
+        // $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
+
+        parent::__construct('students');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['student_search'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('search');
     }
 
     /**
@@ -31,7 +40,7 @@ class StudentController extends Controller
      * tags={"Student"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="error", type="string", example="Unauthorized")
@@ -94,7 +103,7 @@ class StudentController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -192,7 +201,7 @@ class StudentController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -254,7 +263,7 @@ class StudentController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -271,7 +280,7 @@ class StudentController extends Controller
 
         if (auth('student')->user() !== null) {
             if (auth('student')->user()->id != $id) {
-                return response()->json(["error" => "Unauthorized"], 401);
+                return response()->json(["error" => "Unauthorized"], 403);
             }
         }
 
@@ -367,7 +376,7 @@ class StudentController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -396,86 +405,6 @@ class StudentController extends Controller
         return response()->json([
             "message" => "Student deleted successfully",
             "student" => $student->id
-        ]);
-    }
-
-    /**
-     * @OA\Post(
-     * path="/api/student/login",
-     * summary="Login",
-     * description="Login by email, password",
-     * operationId="studentLogin",
-     * tags={"Student"},
-     * security={ {"bearerAuth": {} }},
-     * @OA\RequestBody(
-     *    required=true,
-     *    description="Pass student credentials",
-     *    @OA\JsonContent(
-     *       required={"email","password"},
-     *       @OA\Property(property="email", type="string", format="email", example="user@gmail.com"),
-     *       @OA\Property(property="password", type="string", format="password", example="12345678")
-     *    ),
-     * ),
-     * @OA\Response(
-     *    response=422,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
-     *        )
-     *     )
-     * )
-     */
-
-    public function login(Request $req)
-    {
-        $validator = Validator::make($req->all(), [
-            'email' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails())
-            return response()->json($validator->messages(), 422);
-
-        $token = auth('student')->setTTL(60 * 12)->attempt($validator->validated());
-
-        if (!$token)
-            return response()->json(['error' => 'Unauthorized'], 401);
-
-        return response(['token' => $token]);
-    }
-
-    /**
-     * @OA\Get(
-     * path="/api/student/logout",
-     * summary="Logout",
-     * description="Logout",
-     * operationId="studentLogout",
-     * tags={"Student"},
-     * @OA\Response(
-     *    response=200,
-     *    description="Success",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Student logged out")
-     *        )
-     *     )
-     * )
-     */
-
-    public function logout()
-    {
-        auth('student')->logout();
-        return response()->json(['message' => 'Student logged out'], 201);
-    }
-
-    public function certificates(string $id)
-    {
-        $student = Student::find($id);
-
-        if (!$student)
-            return response()->json(["error" => "Not found"]);
-
-        return response()->json([
-            "data" => $student->certificates
         ]);
     }
 
@@ -519,7 +448,18 @@ class StudentController extends Controller
             ->take(10)
             ->get();
 
-        // return response()->json($students);
         return StudentResourceForSearch::collection($students);
     }
+
+    // public function certificates(string $id)
+    // {
+    //     $student = Student::find($id);
+
+    //     if (!$student)
+    //         return response()->json(["error" => "Not found"]);
+
+    //     return response()->json([
+    //         "data" => $student->certificates
+    //     ]);
+    // }
 }

@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Access extends Model
+class AccessForCourse extends Model
 {
     use HasFactory;
 
@@ -18,9 +17,4 @@ class Access extends Model
         "pay_time",
         "expire_time",
     ];
-
-    // public function student(): BelongsTo
-    // {
-    //     return $this->belongsTo(Student::class);
-    // }
 }

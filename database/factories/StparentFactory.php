@@ -21,8 +21,9 @@ class StparentFactory extends Factory
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'email' => fake()->safeEmail(),
-            'password' => Hash::make('12345678'),
             'contact_no' => fake()->phoneNumber(),
+            'role_id' => 3,
+            'password' => Hash::make('12345678'),
         ];
     }
 }

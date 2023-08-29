@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Branch\BranchResource;
-use App\Http\Resources\Schedule\ScheduleResource;
 use App\Http\Resources\Schedule\ScheduleResourceThroughBranch;
 use App\Models\Branch;
 use Illuminate\Http\Request;
@@ -15,7 +14,36 @@ class BranchController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy', 'rooms', 'addRooms']]);
+        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy', 'rooms', 'addRooms']]);
+
+        parent::__construct('branches');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['rooms'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('rooms');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['branches'] >= 2))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('addRooms');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['schedules'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('getSchedule');
     }
 
     /**
@@ -27,7 +55,7 @@ class BranchController extends Controller
      * tags={"Branch"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -64,7 +92,7 @@ class BranchController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -118,7 +146,7 @@ class BranchController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -167,7 +195,7 @@ class BranchController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -226,7 +254,7 @@ class BranchController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -274,7 +302,7 @@ class BranchController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -325,7 +353,7 @@ class BranchController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -385,7 +413,7 @@ class BranchController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -393,7 +421,6 @@ class BranchController extends Controller
      *   )
      * )
      */
-
 
     public function getSchedule(Request $req)
     {

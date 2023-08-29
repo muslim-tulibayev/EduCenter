@@ -12,10 +12,11 @@ class ParentController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student', ["except" => ['login']]);
-        $this->middleware('auth:api,parent', ["only" => ['update']]);
-        $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
-        $this->middleware('auth:parent', ["only" => ['logout']]);
+        $this->middleware('auth:api,teacher,parent,student');
+        // $this->middleware('auth:api,parent', ["only" => ['update']]);
+        // $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
+        
+        parent::__construct('stparents');
     }
 
     public function index()
@@ -63,7 +64,7 @@ class ParentController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -80,7 +81,7 @@ class ParentController extends Controller
 
         if (auth('parent')->user() !== null) {
             if (auth('parent')->user()->id != $id) {
-                return response()->json(["error" => "Unauthorized"], 401);
+                return response()->json(["error" => "Unauthorized"], 403);
             }
         }
 
@@ -156,7 +157,7 @@ class ParentController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -183,73 +184,5 @@ class ParentController extends Controller
             "message" => "parent deleted successfully",
             "parent" => $id
         ]);
-    }
-
-    /**
-     * @OA\Post(
-     * path="/api/parent/login",
-     * summary="Login",
-     * description="Login by email, password",
-     * operationId="parentLogin",
-     * tags={"Parent"},
-     * @OA\RequestBody(
-     *    required=true,
-     *    description="Pass Parent credentials",
-     *    @OA\JsonContent(
-     *       required={"email","password"},
-     *       @OA\Property(property="email", type="string", format="email", example="user@gmail.com"),
-     *       @OA\Property(property="password", type="string", format="password", example="12345678")
-     *    ),
-     * ),
-     * @OA\Response(
-     *    response=422,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
-     *        )
-     *     )
-     * )
-     */
-
-    public function login(Request $req)
-    {
-        $validator = Validator::make($req->all(), [
-            'email' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails())
-            return response()->json($validator->messages(), 422);
-
-        $token = auth('parent')->setTTL(60 * 12)->attempt($validator->validated());
-
-        if (!$token)
-            return response()->json(['error' => 'Unauthorized'], 401);
-
-        return response(['token' => $token]);
-    }
-
-    /**
-     * @OA\Get(
-     * path="/api/parent/logout",
-     * summary="Logout",
-     * description="Logout",
-     * operationId="parentLogout",
-     * tags={"Parent"},
-     * security={ {"bearerAuth": {} }},
-     * @OA\Response(
-     *    response=200,
-     *    description="Success",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Parent logged out")
-     *        )
-     *     )
-     * )
-     */
-
-    public function logout()
-    {
-        auth('parent')->logout();
-        return response()->json(['message' => 'Parent logged out'], 201);
     }
 }

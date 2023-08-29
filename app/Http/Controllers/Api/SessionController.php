@@ -12,7 +12,9 @@ class SessionController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
+        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
+
+        parent::__construct('sessions');
     }
 
     /**
@@ -24,7 +26,7 @@ class SessionController extends Controller
      * tags={"Session"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -56,7 +58,7 @@ class SessionController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -105,7 +107,7 @@ class SessionController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -155,7 +157,7 @@ class SessionController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -211,7 +213,7 @@ class SessionController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")

@@ -14,7 +14,27 @@ class GroupController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy', 'changeStudents']]);
+        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy', 'changeStudents']]);
+
+        parent::__construct('groups');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['students'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('students');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['groups'] >= 2))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('changeStudents');
     }
 
     /**
@@ -26,7 +46,7 @@ class GroupController extends Controller
      * tags={"Group"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="error", type="string", example="Unauthorized")
@@ -70,7 +90,7 @@ class GroupController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -136,7 +156,7 @@ class GroupController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -192,7 +212,7 @@ class GroupController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -266,7 +286,7 @@ class GroupController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -314,7 +334,7 @@ class GroupController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -368,7 +388,7 @@ class GroupController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")

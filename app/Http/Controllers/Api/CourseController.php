@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\Lesson\LessonResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +14,18 @@ class CourseController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
+        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
+
+        parent::__construct('courses');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['lessons'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('lessons');
     }
 
     /**
@@ -25,7 +37,7 @@ class CourseController extends Controller
      * tags={"Course"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="error", type="string", example="Unauthorized")
@@ -62,7 +74,7 @@ class CourseController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -116,7 +128,7 @@ class CourseController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -165,7 +177,7 @@ class CourseController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -224,7 +236,7 @@ class CourseController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -271,7 +283,7 @@ class CourseController extends Controller
      * ),
      *
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")

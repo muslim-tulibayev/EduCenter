@@ -23,6 +23,7 @@ class StudentFactory extends Factory
             'email' => fake()->safeEmail(),
             'password' => Hash::make('12345678'),
             'contact_no' => fake()->phoneNumber(),
+            'role_id' => 4,
             // 'is_paid' => fake()->boolean(),
             'status' => fake()->boolean(),
             'created_by' => rand(1, 10),

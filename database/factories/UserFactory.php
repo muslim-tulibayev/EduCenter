@@ -13,10 +13,10 @@ class UserFactory extends Factory
         return [
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
-            'contact_no' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => Hash::make('12345678'),
+            'contact_no' => fake()->phoneNumber(),
             'role_id' => 1,
+            'password' => Hash::make('12345678'),
         ];
     }
 

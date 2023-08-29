@@ -22,6 +22,36 @@ class PaymentController extends Controller
     {
         $this->middleware('auth:api,parent,student');
         // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy', 'changeStudents']]);
+        parent::__construct();
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['payment_addcard'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('addCard');
+
+        // Change this (Create CashierContoller)
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['payment_cashier'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('cashierId');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['payment_pay'] >= 1))
+                return response()->json([
+                    "error" => "Unauthorized"
+                ], 403);
+
+            return $next($request);
+        })->only('pay');
+
         $this->cashier = Cashier::find(1);
     }
 
@@ -44,7 +74,7 @@ class PaymentController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -70,7 +100,7 @@ class PaymentController extends Controller
      * tags={"Payment"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="error", type="string", example="Unauthorized")
@@ -104,7 +134,7 @@ class PaymentController extends Controller
      *    ),
      * ),
      * @OA\Response(
-     *    response=401,
+     *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
      *       @OA\Property(property="message", type="string", example="Unauthorized")
@@ -237,7 +267,7 @@ class PaymentController extends Controller
     {
         $student = Student::find($student_id);
         $current_time = new DateTime();
-        $access = $student->accesses()
+        $access = $student->accessForCourses()
             ->where('course_id', $course_id)
             ->first();
 
@@ -249,7 +279,7 @@ class PaymentController extends Controller
             ]);
             return 'paid';
         } else {
-            $student->accesses()
+            $student->accessForCourses()
                 ->create([
                     'course_id' => $course_id,
                     'pay_time' => $current_time->format('Y-m-d H:i:s'),

@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BranchController;
-use App\Http\Controllers\Api\CertificateController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\LessonController;
@@ -12,28 +11,22 @@ use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\PaymentController;
-use App\Models\Student;
+use App\Http\Controllers\Api\RoleController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => '/user'], function () {
-    Route::post('/register', [UserController::class, 'register']);
-    Route::post('/login', [UserController::class, 'login']);
-    Route::get('/logout', [UserController::class, 'logout']);
-    Route::post('/emailverification', [UserController::class, 'emailverification']);
+Route::group(['prefix' => '/auth'], function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/logout', [AuthController::class, 'logout']);
+    Route::post('/emailverification', [AuthController::class, 'emailverification']);
 });
 
-Route::post('/teacher/login', [TeacherController::class, 'login']);
-Route::get('/teacher/logout', [TeacherController::class, 'logout']);
 Route::apiResource('/teacher', TeacherController::class);
 
-Route::post('/parent/login', [ParentController::class, 'login']);
-Route::get('/parent/logout', [ParentController::class, 'logout']);
 Route::apiResource('/parent', ParentController::class);
 
-Route::post('/student/login', [StudentController::class, 'login']);
-Route::get('/student/logout', [StudentController::class, 'logout']);
 Route::post('/student/search', [StudentController::class, 'search']);
-Route::get('/student/{id}/certificates', [StudentController::class, 'certificates']);
+// Route::get('/student/{id}/certificates', [StudentController::class, 'certificates']);
 Route::apiResource('/student', StudentController::class);
 
 Route::apiResource('/course', CourseController::class);
@@ -54,25 +47,18 @@ Route::apiResource('/session', SessionController::class);
 
 Route::apiResource('/schedule', ScheduleController::class);
 
-Route::apiResource('/certificate', CertificateController::class);
+// Route::apiResource('/certificate', CertificateController::class);
 
 Route::post('/payment/addcard', [PaymentController::class, 'addCard']);
 Route::get('/payment/cashier', [PaymentController::class, 'cashierId']);
 Route::post('/payment/pay', [PaymentController::class, 'pay']);
 
-// Route::get('/login', function () {
-//     return response()->json(["error" => "Unauthenticated"], 401);
-// })->name('login');
+Route::apiResource('/role', RoleController::class);
 
 Route::any('/login', function () {
     return response()->json(["error" => "Unauthenticated"], 401);
 })->name('login');
 
-// Route::get('test', function () {
-//     $st = Student::find(2);
-//     $accesses = $st->accesses;
-//     return response()->json($accesses);
-// });
 
 // Route::get('test', function () {
 //     $changes = Change::with('changeable')->with('linkedable')->get();

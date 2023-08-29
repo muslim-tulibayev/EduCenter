@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +16,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class Student extends Authenticatable implements JWTSubject
 
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, RoleTrait;
 
     public $timestamps = false;
 
@@ -24,6 +25,7 @@ class Student extends Authenticatable implements JWTSubject
         'lastname',
         'email',
         'contact_no',
+        'role_id',
         'status',
         'password',
         'payment_token',
@@ -50,9 +52,9 @@ class Student extends Authenticatable implements JWTSubject
         return $this->morphMany(Change::class, 'changeable');
     }
 
-    public function accesses()
+    public function accessForCourses()
     {
-        return $this->hasMany(Access::class);
+        return $this->hasMany(AccessForCourse::class);
     }
 
     public function makeChanges($description, $data_key, $linkedable): Change
