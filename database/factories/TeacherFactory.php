@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
+use App\Models\Teacher;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -23,7 +25,8 @@ class TeacherFactory extends Factory
             'email' => fake()->safeEmail(),
             'password' => Hash::make('12345678'),
             'contact_no' => fake()->phoneNumber(),
-            'role_id' => 2,
+            'status' => fake()->boolean(70),
+            'role_id' => Role::where('name', 'teacher')->first()->id,
             'is_assistant' => fake()->boolean(),
         ];
     }

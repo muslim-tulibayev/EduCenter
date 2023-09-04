@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lesson;
@@ -12,7 +12,6 @@ class LessonController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
 
         parent::__construct('lessons');
     }
@@ -24,7 +23,7 @@ class LessonController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/lesson",
+     * path="/api/manage/lesson",
      * summary="Set new lesson",
      * description="Lesson store",
      * operationId="storeLesson",
@@ -54,7 +53,6 @@ class LessonController extends Controller
     {
         $validator = Validator::make($req->all(), [
             "sequence_number" => 'required|string',
-            // |unique:',
             "name" => 'required|string',
             "course_id" => 'required|exists:courses,id',
         ]);
@@ -81,7 +79,7 @@ class LessonController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/lesson/{id}",
+     * path="/api/manage/lesson/{id}",
      * summary="Update specific lesson",
      * description="Lesson update",
      * operationId="updateLesson",
@@ -125,7 +123,6 @@ class LessonController extends Controller
 
         $validator = Validator::make($req->all(), [
             "sequence_number" => 'required|string',
-            // |unique:',
             "name" => 'required|string',
             "course_id" => 'required|exists:courses,id',
         ]);
@@ -147,7 +144,7 @@ class LessonController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/lesson/{id}",
+     * path="/api/manage/lesson/{id}",
      * summary="Delete specific lesson",
      * description="Lesson delete",
      * operationId="destroyLesson",

@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('firstname');
             $table->string('lastname');
             $table->string('contact_no');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->index('idx_email');
             $table->string('password');
+            $table->boolean('status')->default(false);
             $table->foreignId('role_id')->constrained();
+            $table->foreignId('branch_id')->constrained();
         });
     }
 

@@ -28,6 +28,11 @@ class DatabaseSeeder extends Seeder
             SessionSeeder::class,
             BranchSeeder::class,
             CashierSeeder::class,
+
+            UserSeeder::class,
+            TeacherSeeder::class,
+            StparentSeeder::class,
+            StudentSeeder::class,
         ]);
 
         User::factory(10)->create();

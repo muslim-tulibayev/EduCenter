@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Models\Stparent;
+use App\Traits\CheckEmailUniqueness;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class ParentController extends Controller
 {
+    use CheckEmailUniqueness;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api,parent', ["only" => ['update']]);
-        // $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
         
         parent::__construct('stparents');
     }
@@ -36,7 +36,7 @@ class ParentController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/parent/{id}",
+     * path="/api/manage/parent/{id}",
      * summary="Update specific parent",
      * description="Parent update",
      * operationId="updateParent",
@@ -79,12 +79,6 @@ class ParentController extends Controller
         if ($parent === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('parent')->user() !== null) {
-            if (auth('parent')->user()->id != $id) {
-                return response()->json(["error" => "Unauthorized"], 403);
-            }
-        }
-
         $validator = Validator::make($req->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
@@ -94,8 +88,9 @@ class ParentController extends Controller
         ]);
 
         if ($parent->email !== $req->email) {
-            $found = Stparent::where('email', '=', $req->email)->first();
-            if ($found !== null) {
+            $check = $this->checkForEmailUniqueness($req->email);
+
+            if (!$check) {
                 return response([
                     "email" => [
                         "The email has already been taken."
@@ -107,31 +102,21 @@ class ParentController extends Controller
         if ($validator->fails())
             return response()->json($validator->messages());
 
-        if ($req->has('password') && (auth('parent')->user() !== null)) {
-            $parent->password = Hash::make($req->password);
-            $parent->save();
-        }
+        $parent->update($validator->validated());
 
-        $parent->update([
-            'firstname' => $req->firstname,
-            'lastname' => $req->lastname,
-            'email' => $req->email,
-            'contact_no' => $req->contact_no,
-        ]);
+        // if (auth('api')->user() !== null)
+        //     auth('api')->user()->makeChanges(
+        //         'Parent updated from $val1 to $val2',
+        //         '$col-name',
+        //         $parent
+        //     );
 
-        if (auth('api')->user() !== null)
-            auth('api')->user()->makeChanges(
-                'Parent updated from $val1 to $val2',
-                '$col-name',
-                $parent
-            );
-
-        if (auth('parent')->user() !== null)
-            auth('parent')->user()->makeChanges(
-                'Parent updated from $val1 to $val2',
-                '$col-name',
-                $parent
-            );
+        // if (auth('parent')->user() !== null)
+        //     auth('parent')->user()->makeChanges(
+        //         'Parent updated from $val1 to $val2',
+        //         '$col-name',
+        //         $parent
+        //     );
 
         return response()->json([
             "message" => "Parent updated successfully",
@@ -141,7 +126,7 @@ class ParentController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/parent/{id}",
+     * path="/api/manage/parent/{id}",
      * summary="Delete specific parent",
      * description="Parent delete",
      * operationId="destroyParent",
@@ -169,14 +154,15 @@ class ParentController extends Controller
     public function destroy(string $id)
     {
         $parent = Stparent::find($id);
+
         if ($parent === null)
             return response()->json(["error" => "Not found"]);
 
-        auth('api')->user()->makeChanges(
-            'Parent deleted',
-            'deleted',
-            $parent
-        );
+        // auth('api')->user()->makeChanges(
+        //     'Parent deleted',
+        //     'deleted',
+        //     $parent
+        // );
 
         $parent->delete();
 

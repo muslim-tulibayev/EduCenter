@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\StudentResource;
 use App\Http\Resources\Student\StudentResourceForSearch;
 use App\Models\Stparent;
 use App\Models\Student;
+use App\Traits\CheckEmailUniqueness;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+    use CheckEmailUniqueness;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api,student', ["only" => ['update']]);
-        // $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
 
         parent::__construct('students');
 
@@ -33,7 +34,7 @@ class StudentController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/student",
+     * path="/api/manage/student",
      * summary="Get all students data",
      * description="Student index",
      * operationId="indexStudent",
@@ -53,24 +54,12 @@ class StudentController extends Controller
     {
         $students = Student::with('groups')->with('stparents')->orderByDesc('id')->paginate();
 
-        // if (auth('api')->user())
-        //     return StudentResourceForAdmin::collection($students);
-
-        // if (auth('teacher')->user())
-        //     return StudentResourceForTeacher::collection($students);
-
-        // if (auth('parent')->user())
-        //     return StudentResourceForParent::collection($students);
-
-        // if (auth('student')->user())
-        //     return StudentResourceForStudent::collection($students);
-
         return StudentResource::collection($students);
     }
 
     /**
      * @OA\Post(
-     * path="/api/student",
+     * path="/api/manage/student",
      * summary="Set new student",
      * description="Student store",
      * operationId="storeStudent",
@@ -118,9 +107,7 @@ class StudentController extends Controller
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'email' => 'required|email|unique:students,email',
-            // 'password' => 'required|confirmed|string|min:8',
             'contact_no' => 'required|string',
-            // 'is_paid' => 'boolean',
             'status' => 'boolean',
             'group_id' => 'numeric|exists:groups,id',
             'parents' => 'array',
@@ -141,7 +128,6 @@ class StudentController extends Controller
             'email' => $req->email,
             'password' => Hash::make('12345678'),
             'contact_no' => $req->contact_no,
-            // 'is_paid' => $req->is_paid ?? false,
             'status' => $req->status ?? false,
             'created_by' => auth('api')->user()->id,
             'created_at' => date('Y-m-d h:i:s')
@@ -170,12 +156,12 @@ class StudentController extends Controller
 
         $newStudent->stparents()->attach($attaches);
 
-        if (auth('api')->user() !== null)
-            auth('api')->user()->makeChanges(
-                'New student created',
-                'created',
-                $newStudent
-            );
+        // if (auth('api')->user() !== null)
+        //     auth('api')->user()->makeChanges(
+        //         'New student created',
+        //         'created',
+        //         $newStudent
+        //     );
 
         return response()->json([
             "message" => "Student created successfully",
@@ -185,7 +171,7 @@ class StudentController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/student/{id}",
+     * path="/api/manage/student/{id}",
      * summary="Get specific student data",
      * description="Student show",
      * operationId="showStudent",
@@ -215,26 +201,14 @@ class StudentController extends Controller
         $student = Student::with('stparents')->with('groups')->find($id);
 
         if ($student === null)
-            return response()->json(['error' => 'Not found']);
-
-        // if (auth('api')->user())
-        //     return new StudentResourceForAdmin($student);
-
-        // if (auth('teacher')->user())
-        //     return new StudentResourceForTeacher($student);
-
-        // if (auth('parent')->user())
-        //     return new StudentResourceForParent($student);
-
-        // if (auth('student')->user())
-        //     return new StudentResourceForStudent($student);
+            return response()->json(['error' => 'Not found'], 400);
 
         return new StudentResource($student);
     }
 
     /**
      * @OA\Put(
-     * path="/api/student/{id}",
+     * path="/api/manage/student/{id}",
      * summary="Update specific student",
      * description="Student update",
      * operationId="updateStudent",
@@ -278,12 +252,6 @@ class StudentController extends Controller
         if ($student === null)
             return response()->json(["error" => "Not found"]);
 
-        if (auth('student')->user() !== null) {
-            if (auth('student')->user()->id != $id) {
-                return response()->json(["error" => "Unauthorized"], 403);
-            }
-        }
-
         $validator = Validator::make($req->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
@@ -303,8 +271,9 @@ class StudentController extends Controller
         ]);
 
         if ($student->email !== $req->email) {
-            $found = Student::where('email', '=', $req->email)->first();
-            if ($found !== null) {
+            $check = $this->checkForEmailUniqueness($req->email);
+
+            if (!$check) {
                 return response([
                     "email" => [
                         "The email has already been taken."
@@ -316,41 +285,26 @@ class StudentController extends Controller
         if ($validator->fails())
             return response()->json($validator->messages());
 
-        if ($req->has('password') && (auth('student')->user() !== null)) {
-            $student->password = Hash::make($req->password);
-            $student->save();
-        }
-
         // if ($req->has('is_paid') && (auth('api')->user() !== null)) {
         //     $student->is_paid = $req->is_paid;
         //     $student->save();
         // }
 
-        if ($req->has('status') && (auth('api')->user() !== null)) {
-            $student->status = $req->status;
-            $student->save();
-        }
+        $student->update($validator->validated());
 
-        $student->update([
-            'firstname' => $req->firstname,
-            'lastname' => $req->lastname,
-            'email' => $req->email,
-            'contact_no' => $req->contact_no,
-        ]);
+        // if (auth('api')->user() !== null)
+        //     auth('api')->user()->makeChanges(
+        //         'Student updated from $val1 to $val2',
+        //         '$col-name',
+        //         $student
+        //     );
 
-        if (auth('api')->user() !== null)
-            auth('api')->user()->makeChanges(
-                'Student updated from $val1 to $val2',
-                '$col-name',
-                $student
-            );
-
-        if (auth('student')->user() !== null)
-            auth('student')->user()->makeChanges(
-                'Student updated from $val1 to $val2',
-                '$col-name',
-                $student
-            );
+        // if (auth('student')->user() !== null)
+        //     auth('student')->user()->makeChanges(
+        //         'Student updated from $val1 to $val2',
+        //         '$col-name',
+        //         $student
+        //     );
 
         return response()->json([
             "message" => "Student updated successfully",
@@ -360,7 +314,7 @@ class StudentController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/student/{id}",
+     * path="/api/manage/student/{id}",
      * summary="Delete specific student",
      * description="Student delete",
      * operationId="destroyStudent",
@@ -394,11 +348,11 @@ class StudentController extends Controller
         // foreach ($student->stparents as $parent)
         //     $parent->delete();
 
-        auth('api')->user()->makeChanges(
-            'Student deleted',
-            'deleted',
-            $student
-        );
+        // auth('api')->user()->makeChanges(
+        //     'Student deleted',
+        //     'deleted',
+        //     $student
+        // );
 
         $student->delete();
 
@@ -410,7 +364,7 @@ class StudentController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/student/search",
+     * path="/api/manage/student/search",
      * summary="Search",
      * description="Search by student firstname or lastname",
      * operationId="studentSearch",
@@ -450,16 +404,4 @@ class StudentController extends Controller
 
         return StudentResourceForSearch::collection($students);
     }
-
-    // public function certificates(string $id)
-    // {
-    //     $student = Student::find($id);
-
-    //     if (!$student)
-    //         return response()->json(["error" => "Not found"]);
-
-    //     return response()->json([
-    //         "data" => $student->certificates
-    //     ]);
-    // }
 }

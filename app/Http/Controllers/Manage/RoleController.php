@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
@@ -18,7 +18,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/role",
+     * path="/api/manage/role",
      * summary="Get all Roles data",
      * description="Role index",
      * operationId="indexRole",
@@ -45,7 +45,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/role",
+     * path="/api/manage/role",
      * summary="Set new Role",
      * description="Role store",
      * operationId="storeRole",
@@ -134,7 +134,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/role/{id}",
+     * path="/api/manage/role/{id}",
      * summary="Get specific Role data",
      * description="Role show",
      * operationId="showRole",
@@ -175,7 +175,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/role/{id}",
+     * path="/api/manage/role/{id}",
      * summary="Update specific Role",
      * description="Role update",
      * operationId="updateRole",
@@ -288,7 +288,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/role/{id}",
+     * path="/api/manage/role/{id}",
      * summary="Delete specific Role",
      * description="Role delete",
      * operationId="destroyRole",

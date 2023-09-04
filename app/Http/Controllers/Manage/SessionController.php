@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Models\Session;
@@ -12,14 +12,13 @@ class SessionController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
 
         parent::__construct('sessions');
     }
 
     /**
      * @OA\Get(
-     * path="/api/session",
+     * path="/api/manage/session",
      * summary="Session index",
      * description="Get all Sessions data",
      * operationId="indexSession",
@@ -42,7 +41,7 @@ class SessionController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/session",
+     * path="/api/manage/session",
      * summary="Session store",
      * description="Set new Session",
      * operationId="storeSession",
@@ -91,7 +90,7 @@ class SessionController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/session/{id}",
+     * path="/api/manage/session/{id}",
      * summary="Session show",
      * description="Get specific session data",
      * operationId="showSession",
@@ -132,7 +131,7 @@ class SessionController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/session/{id}",
+     * path="/api/manage/session/{id}",
      * summary="Session update",
      * description="Update specific session",
      * operationId="updateSession",
@@ -197,7 +196,7 @@ class SessionController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/session/{id}",
+     * path="/api/manage/session/{id}",
      * summary="Session delete",
      * description="Delete specific session",
      * operationId="destroySession",

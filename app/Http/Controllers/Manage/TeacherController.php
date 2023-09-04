@@ -1,29 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Group\GroupResourceMin;
 use App\Http\Resources\Teacher\TeacherResource;
 use App\Models\Group;
 use App\Models\Teacher;
+use App\Traits\CheckEmailUniqueness;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
 {
+    use CheckEmailUniqueness;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api,teacher', ["only" => ['update']]);
-        // $this->middleware('auth:api', ["only" => ['store', 'destroy']]);
-        parent::__construct('teachers'); // Call parent constructor
+
+        parent::__construct('teachers');
     }
 
     /**
      * @OA\Get(
-     * path="/api/teacher?role={role}",
+     * path="/api/manage/teacher?role={role}",
      * summary="Get all teachers data",
      * description="Teacher index",
      * operationId="indexTeacher",
@@ -61,15 +63,12 @@ class TeacherController extends Controller
             $teachers = Teacher::orderByDesc('id')->paginate();
         }
 
-        // if (auth('api')->user())
-        //     return TeacherResourceForAdmin::collection($teachers);
-
         return TeacherResource::collection($teachers);
     }
 
     /**
      * @OA\Post(
-     * path="/api/teacher",
+     * path="/api/manage/teacher",
      * summary="Set new teacher",
      * description="Teacher store",
      * operationId="storeTeacher",
@@ -124,11 +123,11 @@ class TeacherController extends Controller
         // if ($req->has('group_id'))
         //     $newTeacher->groups()->attach($req->group_id);
 
-        auth('api')->user()->makeChanges(
-            'New teacher created',
-            'created',
-            $newTeacher
-        );
+        // auth('api')->user()->makeChanges(
+        //     'New teacher created',
+        //     'created',
+        //     $newTeacher
+        // );
 
         return response()->json([
             "message" => "Teacher created successfully",
@@ -138,7 +137,7 @@ class TeacherController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/teacher/{id}",
+     * path="/api/manage/teacher/{id}",
      * summary="Get specific teacher data",
      * description="Teacher show",
      * operationId="showTeacher",
@@ -168,7 +167,7 @@ class TeacherController extends Controller
         $teacher = Teacher::find($id);
 
         if ($teacher === null)
-            return response()->json(["error" => "Not found"]);
+            return response()->json(["error" => "Not found"], 400);
 
         // if (auth('api')->user())
         //     return new TeacherResource($teacher);
@@ -178,7 +177,7 @@ class TeacherController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/teacher/{id}",
+     * path="/api/manage/teacher/{id}",
      * summary="Update specific Teacher",
      * description="Teacher update",
      * operationId="updateTeacher",
@@ -219,13 +218,7 @@ class TeacherController extends Controller
     {
         $teacher = Teacher::find($id);
         if ($teacher === null)
-            return response()->json(["error" => "Not found"]);
-
-        if (auth('teacher')->user() !== null) {
-            if (auth('teacher')->user()->id != $id) {
-                return response()->json(["error" => "Unauthorized"], 403);
-            }
-        }
+            return response()->json(["error" => "Not found"], 400);
 
         $validator = Validator::make($req->all(), [
             'firstname' => 'required|string',
@@ -237,8 +230,9 @@ class TeacherController extends Controller
         ]);
 
         if ($teacher->email !== $req->email) {
-            $found = Teacher::where('email', '=', $req->email)->first();
-            if ($found !== null) {
+            $check = $this->checkForEmailUniqueness($req->email);
+
+            if (!$check) {
                 return response([
                     "email" => [
                         "The email has already been taken."
@@ -250,36 +244,21 @@ class TeacherController extends Controller
         if ($validator->fails())
             return response()->json($validator->messages());
 
-        if ($req->has('password') && (auth('teacher')->user() !== null)) {
-            $teacher->password = Hash::make($req->password);
-            $teacher->save();
-        }
+        $teacher->update($validator->validated());
 
-        if ($req->has('is_assistant') && (auth('api')->user() !== null)) {
-            $teacher->is_assistant = $req->is_assistant;
-            $teacher->save();
-        }
+        // if (auth('api')->user() !== null)
+        //     auth('api')->user()->makeChanges(
+        //         'teacher updated from $val1 to $val2',
+        //         '$col-name',
+        //         $teacher
+        //     );
 
-        $teacher->update([
-            'firstname' => $req->firstname,
-            'lastname' => $req->lastname,
-            'email' => $req->email,
-            'contact_no' => $req->contact_no,
-        ]);
-
-        if (auth('api')->user() !== null)
-            auth('api')->user()->makeChanges(
-                'teacher updated from $val1 to $val2',
-                '$col-name',
-                $teacher
-            );
-
-        if (auth('teacher')->user() !== null)
-            auth('teacher')->user()->makeChanges(
-                'teacher updated from $val1 to $val2',
-                '$col-name',
-                $teacher
-            );
+        // if (auth('teacher')->user() !== null)
+        //     auth('teacher')->user()->makeChanges(
+        //         'teacher updated from $val1 to $val2',
+        //         '$col-name',
+        //         $teacher
+        //     );
 
         return response()->json([
             "message" => "Teacher updated successfully",
@@ -289,7 +268,7 @@ class TeacherController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/teacher/{id}",
+     * path="/api/manage/teacher/{id}",
      * summary="Delete specific Teacher",
      * description="Teacher delete",
      * operationId="destroyTeacher",
@@ -323,11 +302,11 @@ class TeacherController extends Controller
         // foreach ($teacher->stparents as $parent)
         //     $parent->delete();
 
-        auth('api')->user()->makeChanges(
-            'teacher deleted',
-            'deleted',
-            $teacher
-        );
+        // auth('api')->user()->makeChanges(
+        //     'teacher deleted',
+        //     'deleted',
+        //     $teacher
+        // );
 
         $groups = Group::where('teacher_id', $id)
             ->orWhere('assistant_teacher_id', $id)

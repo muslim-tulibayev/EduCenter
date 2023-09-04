@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Course\CourseResource;
-use App\Http\Resources\Lesson\LessonResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,23 +13,13 @@ class CourseController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
 
         parent::__construct('courses');
-
-        $this->middleware(function ($request, $next) {
-            if (!($this->auth_role['lessons'] >= 1))
-                return response()->json([
-                    "error" => "Unauthorized"
-                ], 403);
-
-            return $next($request);
-        })->only('lessons');
     }
 
     /**
      * @OA\Get(
-     * path="/api/course",
+     * path="/api/manage/course",
      * summary="Get all courses data",
      * description="Course index",
      * operationId="indexCourse",
@@ -50,15 +39,12 @@ class CourseController extends Controller
     {
         $courses = Course::orderByDesc('id')->paginate();
 
-        // if (auth('api')->user())
-        //     return CourseResource::collection($courses);
-
         return CourseResource::collection($courses);
     }
 
     /**
      * @OA\Post(
-     * path="/api/course",
+     * path="/api/manage/course",
      * summary="Set new course",
      * description="Course store",
      * operationId="storeCourse",
@@ -98,11 +84,11 @@ class CourseController extends Controller
             'price' => $req->price
         ]);
 
-        auth('api')->user()->makeChanges(
-            'New course created',
-            'created',
-            $newCourse
-        );
+        // auth('api')->user()->makeChanges(
+        //     'New course created',
+        //     'created',
+        //     $newCourse
+        // );
 
         return response()->json([
             "message" => "Course created successfully",
@@ -112,7 +98,7 @@ class CourseController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/course/{id}",
+     * path="/api/manage/course/{id}",
      * summary="Get specific course data",
      * description="Course show",
      * operationId="showCourse",
@@ -144,15 +130,12 @@ class CourseController extends Controller
         if ($course === null)
             return response()->json(["error" => "Not found"]);
 
-        // if (auth('api')->user())
-        //     return new CourseResource($course);
-
         return new CourseResource($course);
     }
 
     /**
      * @OA\Put(
-     * path="/api/course/{id}",
+     * path="/api/manage/course/{id}",
      * summary="Update specific course",
      * description="Course update",
      * operationId="updateCourse",
@@ -206,11 +189,11 @@ class CourseController extends Controller
             'price' => $req->price,
         ]);
 
-        auth('api')->user()->makeChanges(
-            'Course updated from $val1 to $val2',
-            '$col-name',
-            $course
-        );
+        // auth('api')->user()->makeChanges(
+        //     'Course updated from $val1 to $val2',
+        //     '$col-name',
+        //     $course
+        // );
 
         return response()->json([
             "message" => "Course updated successfully",
@@ -220,7 +203,7 @@ class CourseController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/course/{id}",
+     * path="/api/manage/course/{id}",
      * summary="Delete specific course",
      * description="Course delete",
      * operationId="destroyCourse",
@@ -251,11 +234,11 @@ class CourseController extends Controller
         if ($course === null)
             return response()->json(["error" => "Not found"]);
 
-        auth('api')->user()->makeChanges(
-            'Course deleted',
-            'deleted',
-            $course
-        );
+        // auth('api')->user()->makeChanges(
+        //     'Course deleted',
+        //     'deleted',
+        //     $course
+        // );
 
         $course->delete();
 
@@ -265,44 +248,40 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * @OA\Get(
-     * path="/api/course/{id}/lessons",
-     * summary="Get specific course lessons",
-     * description="Course lessons",
-     * operationId="lessonsCourse",
-     * tags={"Course"},
-     * security={ {"bearerAuth": {} }},
-     *
-     * @OA\Parameter(
-     *    in="path",
-     *    name="id",
-     *    required=true,
-     *    description="ID to fetch the targeted campaigns.",
-     *    @OA\Schema(type="string")
-     * ),
-     *
-     * @OA\Response(
-     *    response=403,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Unauthorized")
-     *        )
-     *     )
-     * )
-     */
-
-    public function lessons(string $id)
-    {
-        $course = Course::find($id);
-        if ($course === null)
-            return response()->json(["error" => "Not found"]);
-
-        $lessons = $course->lessons()->orderBy('sequence_number')->paginate();
-
-        // if (auth('api')->user())
-        //     return CourseLessonResourceForAdmin::collection($lessons);
-
-        return LessonResource::collection($lessons);
-    }
+    // /**
+    //  * @OA\Get(
+    //  * path="/api/manage/course/{id}/lessons",
+    //  * summary="Get specific course lessons",
+    //  * description="Course lessons",
+    //  * operationId="lessonsCourse",
+    //  * tags={"Course"},
+    //  * security={ {"bearerAuth": {} }},
+    //  *
+    //  * @OA\Parameter(
+    //  *    in="path",
+    //  *    name="id",
+    //  *    required=true,
+    //  *    description="ID to fetch the targeted campaigns.",
+    //  *    @OA\Schema(type="string")
+    //  * ),
+    //  *
+    //  * @OA\Response(
+    //  *    response=403,
+    //  *    description="Wrong credentials response",
+    //  *    @OA\JsonContent(
+    //  *       @OA\Property(property="message", type="string", example="Unauthorized")
+    //  *        )
+    //  *     )
+    //  * )
+    //  */
+    // public function lessons(string $id)
+    // {
+    //     $course = Course::find($id);
+    //     if ($course === null)
+    //         return response()->json(["error" => "Not found"]);
+    //     $lessons = $course->lessons()->orderBy('sequence_number')->paginate();
+    //     // if (auth('api')->user())
+    //     //     return CourseLessonResourceForAdmin::collection($lessons);
+    //     return LessonResource::collection($lessons);
+    // }
 }

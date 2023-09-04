@@ -23,6 +23,7 @@ class GroupFactory extends Factory
             'teacher_id' => rand(1, 10),
             'assistant_teacher_id' => rand(1, 10),
             'course_id' => rand(1, 4),
+            'branch_id' => rand(1, 3),
         ];
     }
 }

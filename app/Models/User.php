@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -23,6 +24,8 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'contact_no',
         'role_id',
+        'branch_id',
+        'status',
         'password',
     ];
 
@@ -38,6 +41,11 @@ class User extends Authenticatable implements JWTSubject
     public function changes(): MorphMany
     {
         return $this->morphMany(Change::class, 'changeable');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function makeChanges($description, $data_key, $linkedable): Change
@@ -60,5 +68,4 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
 }

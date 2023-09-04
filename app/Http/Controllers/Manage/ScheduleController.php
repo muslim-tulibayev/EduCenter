@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Schedule\ScheduleResource;
@@ -13,14 +13,13 @@ class ScheduleController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
-        // $this->middleware('auth:api', ["only" => ['update', 'store', 'destroy']]);
 
         parent::__construct('schedules');
     }
 
     /**
      * @OA\Get(
-     * path="/api/schedule",
+     * path="/api/manage/schedule",
      * summary="Get all schedules data",
      * description="Schedule index",
      * operationId="indexSchedule",
@@ -40,17 +39,12 @@ class ScheduleController extends Controller
     {
         $schedules = Schedule::with('group', 'weekday', 'session', 'room.branch')->orderByDesc('id')->paginate();
 
-        // if (auth('api')->user())
-        //     return ScheduleResource::collection($schedules);
-
         return ScheduleResource::collection($schedules);
-
-        // return response()->json($schedules);
     }
 
     /**
      * @OA\Post(
-     * path="/api/schedule",
+     * path="/api/manage/schedule",
      * summary="Set new schedule",
      * description="Schedule store",
      * operationId="storeSchedule",
@@ -93,11 +87,11 @@ class ScheduleController extends Controller
             $validator->validated()
         );
 
-        auth('api')->user()->makeChanges(
-            'New schedule created',
-            'created',
-            $newSchedule
-        );
+        // auth('api')->user()->makeChanges(
+        //     'New schedule created',
+        //     'created',
+        //     $newSchedule
+        // );
 
         return response()->json([
             "message" => "Schedule created successfully",
@@ -107,7 +101,7 @@ class ScheduleController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/schedule/{id}",
+     * path="/api/manage/schedule/{id}",
      * summary="Get specific schedule data",
      * description="Schedule show",
      * operationId="showSchedule",
@@ -134,22 +128,17 @@ class ScheduleController extends Controller
 
     public function show(string $id)
     {
-        // $schedule = Schedule::find($id);
         $schedule = Schedule::with('group', 'weekday', 'session', 'room.branch')->find($id);
-        // Schedule::with('group', 'weekday', 'session', 'room.branch')->orderByDesc('id')->paginate();
 
         if ($schedule === null)
             return response()->json(["error" => "Not found"]);
-
-        // if (auth('api')->user())
-        //     return new ScheduleResource($schedule);
 
         return new ScheduleResource($schedule);
     }
 
     /**
      * @OA\Put(
-     * path="/api/schedule/{id}",
+     * path="/api/manage/schedule/{id}",
      * summary="Update specific schedule",
      * description="Schedule update",
      * operationId="updateSchedule",
@@ -206,11 +195,11 @@ class ScheduleController extends Controller
             $validator->validated()
         );
 
-        auth('api')->user()->makeChanges(
-            'Schedule updated from $val1 to $val2',
-            '$col-name',
-            $schedule
-        );
+        // auth('api')->user()->makeChanges(
+        //     'Schedule updated from $val1 to $val2',
+        //     '$col-name',
+        //     $schedule
+        // );
 
         return response()->json([
             "message" => "Schedule updated successfully",
@@ -220,7 +209,7 @@ class ScheduleController extends Controller
 
     /**
      * @OA\Delete(
-     * path="/api/schedule/{id}",
+     * path="/api/manage/schedule/{id}",
      * summary="Schedule delete",
      * description="Delete specific Schedule",
      * operationId="destroySchedule",
@@ -254,11 +243,11 @@ class ScheduleController extends Controller
 
         $schedule->delete();
 
-        auth('api')->user()->makeChanges(
-            'Schedule deleted',
-            'deleted',
-            $schedule
-        );
+        // auth('api')->user()->makeChanges(
+        //     'Schedule deleted',
+        //     'deleted',
+        //     $schedule
+        // );
 
         return response()->json([
             "message" => "Schedule deleted successfully",

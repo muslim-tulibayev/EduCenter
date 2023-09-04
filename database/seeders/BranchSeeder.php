@@ -15,8 +15,8 @@ class BranchSeeder extends Seeder
     {
         $branches = [
             ["name" => 'Tashkent', "location" => 'This is location'],
-            ["name" => 'Branch Samarkand', "location" => 'This is location'],
-            ["name" => 'Branch Jizzakh', "location" => 'This is location'],
+            ["name" => 'Samarkand', "location" => 'This is location'],
+            ["name" => 'Jizzakh', "location" => 'This is location'],
         ];
 
         Branch::insert($branches);

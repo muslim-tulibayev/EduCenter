@@ -8,7 +8,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 /**
  * @OA\Info(
- *    title="Api sructure",
+ *    title="Api structure",
  *    version="1.0.0",
  * )
  * 
@@ -20,7 +20,12 @@ use Illuminate\Routing\Controller as BaseController;
  * 
  *  @OA\Tag(
  *      name = "Auth",
- *      description = "User",
+ *      description = "Auth",
+ *  ),
+ * 
+ *  @OA\Tag(
+ *      name = "UnactiveUser",
+ *      description = "UnactiveUser",
  *  ),
  * 
  *  @OA\Tag(

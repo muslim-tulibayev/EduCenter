@@ -26,4 +26,9 @@ class Branch extends Model
     {
         return $this->hasManyThrough(Schedule::class, Room::class);
     }
+
+    public function user(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }
