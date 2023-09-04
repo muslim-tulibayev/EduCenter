@@ -147,7 +147,7 @@ class AuthController extends Controller
                     [
                         "name" => "My groups",
                         "link" => "/api/teacher/groups",
-                        "window" => "deafult",
+                        "window" => "default",
                     ],
                 ];
                 break;
