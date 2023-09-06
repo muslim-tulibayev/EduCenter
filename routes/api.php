@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TeacherController as AuthTeacherController;
-use App\Http\Controllers\ParentController as AuthParentController;
-use App\Http\Controllers\StudentController as AuthStudentController;
+use App\Http\Controllers\AuthTeacherController;
+use App\Http\Controllers\AuthParentController;
+use App\Http\Controllers\AuthStudentController;
 
 // use App\Http\Controllers\Manage\PaymentController;
 use App\Http\Controllers\Manage\BranchController;
@@ -16,7 +16,10 @@ use App\Http\Controllers\Manage\SessionController;
 use App\Http\Controllers\Manage\StudentController;
 use App\Http\Controllers\Manage\TeacherController;
 use App\Http\Controllers\Manage\RoleController;
-use App\Http\Controllers\Manage\UnactiveUserController;
+use App\Http\Controllers\Manage\InactiveUserController;
+use App\Models\Stparent;
+use App\Models\Student;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => '/auth'], function () {
@@ -25,22 +28,31 @@ Route::group(['prefix' => '/auth'], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/update', [AuthController::class, 'update']);
+    Route::get('/branches', [AuthController::class, 'branches']);
 });
 
 Route::group(['prefix' => '/teacher'], function () {
-    Route::post('/something', [AuthTeacherController::class, 'something']);
+    Route::get('/my-groups', [AuthTeacherController::class, 'myGroups']);
 });
 
 Route::group(['prefix' => '/parent'], function () {
-    Route::post('/something', [AuthParentController::class, 'something']);
+    Route::get('/my-children', [AuthParentController::class, 'myChildren']);
+    Route::get('/my-cards', [AuthParentController::class, 'myCards']);
+    Route::post('/add-card', [AuthParentController::class, 'addCard']);
+    Route::delete('/delete-card/{id}', [AuthParentController::class, 'deleteCard']);
+    Route::get('/all-courses', [AuthParentController::class, 'allCourses']);
 });
 
 Route::group(['prefix' => '/student'], function () {
-    Route::post('/something', [AuthStudentController::class, 'something']);
+    Route::get('/my-courses', [AuthStudentController::class, 'myCourses']);
+    Route::get('/my-cards', [AuthStudentController::class, 'myCards']);
+    Route::post('/add-card', [AuthStudentController::class, 'addCard']);
+    Route::delete('/delete-card/{id}', [AuthStudentController::class, 'deleteCard']);
+    Route::get('/all-courses', [AuthStudentController::class, 'allCourses']);
 });
 
 Route::group(['prefix' => '/manage'], function () {
-    Route::apiResource('/user/unactive', UnactiveUserController::class);
+    Route::apiResource('/user/inactive', InactiveUserController::class);
     Route::apiResource('/teacher', TeacherController::class);
     Route::apiResource('/parent', ParentController::class);
     Route::apiResource('/student', StudentController::class);
@@ -52,6 +64,19 @@ Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/session', SessionController::class);
     Route::apiResource('/schedule', ScheduleController::class);
     Route::apiResource('/role', RoleController::class);
+});
+
+Route::get('test', function () {
+
+    $specificBranchIds = [2];
+
+    $usersFromSpecificBranches = User::whereHas('branches', function ($query) use ($specificBranchIds) {
+        $query->whereIn('branch_id', $specificBranchIds);
+    })->get();
+
+    return response()->json([
+        "data" => $usersFromSpecificBranches
+    ]);
 });
 
 

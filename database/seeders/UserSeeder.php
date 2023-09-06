@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 "password" => Hash::make('12345678'), // 
                 "status" => true, // default(false);
                 "role_id" => Role::where('name', 'superadmin')->first()->id, // constrained();
-                "branch_id" => "1", // constrained();
+                // "branch_id" => "1", // constrained();
             ],
             [
                 "firstname" => fake()->firstName(), // 
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                 "password" => Hash::make('12345678'), // 
                 "status" => true, // default(false);
                 "role_id" => Role::where('name', 'admin')->first()->id, // constrained();
-                "branch_id" => "2", // constrained();
+                // "branch_id" => "2", // constrained();
             ],
         ];
 

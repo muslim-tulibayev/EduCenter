@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student')->only(['logout', 'me']);
+        $this->middleware('auth:api,teacher,parent,student')->except(['register', 'login']);
 
         parent::__construct(); // Call parent constructor
     }
@@ -58,7 +58,7 @@ class AuthController extends Controller
             'contact_no' => 'required|string',
             'email' => 'required|email|unique:users,email',
             "role_id" => 'required|exists:roles,id',
-            "branch_id" => 'required|exists:branches,id',
+            // "branch_id" => 'required|exists:branches,id',
             'password' => 'required|confirmed|string|min:8',
         ]);
 
@@ -71,12 +71,12 @@ class AuthController extends Controller
             'contact_no' => $req->contact_no,
             'email' => $req->email,
             "role_id" => $req->role_id,
-            "branch_id" => $req->branch_id,
+            // "branch_id" => $req->branch_id,
             'password' => Hash::make($req->password),
         ]);
 
         return response()->json([
-            "message" => "Unactive user has been created successfully.",
+            "message" => "Inactive user has been created successfully.",
         ]);
     }
 
@@ -145,8 +145,7 @@ class AuthController extends Controller
             case 'teacher':
                 $show = [
                     [
-                        "name" => "My groups",
-                        "link" => "/api/teacher/groups",
+                        "name" => "my-groups",
                         "window" => "default",
                     ],
                 ];
@@ -154,18 +153,15 @@ class AuthController extends Controller
             case 'parent':
                 $show = [
                     [
-                        "name" => "My children",
-                        "link" => "/api/parent/students",
+                        "name" => "my-children",
                         "window" => "default",
                     ],
                     [
-                        "name" => "My cards",
-                        "link" => "/api/parent/cards",
+                        "name" => "my-cards",
                         "window" => null,
                     ],
                     [
-                        "name" => "All courses",
-                        "link" => "/api/course",
+                        "name" => "all-courses",
                         "window" => null,
                     ],
                 ];
@@ -173,29 +169,20 @@ class AuthController extends Controller
             case 'student':
                 $show = [
                     [
-                        "name" => "My courses",
-                        "link" => "/api/student/courses",
+                        "name" => "my-courses",
                         "window" => "default",
                     ],
                     [
-                        "name" => "My cards",
-                        "link" => "/api/student/cards",
+                        "name" => "my-cards",
                         "window" => null,
                     ],
                     [
-                        "name" => "All courses",
-                        "link" => "/api/course",
+                        "name" => "all-courses",
                         "window" => null,
                     ],
                 ];
                 break;
         }
-
-        // $show = [];
-        // foreach (auth($auth_type)->user()->role->toArray() as $key => $value)
-        //     if ($value > 0)
-        //         $show[$key] = $value;
-        // $show['additional'] = $additional;
 
         return response()->json([
             'token' => $token,
@@ -301,6 +288,31 @@ class AuthController extends Controller
                 return $this->updateStudent($request);
                 break;
         }
+    }
+
+    /**
+     * @OA\Get(
+     * path="/api/auth/branches",
+     * summary="get the user data",
+     * description="branches",
+     * operationId="authBranches",
+     * tags={"Auth"},
+     * security={ {"bearerAuth": {} }},
+     * @OA\Response(
+     *    response=200,
+     *    description="Success",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="User logged out")
+     *        )
+     *     )
+     * )
+     */
+
+    public function branches()
+    {
+        return response()->json([
+            "data" => $this->auth_user->branches
+        ]);
     }
 
     /* Privates :) */

@@ -279,6 +279,484 @@
                 }
             }
         },
+        "/api/auth/branches": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "get the user data",
+                "description": "branches",
+                "operationId": "authBranches",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User logged out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/parent/my-cards": {
+            "get": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "MyCards",
+                "description": "MyCards",
+                "operationId": "authMyCards",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/parent/add-card": {
+            "post": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "Add new card",
+                "description": "Add Card",
+                "operationId": "addCardAuthParent",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "card_number",
+                                    "card_expiration",
+                                    "card_token"
+                                ],
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string",
+                                        "example": "1234567890123456"
+                                    },
+                                    "card_expiration": {
+                                        "type": "string",
+                                        "example": "01/25"
+                                    },
+                                    "card_token": {
+                                        "type": "string",
+                                        "example": "4345678987653773hgfkdfu34hf3fhiuerifr4345678987653773hgfkdfu34hf3fhiuerifr4345678987653773hgfkdfu34hf3fhiuerifr"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/parent/delete-card/{id}": {
+            "delete": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "Delete card",
+                "description": "Delete card",
+                "operationId": "deleteCardAuthParent",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/parent/my-children": {
+            "get": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "myChildren",
+                "description": "myChildren",
+                "operationId": "authMyChildren",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/parent/all-courses": {
+            "get": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "AllCourses",
+                "description": "AllCourses",
+                "operationId": "authParentAllCourses",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/my-cards": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "MyCards",
+                "description": "MyCards",
+                "operationId": "myCardsAuthStudent",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/add-card": {
+            "post": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "Add new card",
+                "description": "Add Card",
+                "operationId": "addCardAuthStudent",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "card_number",
+                                    "card_expiration",
+                                    "card_token"
+                                ],
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string",
+                                        "example": "1234567890123456"
+                                    },
+                                    "card_expiration": {
+                                        "type": "string",
+                                        "example": "01/25"
+                                    },
+                                    "card_token": {
+                                        "type": "string",
+                                        "example": "4345678987653773hgfkdfu34hf3fhiuerifr4345678987653773hgfkdfu34hf3fhiuerifr4345678987653773hgfkdfu34hf3fhiuerifr"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/delete-card/{id}": {
+            "delete": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "Delete card",
+                "description": "Delete card",
+                "operationId": "deleteCardAuthStudent",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/my-courses": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "MyCourses",
+                "description": "MyCourses",
+                "operationId": "authMyCourses",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/all-courses": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "AllCourses",
+                "description": "AllCourses",
+                "operationId": "authAllCourses",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/teacher/my-groups": {
+            "get": {
+                "tags": [
+                    "AuthTeacher"
+                ],
+                "summary": "myGroups",
+                "description": "myGroups",
+                "operationId": "authMyGroups",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/branch": {
             "get": {
                 "tags": [
@@ -1015,6 +1493,213 @@
                 "summary": "Delete specific group",
                 "description": "Group delete",
                 "operationId": "destroyGroup",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/manage/user/inactive": {
+            "get": {
+                "tags": [
+                    "InactiveUser"
+                ],
+                "summary": "Get all InactiveUser data",
+                "description": "InactiveUser index",
+                "operationId": "indexInactiveUser",
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/manage/user/inactive/{id}": {
+            "get": {
+                "tags": [
+                    "InactiveUser"
+                ],
+                "summary": "Get specific InactiveUser data",
+                "description": "InactiveUser show",
+                "operationId": "showInactiveUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "InactiveUser"
+                ],
+                "summary": "Update specific InactiveUser",
+                "description": "InactiveUser update",
+                "operationId": "updateInactiveUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "contact_no",
+                                    "email",
+                                    "role",
+                                    "branch_id",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "address"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "address"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "address"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "role_id": {
+                                        "type": "number",
+                                        "example": 1
+                                    },
+                                    "branch_id": {
+                                        "type": "number",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "InactiveUser"
+                ],
+                "summary": "Delete specific InactiveUser",
+                "description": "InactiveUser delete",
+                "operationId": "destroyInactiveUser",
                 "parameters": [
                     {
                         "name": "id",
@@ -3060,213 +3745,6 @@
                     }
                 ]
             }
-        },
-        "/api/manage/user/unactive": {
-            "get": {
-                "tags": [
-                    "UnactiveUser"
-                ],
-                "summary": "Get all UnactiveUser data",
-                "description": "UnactiveUser index",
-                "operationId": "indexUnactiveUser",
-                "responses": {
-                    "403": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/manage/user/unactive/{id}": {
-            "get": {
-                "tags": [
-                    "UnactiveUser"
-                ],
-                "summary": "Get specific UnactiveUser data",
-                "description": "UnactiveUser show",
-                "operationId": "showUnactiveUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID to fetch the targeted campaigns.",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "403": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "UnactiveUser"
-                ],
-                "summary": "Update specific UnactiveUser",
-                "description": "UnactiveUser update",
-                "operationId": "updateUnactiveUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID to fetch the targeted campaigns.",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Pass user credentials",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "firstname",
-                                    "lastname",
-                                    "contact_no",
-                                    "email",
-                                    "role",
-                                    "branch_id",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "firstname": {
-                                        "type": "string",
-                                        "example": "address"
-                                    },
-                                    "lastname": {
-                                        "type": "string",
-                                        "example": "address"
-                                    },
-                                    "contact_no": {
-                                        "type": "string",
-                                        "example": "address"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "user@gmail.com"
-                                    },
-                                    "role_id": {
-                                        "type": "number",
-                                        "example": 1
-                                    },
-                                    "branch_id": {
-                                        "type": "number",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "403": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "UnactiveUser"
-                ],
-                "summary": "Delete specific UnactiveUser",
-                "description": "UnactiveUser delete",
-                "operationId": "destroyUnactiveUser",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID to fetch the targeted campaigns.",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "403": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
         }
     },
     "components": {
@@ -3283,8 +3761,20 @@
             "description": "Auth"
         },
         {
-            "name": "UnactiveUser",
-            "description": "UnactiveUser"
+            "name": "AuthTeacher",
+            "description": "AuthTeacher"
+        },
+        {
+            "name": "AuthParent",
+            "description": "AuthParent"
+        },
+        {
+            "name": "AuthStudent",
+            "description": "AuthStudent"
+        },
+        {
+            "name": "InactiveUser",
+            "description": "InactiveUser"
         },
         {
             "name": "Branch",

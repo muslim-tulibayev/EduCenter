@@ -20,10 +20,10 @@ return new class extends Migration
             $table->string('contact_no');
             $table->foreignId('role_id')->constrained();
             $table->boolean('status')->default(false);
-            $table->text('payment_token')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users');
             $table->dateTime('created_at');
+            // $table->text('payment_token')->nullable();
         });
     }
 

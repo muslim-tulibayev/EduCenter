@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 // // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -36,10 +37,12 @@ class Teacher extends Authenticatable implements JWTSubject
         return $this->hasMany(Group::class);
     }
 
-    public function fullname()
+    public function branches(): BelongsToMany
     {
-        return $this->firstname . ' ' . $this->lastname;
+        return $this->belongsToMany(Branch::class);
     }
+
+    // -------------------------------------------------- 
 
     public function getJWTIdentifier()
     {

@@ -17,7 +17,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'superadmin',
 
-                'all_branches' => 1,
+                // 'all_branches' => 1,
 
                 'roles' => 4,
                 'users' => 4,
@@ -42,7 +42,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'admin',
 
-                'all_branches' => 0,
+                // 'all_branches' => 0,
 
                 'roles' => 0,
                 'users' => 1,
@@ -67,7 +67,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'teacher',
 
-                'all_branches' => 0,
+                // 'all_branches' => 0,
 
                 'roles' => 0,
                 'users' => 0,
@@ -91,7 +91,7 @@ class RoleSeeder extends Seeder
             ],[
                 'name' => 'parent',
 
-                'all_branches' => 0,
+                // 'all_branches' => 0,
 
                 'roles' => 0,
                 'users' => 0,
@@ -116,7 +116,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'student',
 
-                'all_branches' => 0,
+                // 'all_branches' => 0,
 
                 'roles' => 0,
                 'users' => 0,

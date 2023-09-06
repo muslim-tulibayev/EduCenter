@@ -24,8 +24,23 @@ use Illuminate\Routing\Controller as BaseController;
  *  ),
  * 
  *  @OA\Tag(
- *      name = "UnactiveUser",
- *      description = "UnactiveUser",
+ *      name = "AuthTeacher",
+ *      description = "AuthTeacher",
+ *  ),
+ * 
+ *  @OA\Tag(
+ *      name = "AuthParent",
+ *      description = "AuthParent",
+ *  ),
+ * 
+ *  @OA\Tag(
+ *      name = "AuthStudent",
+ *      description = "AuthStudent",
+ *  ),
+ * 
+ *  @OA\Tag(
+ *      name = "InactiveUser",
+ *      description = "InactiveUser",
  *  ),
  * 
  *  @OA\Tag(

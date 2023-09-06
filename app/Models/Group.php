@@ -20,6 +20,7 @@ class Group extends Model
         "teacher_id",
         "assistant_teacher_id",
         "course_id",
+        "branch_id",
     ];
 
     public function teacher(): BelongsTo
@@ -35,5 +36,10 @@ class Group extends Model
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 }

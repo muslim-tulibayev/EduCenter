@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('status')->default(false);
             $table->foreignId('role_id')->constrained();
-            $table->foreignId('branch_id')->constrained();
+            // $table->foreignId('branch_id')->constrained();
         });
     }
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('contact_no');
             $table->foreignId('role_id')->constrained();
-            $table->text('payment_token')->nullable();
+            // $table->text('payment_token')->nullable();
         });
     }
 

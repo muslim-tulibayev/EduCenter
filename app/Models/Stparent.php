@@ -5,6 +5,8 @@ namespace App\Models;
 // // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,17 +25,31 @@ class Stparent extends Authenticatable implements JWTSubject
         'password',
         'contact_no',
         'role_id',
-        'payment_token',
+        // 'payment_token',
     ];
 
     protected $hidden = [
         'password',
     ];
 
-    public function fullname()
+    public function students(): BelongsToMany
     {
-        return $this->firstname . ' ' . $this->lastname;
+        return $this->belongsToMany(Student::class);
     }
+
+    public function cards(): MorphMany
+    {
+        return $this->morphMany(Card::class, 'cardable');
+    }
+
+    public function getBranchesAttribute()
+    {
+        return $this->students->flatMap(function ($student) {
+            return $student->branches;
+        })->unique();
+    }
+
+    // ----------------------------------------------------------
 
     public function changes()
     {

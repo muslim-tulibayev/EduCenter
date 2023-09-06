@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -28,9 +29,9 @@ class Student extends Authenticatable implements JWTSubject
         'role_id',
         'status',
         'password',
-        'payment_token',
         'updated_by',
         'created_by',
+        // 'payment_token',
     ];
 
     protected $hidden = [
@@ -47,14 +48,26 @@ class Student extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Group::class);
     }
 
+    public function accessForCourses(): HasMany
+    {
+        return $this->hasMany(AccessForCourse::class);
+    }
+
+    public function cards(): MorphMany
+    {
+        return $this->morphMany(Card::class, 'cardable');
+    }
+
+    public function getBranchesAttribute()
+    {
+        return $this->groups->pluck('branch')->unique();
+    }
+
+    // ------------------------------------------------------
+
     public function changes(): MorphMany
     {
         return $this->morphMany(Change::class, 'changeable');
-    }
-
-    public function accessForCourses()
-    {
-        return $this->hasMany(AccessForCourse::class);
     }
 
     public function makeChanges($description, $data_key, $linkedable): Change

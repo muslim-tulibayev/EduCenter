@@ -1,0 +1,41 @@
+# API Documentation
+
+# GET /api/users
+- Route: /api/users
+  Method: GET
+  Summary: Get a list of users
+  Description: Retrieve a list of all users in the system.
+  Responses:
+    - Status: 200 OK
+      Description: Successful response
+      Content:
+        application/json:
+          Schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+    - Status: 401 Unauthorized
+      Description: Unauthorized access
+    - Status: 403 Forbidden
+      Description: Access to this resource is forbidden
+
+# POST /api/users
+- Route: /api/users
+  Method: POST
+  Summary: Create a new user
+  Description: Create a new user in the system.
+  Request Body:
+    application/json:
+      Schema:
+        $ref: '#/components/schemas/UserRequest'
+  Responses:
+    - Status: 201 Created
+      Description: User created successfully
+      Content:
+        application/json:
+          Schema:
+            $ref: '#/components/schemas/User'
+    - Status: 400 Bad Request
+      Description: Invalid request data
+    - Status: 401 Unauthorized
+      Description: Unauthorized access

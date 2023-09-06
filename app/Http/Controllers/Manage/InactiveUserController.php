@@ -7,22 +7,34 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class UnactiveUserController extends Controller
+class InactiveUserController extends Controller
 {
+    private $inactiveUser;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
+
+        $this->middleware(function ($request, $next) {
+            if (isset($request->branch_id))
+                $this->inactiveUser = User::where('status', false)->where();
+            else
+                $this->inactiveUser = User::where('status', false);
+
+
+            return $next($request);
+        });
 
         parent::__construct('users');
     }
 
     /**
      * @OA\Get(
-     * path="/api/manage/user/unactive",
-     * summary="Get all UnactiveUser data",
-     * description="UnactiveUser index",
-     * operationId="indexUnactiveUser",
-     * tags={"UnactiveUser"},
+     * path="/api/manage/user/inactive",
+     * summary="Get all InactiveUser data",
+     * description="InactiveUser index",
+     * operationId="indexInactiveUser",
+     * tags={"InactiveUser"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
      *    response=403,
@@ -36,6 +48,8 @@ class UnactiveUserController extends Controller
 
     public function index()
     {
+        // $this->auth_user->branch_id
+
         $users = User::where('status', false)->orderByDesc('id')->paginate();
 
         return response()->json([
@@ -45,11 +59,11 @@ class UnactiveUserController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/manage/user/unactive/{id}",
-     * summary="Get specific UnactiveUser data",
-     * description="UnactiveUser show",
-     * operationId="showUnactiveUser",
-     * tags={"UnactiveUser"},
+     * path="/api/manage/user/inactive/{id}",
+     * summary="Get specific InactiveUser data",
+     * description="InactiveUser show",
+     * operationId="showInactiveUser",
+     * tags={"InactiveUser"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -84,11 +98,11 @@ class UnactiveUserController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/manage/user/unactive/{id}",
-     * summary="Update specific UnactiveUser",
-     * description="UnactiveUser update",
-     * operationId="updateUnactiveUser",
-     * tags={"UnactiveUser"},
+     * path="/api/manage/user/inactive/{id}",
+     * summary="Update specific InactiveUser",
+     * description="InactiveUser update",
+     * operationId="updateInactiveUser",
+     * tags={"InactiveUser"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -138,7 +152,7 @@ class UnactiveUserController extends Controller
             'contact_no' => 'required|string',
             'email' => 'required|email|unique:users,email',
             "role_id" => 'required|exists:roles,id',
-            "branch_id" => 'required|exists:branches,id',
+            // "branch_id" => 'required|exists:branches,id',
             'status' => 'required|boolean',
         ]);
 
@@ -151,22 +165,22 @@ class UnactiveUserController extends Controller
             'contact_no' => $request->contact_no,
             'email' => $request->email,
             "role_id" => $request->role_id,
-            "branch_id" => $request->branch_id,
+            // "branch_id" => $request->branch_id,
             'status' => $request->status,
         ]);
 
         return response()->json([
-            "message" => "Unactive user has been created successfully.",
+            "message" => "Inactive user has been created successfully.",
         ]);
     }
 
     /**
      * @OA\Delete(
-     * path="/api/manage/user/unactive/{id}",
-     * summary="Delete specific UnactiveUser",
-     * description="UnactiveUser delete",
-     * operationId="destroyUnactiveUser",
-     * tags={"UnactiveUser"},
+     * path="/api/manage/user/inactive/{id}",
+     * summary="Delete specific InactiveUser",
+     * description="InactiveUser delete",
+     * operationId="destroyInactiveUser",
+     * tags={"InactiveUser"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -197,7 +211,7 @@ class UnactiveUserController extends Controller
         $user->delete();
 
         return response()->json([
-            "message" => "Unactive user deleted successfully",
+            "message" => "Inactive user deleted successfully",
             "user" => $user->id
         ]);
     }

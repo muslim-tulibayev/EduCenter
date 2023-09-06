@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('name', 50)->unique();
             
             // manage all branches data
-            $table->unsignedTinyInteger('all_branches')->default(0);
+            // $table->unsignedTinyInteger('all_branches')->default(0);
 
             // access for tables (CRUD)
             $table->unsignedTinyInteger('roles')->default(0);

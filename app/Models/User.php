@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Traits\RoleTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,7 +25,7 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'contact_no',
         'role_id',
-        'branch_id',
+        // 'branch_id',
         'status',
         'password',
     ];
@@ -38,14 +39,16 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
+    public function branches(): BelongsToMany
+    {
+        return $this->belongsToMany(Branch::class);
+    }
+
+    // ---------------------------------------------------------
+
     public function changes(): MorphMany
     {
         return $this->morphMany(Change::class, 'changeable');
-    }
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(Branch::class);
     }
 
     public function makeChanges($description, $data_key, $linkedable): Change

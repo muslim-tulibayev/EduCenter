@@ -12,13 +12,17 @@ class StudentResource extends JsonResource
     public function toArray(Request $request): array
     {
         $groups = [];
+
         foreach ($this->groups as $group) {
+            $teacher = Teacher::find($group->teacher_id);
+            $assistant_teacher = Teacher::find($group->assistant_teacher_id);
+            
             array_push($groups, [
                 "id" => $group->id,
                 "name" => $group->name,
                 "completed_lessons" => $group->completed_lessons,
-                "teacher" => Teacher::find($group->teacher_id)->fullname(),
-                "assistant_teacher" => Teacher::find($group->assistant_teacher_id)->fullname(),
+                "teacher" => $teacher->firstname . ' ' . $teacher->lastname,
+                "assistant_teacher" => $assistant_teacher->firstname . ' ' . $assistant_teacher->lastname,
                 "course" => Course::find($group->course_id)->name,
                 "created_by" => $group->created_by,
                 "updated_by" => $group->updated_by,

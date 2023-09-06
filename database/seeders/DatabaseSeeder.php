@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Card;
 use App\Models\Failedgroups;
 use App\Models\Failedsts;
 use App\Models\Group;
@@ -62,15 +63,36 @@ class DatabaseSeeder extends Seeder
                 'teacher_id' => rand(1, 10),
             ]);
         }
-        for ($i = 0; $i < 100; $i++) {
-            DB::table('branch_student')->insert([
-                'branch_id' => rand(1, 3),
-                'student_id' => rand(1, 100),
-            ]);
-        }
+        // for ($i = 0; $i < 100; $i++) {
+        //     DB::table('branch_student')->insert([
+        //         'branch_id' => rand(1, 3),
+        //         'student_id' => rand(1, 100),
+        //     ]);
+        // }
         Certificate::factory(100)->create();
         Failedsts::factory(50)->create();
         Failedgroups::factory(3)->create();
-        // AccessForCourse::factory(50)->create();
+
+        // AccessForCourseSeeder::class,
+        for ($i = 1; $i <= 100; $i++) {
+            $random = rand(0, 4);
+            for ($j = 1; $j <= $random; $j++) {
+                DB::table('access_for_courses')->insert([
+                    "student_id" => $i,
+                    "course_id" => $j,
+                    "pay_time" => fake()->dateTime(),
+                    "expire_time" => fake()->dateTime(),
+                ]);
+            }
+        }
+
+        Card::factory(100)->create();
+
+        for ($i = 0; $i < 20; $i++) {
+            DB::table('branch_user')->insert([
+                'branch_id' => rand(1, 3),
+                'user_id' => rand(1, 10),
+            ]);
+        }
     }
 }
