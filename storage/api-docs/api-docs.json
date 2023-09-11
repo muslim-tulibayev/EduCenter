@@ -770,6 +770,39 @@
                 ]
             }
         },
+        "/api/user/statistics": {
+            "get": {
+                "tags": [
+                    "AuthUser"
+                ],
+                "summary": "statistics",
+                "description": "statistics",
+                "operationId": "authUserStatistics",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/teacher/assistant": {
             "get": {
                 "tags": [
@@ -4590,6 +4623,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "AuthUser",
+            "description": "AuthUser"
         },
         {
             "name": "AuthTeacher",

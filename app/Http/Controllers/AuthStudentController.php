@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AccessForCourse\AccessForCourseResource;
+use App\Http\Resources\Course\CourseResource;
 use App\Models\Course;
 use App\Traits\PaymentTrait;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 
 class AuthStudentController extends Controller
 {
@@ -79,6 +82,7 @@ class AuthStudentController extends Controller
      */
 
     use PaymentTrait;
+    use SendResponseTrait, SendValidatorMessagesTrait;
 
     public function __construct()
     {
@@ -107,9 +111,12 @@ class AuthStudentController extends Controller
 
     public function myCourses()
     {
-        return response()->json([
-            "data" => AccessForCourseResource::collection($this->auth_user->accessForCourses)
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_my_courses',
+            data: AccessForCourseResource::collection($this->auth_user->accessForCourses)
+        );
     }
 
     /**
@@ -132,10 +139,16 @@ class AuthStudentController extends Controller
 
     public function allCourses()
     {
+        // if ($request->has('branch_filter'))
+
         $courses = Course::orderByDesc('id')->paginate();
 
-        return response()->json([
-            "data" => $courses
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_all_courses',
+            data: CourseResource::collection($courses),
+            pagination: $courses
+        );
     }
 }

@@ -68,7 +68,11 @@ class AuthController extends Controller
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'contact_no' => 'required|string',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email',
             'password' => 'required|confirmed|string|min:8',
             "role_id" => 'required|exists:roles,id',
             "branches" => 'array',
@@ -244,7 +248,7 @@ class AuthController extends Controller
                 "email" => $this->auth_user->email,
                 "contact_no" => $this->auth_user->contact_no,
                 // "role_id" =>$this->auth_user->firstname,
-                "status" => $this->auth_user->status ?? null,
+                "status" => $this->auth_user->status,
                 // "created_by" =>$this->auth_user->firstname,
                 // "created_at" => $this->auth_user->firstname,
             ]
@@ -319,6 +323,14 @@ class AuthController extends Controller
 
     public function branches()
     {
+        //! now for only users
+        if (!count($this->auth_user->branches) || $this->auth_type !== 'api')
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'user_has_no_branch',
+            );
+
         $data = [];
 
         foreach ($this->auth_user->branches as $branch) {
@@ -333,9 +345,12 @@ class AuthController extends Controller
             ];
         }
 
-        return response()->json([
-            "data" => $data
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_user_branches',
+            data: $data
+        );
     }
 
     /* Privates :) */
@@ -346,38 +361,33 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'email' => 'email',
+            'email' => 'required|email'
+                . '|unique:users,email,' . $this->auth_user->id
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email',
             'contact_no' => 'required|string',
             'password' => 'string|min:8|confirmed',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
+            return $this->sendValidatorMessages($validator);
 
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
+        $this->auth_user->email = $request->email;
         $this->auth_user->contact_no = $request->contact_no;
 
-        if (isset($request->email)) {
-            if ($request->email !== $this->auth_user->email)
-                $check = $this->checkForEmailUniqueness($request->email);
-
-            if (!$check)
-                return response()->json([
-                    "error" => "This email address has already been taken."
-                ], 400);
-
-            $this->auth_user->email = $request->email;
-        }
-
-        if (isset($request->password))
+        if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
 
         $this->auth_user->save();
 
-        return response()->json([
-            "message" => "User successfully updated"
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'user_updated',
+        );
     }
 
     private function updateTeacher(Request $request)
@@ -385,38 +395,33 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "firstname" => 'required|string',
             "lastname" => 'required|string',
-            "email" => 'email',
+            'email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email,' . $this->auth_user->id
+                . '|unique:stparents,email'
+                . '|unique:students,email',
             "contact_no" => 'required|string',
             'password' => 'string|min:8|confirmed',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
+            return $this->sendValidatorMessages($validator);
 
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
+        $this->auth_user->email = $request->email;
         $this->auth_user->contact_no = $request->contact_no;
 
-        if (isset($request->email)) {
-            if ($request->email !== $this->auth_user->email)
-                $check = $this->checkForEmailUniqueness($request->email);
-
-            if (!$check)
-                return response()->json([
-                    "error" => "This email address has already been taken."
-                ], 400);
-
-            $this->auth_user->email = $request->email;
-        }
-
-        if (isset($request->password))
+        if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
 
         $this->auth_user->save();
 
-        return response()->json([
-            "message" => "User successfully updated"
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'teacher_updated',
+        );
     }
 
     private function updateParent(Request $request)
@@ -424,39 +429,34 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "firstname" => 'required|string',
             "lastname" => 'required|string',
-            "email" => 'email',
+            'email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email,' . $this->auth_user->id
+                . '|unique:students,email',
             "contact_no" => 'required|string',
             'password' => 'string|min:8|confirmed',
             // 'payment_token',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
+            return $this->sendValidatorMessages($validator);
 
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
+        $this->auth_user->email = $request->email;
         $this->auth_user->contact_no = $request->contact_no;
 
-        if (isset($request->email)) {
-            if ($request->email !== $this->auth_user->email)
-                $check = $this->checkForEmailUniqueness($request->email);
-
-            if (!$check)
-                return response()->json([
-                    "error" => "This email address has already been taken."
-                ], 400);
-
-            $this->auth_user->email = $request->email;
-        }
-
-        if (isset($request->password))
+        if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
 
         $this->auth_user->save();
 
-        return response()->json([
-            "message" => "User successfully updated"
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'parent_updated',
+        );
     }
 
     private function updateStudent(Request $request)
@@ -464,38 +464,33 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             "firstname" => 'required|string',
             "lastname" => 'required|string',
-            "email" => 'email',
+            'email' => 'required|email'
+                . '|unique:users,email,'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email,' . $this->auth_user->id,
             "contact_no" => 'required|string',
             'password' => 'string|min:8|confirmed',
             // 'payment_token',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
+            return $this->sendValidatorMessages($validator);
 
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
+        $this->auth_user->email = $request->email;
         $this->auth_user->contact_no = $request->contact_no;
 
-        if (isset($request->email)) {
-            if ($request->email !== $this->auth_user->email)
-                $check = $this->checkForEmailUniqueness($request->email);
-
-            if (!$check)
-                return response()->json([
-                    "error" => "This email address has already been taken."
-                ], 400);
-
-            $this->auth_user->email = $request->email;
-        }
-
-        if (isset($request->password))
+        if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
 
         $this->auth_user->save();
 
-        return response()->json([
-            "message" => "User successfully updated"
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'student_updated',
+        );
     }
 }

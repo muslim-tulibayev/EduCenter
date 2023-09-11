@@ -25,9 +25,11 @@ class StudentController extends Controller
 
         $this->middleware(function ($request, $next) {
             if (!($this->auth_role['student_search'] >= 1))
-                return response()->json([
-                    "error" => "Unauthorized"
-                ], 403);
+                $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
 
             return $next($request);
         })->only('search');
@@ -254,9 +256,14 @@ class StudentController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $student = Student::find($id);
-        if ($student === null)
-            return response()->json(["error" => "Not found"]);
+        $student = $this->Student->find($id);
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: "student_not_found",
+                data: ["id" => $id]
+            );
 
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',

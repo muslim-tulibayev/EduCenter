@@ -15,12 +15,22 @@ class StudentPermissionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            // "token" => $this->token,
-            // // "id" => $this->id,
-            // "name" => $this->name,
-            // "permissions" => [
-                
             // additional windows
+            [
+                "name" => "statistics",
+                "value" => false,
+                "default" => false,
+            ],
+            [
+                "name" => "my-groups",
+                "value" => false,
+                "default" => false,
+            ],
+            [
+                "name" => "my-children",
+                "value" => false,
+                "default" => false,
+            ],
             [
                 "name" => "my-courses",
                 "value" => true,
@@ -37,7 +47,10 @@ class StudentPermissionResource extends JsonResource
                 "default" => false,
             ],
 
+
             // access for tables (CRUD)
+            // "id" => $this->id,
+            // "name" => $this->name,
             [
                 "name" => 'roles',
                 "value" => $this->roles,
@@ -104,11 +117,10 @@ class StudentPermissionResource extends JsonResource
                 "default" => false
             ],
             [
-                "name" => 'access_for_courses',
+                "name" => 'access-for-courses',
                 "value" => $this->access_for_courses,
                 "default" => false
             ],
-            // ]
         ];
     }
 }

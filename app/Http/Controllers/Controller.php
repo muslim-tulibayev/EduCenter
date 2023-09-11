@@ -25,6 +25,11 @@ use Illuminate\Routing\Controller as BaseController;
  *  ),
  * 
  *  @OA\Tag(
+ *      name = "AuthUser",
+ *      description = "AuthUser",
+ *  ),
+ * 
+ *  @OA\Tag(
  *      name = "AuthTeacher",
  *      description = "AuthTeacher",
  *  ),
@@ -156,7 +161,7 @@ class Controller extends BaseController
                         return $this->sendResponse(
                             success: false,
                             status: 404,
-                            name: 'user_has_not_branch',
+                            name: 'user_has_no_branch',
                         );
                 } else {
                     $this->auth_branch_id = $branch_header->id;

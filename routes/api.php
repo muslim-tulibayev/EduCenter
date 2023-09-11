@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthTeacherController;
 use App\Http\Controllers\AuthParentController;
 use App\Http\Controllers\AuthStudentController;
+use App\Http\Controllers\AuthUserController;
 
 use App\Http\Controllers\Manage\AssistantTeacherController;
 use App\Http\Controllers\Manage\BranchController;
@@ -29,6 +30,10 @@ Route::group(['prefix' => '/auth'], function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/update', [AuthController::class, 'update']);
     Route::get('/branches', [AuthController::class, 'branches']);
+});
+
+Route::group(['prefix' => '/user'], function () {
+    Route::get('/statistics', [AuthUserController::class, 'statistics']);
 });
 
 Route::group(['prefix' => '/teacher'], function () {
@@ -84,7 +89,11 @@ Route::group(['prefix' => '/manage'], function () {
 
 
 Route::any('/login', function () {
-    return response()->json(["error" => "Unauthenticated"], 401);
+    return response()->json([
+        "success" => false,
+        "status" => 401,
+        "name" => 'unauthenticated',
+    ]);
 })->name('login');
 
 
