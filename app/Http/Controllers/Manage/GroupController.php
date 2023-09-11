@@ -5,32 +5,30 @@ namespace App\Http\Controllers\Manage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Group\GroupResource;
 use App\Http\Resources\Student\StudentResource;
+use App\Models\Branch;
 use App\Models\Group;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class GroupController extends Controller
 {
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
+    private $Group;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('groups');
+        parent::__construct('groups', true);
 
-        // $this->middleware(function ($request, $next) {
-        //     if (!($this->auth_role['students'] >= 1))
-        //         return response()->json([
-        //             "error" => "Unauthorized"
-        //         ], 403);
-        //     return $next($request);
-        // })->only('students');
-        // $this->middleware(function ($request, $next) {
-        //     if (!($this->auth_role['groups'] >= 2))
-        //         return response()->json([
-        //             "error" => "Unauthorized"
-        //         ], 403);
-        //     return $next($request);
-        // })->only('changeStudents');
+        $this->middleware(function ($request, $next) {
+            $this->Group = Branch::find($this->auth_branch_id)->groups();
+
+            return $next($request);
+        });
     }
 
     /**
@@ -41,6 +39,7 @@ class GroupController extends Controller
      * operationId="indexGroup",
      * tags={"Group"},
      * security={ {"bearerAuth": {} }},
+     * 
      * @OA\Response(
      *    response=403,
      *    description="Wrong credentials response",
@@ -53,9 +52,15 @@ class GroupController extends Controller
 
     public function index()
     {
-        $groups = Group::orderByDesc('id')->paginate();
+        $groups = $this->Group->orderByDesc('id')->paginate();
 
-        return GroupResource::collection($groups);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_groups',
+            data: GroupResource::collection($groups),
+            pagination: $groups
+        );
     }
 
     /**
@@ -92,32 +97,34 @@ class GroupController extends Controller
      * )
      */
 
-    public function store(Request $req)
+    public function store(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "name" => 'required|string',
             "status" => 'boolean',
             "teacher_id" => 'required|exists:teachers,id',
             "assistant_teacher_id" => 'required|exists:teachers,id',
             "course_id" => 'required|exists:courses,id',
+
             "students" => 'array',
             'students.*' => 'required|numeric|distinct|exists:students,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $newGroup = Group::create([
-            "name" => $req->name,
-            "status" => $req->status ?? true,
+            "name" => $request->name,
+            "status" => $request->status ?? true,
             "completed_lessons" => 0,
-            "teacher_id" => $req->teacher_id,
-            "assistant_teacher_id" => $req->assistant_teacher_id,
-            "course_id" => $req->course_id,
+            "teacher_id" => $request->teacher_id,
+            "assistant_teacher_id" => $request->assistant_teacher_id,
+            "course_id" => $request->course_id,
+            "branch_id" => $this->auth_branch_id,
         ]);
 
-        if ($req->has('students'))
-            $newGroup->students()->attach($req->students);
+        if ($request->has('students'))
+            $newGroup->students()->attach($request->students);
 
         // auth('api')->user()->makeChanges(
         //     'New group created',
@@ -125,10 +132,12 @@ class GroupController extends Controller
         //     $newGroup
         // );
 
-        return response()->json([
-            "message" => "Group created successfully",
-            "group" => $newGroup->id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 201,
+            name: 'group_created',
+            data: ["id" => $newGroup->id],
+        );
     }
 
     /**
@@ -160,12 +169,22 @@ class GroupController extends Controller
 
     public function show(string $id)
     {
-        $group = Group::find($id);
+        $group = $this->Group->find($id);
 
-        if ($group === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$group)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'group_not_found',
+                data: ["id" => $id]
+            );
 
-        return new GroupResource($group);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_group',
+            data: GroupResource::make($group)
+        );
     }
 
     /**
@@ -211,39 +230,44 @@ class GroupController extends Controller
      * )
      */
 
-    public function update(Request $req, string $id)
+    public function update(Request $request, string $id)
     {
-        $group = Group::find($id);
+        $group = $this->Group->find($id);
 
-        if ($group === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$group)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'group_not_found',
+                data: ["id" => $id]
+            );
 
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "name" => 'required|string',
             "status" => 'required|boolean',
             "completed_lessons" => 'required|numeric',
             "teacher_id" => 'required|exists:teachers,id',
             "assistant_teacher_id" => 'required|exists:teachers,id',
             "course_id" => 'required|exists:courses,id',
+
             "students" => 'array',
             'students.*' => 'required|numeric|distinct|exists:students,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $group->update([
-            "name" => $req->name,
-            "status" => $req->status,
-            "completed_lessons" => $req->completed_lessons,
-            "teacher_id" => $req->teacher_id,
-            "assistant_teacher_id" => $req->assistant_teacher_id,
-            "course_id" => $req->course_id,
+            "name" => $request->name,
+            "status" => $request->status,
+            "completed_lessons" => $request->completed_lessons,
+            "teacher_id" => $request->teacher_id,
+            "assistant_teacher_id" => $request->assistant_teacher_id,
+            "course_id" => $request->course_id,
         ]);
 
-        if ($req->has('students')) {
-            $group->students()->detach();
-            $group->students()->attach($req->students);
+        if ($request->has('students')) {
+            $group->students()->sync($request->students);
         }
 
         // auth('api')->user()->makeChanges(
@@ -252,10 +276,12 @@ class GroupController extends Controller
         //     $group
         // );
 
-        return response()->json([
-            "message" => "Group updated successfully",
-            "group" => $group->id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'group_updated',
+            data: ["id" => $group->id]
+        );
     }
 
     /**
@@ -287,10 +313,15 @@ class GroupController extends Controller
 
     public function destroy(string $id)
     {
-        $group = Group::find($id);
+        $group = $this->Group->find($id);
 
-        if ($group === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$group)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'group_not_found',
+                data: ["id" => $id]
+            );
 
         $group->delete();
 
@@ -300,10 +331,12 @@ class GroupController extends Controller
         //     $group
         // );
 
-        return response()->json([
-            "message" => "Group deleted successfully",
-            "group" => $id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'group_deleted',
+            data: ["id" => $group->id]
+        );
     }
 
     // /**
@@ -378,19 +411,19 @@ class GroupController extends Controller
     //  *     )
     //  * )
     //  */
-    // public function changeStudents(Request $req, string $id)
+    // public function changeStudents(Request $request, string $id)
     // {
     //     $group = Group::find($id);
     //     if ($group === null)
     //         return response()->json(["error" => "Not found"]);
-    //     $validator = Validator::make($req->all(), [
+    //     $validator = Validator::make($request->all(), [
     //         "students" => 'required|array',
     //         "students.*" => 'required|numeric|distinct|exists:students,id',
     //     ]);
     //     if ($validator->fails())
     //         return response()->json($validator->messages());
     //     $group->students()->detach();
-    //     $group->students()->attach($req->students);
+    //     $group->students()->attach($request->students);
     //     auth('api')->user()->makeChanges(
     //         'Group updated from $val1 to $val2',
     //         '$col-name',

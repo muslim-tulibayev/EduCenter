@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\SendResponseTrait;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
@@ -36,6 +37,11 @@ use Illuminate\Routing\Controller as BaseController;
  *  @OA\Tag(
  *      name = "AuthStudent",
  *      description = "AuthStudent",
+ *  ),
+ * 
+ *  @OA\Tag(
+ *      name = "User",
+ *      description = "User",
  *  ),
  * 
  *  @OA\Tag(
@@ -84,6 +90,11 @@ use Illuminate\Routing\Controller as BaseController;
  *  ),
  * 
  *  @OA\Tag(
+ *      name = "AssistantTeacher",
+ *      description = "AssistantTeacher",
+ *  ),
+ * 
+ *  @OA\Tag(
  *      name = "Session",
  *      description = "Session",
  *  ),
@@ -104,16 +115,16 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+    use SendResponseTrait;
 
     protected $auth_type;
     protected $auth_user;
     protected $auth_role;
-    private $column;
+    protected $auth_branch_id;
 
-    public function __construct($column = null)
+    public function __construct(string $column = null, bool $checkBranch = false)
     {
-        $this->column = $column;
-
+        // define user and its type
         if (auth('api')->user()) {
             $this->auth_type = 'api';
             $this->auth_user = auth('api')->user();
@@ -128,56 +139,104 @@ class Controller extends BaseController
             $this->auth_user = auth('student')->user();
         }
 
+        // define user's role
         if ($this->auth_user)
             $this->auth_role = $this->auth_user->role;
 
-        if ($this->auth_role && $this->column) {
+        // define user's branch
+        if ($checkBranch)
             $this->middleware(function ($request, $next) {
-                if (!($this->auth_role[$this->column] >= 1))
-                    return response()->json([
-                        "error" => "Unauthorized"
-                    ], 403);
+                $branch_header = json_decode(base64_decode($request->header('Branch-Id')));
+
+                // if there is no header, check user has any branch
+                if (!$branch_header) {
+                    if ($branch = $this->auth_user->branches()->first() ?? null)
+                        $this->auth_branch_id = $branch->id;
+                    else
+                        return $this->sendResponse(
+                            success: false,
+                            status: 404,
+                            name: 'user_has_not_branch',
+                        );
+                } else {
+                    $this->auth_branch_id = $branch_header->id;
+                }
+
+                if (!$this->auth_user->branches()->find($this->auth_branch_id))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
+
+                return $next($request);
+            });
+
+        // set gates for CRUD methods
+        if ($this->auth_role && $column) {
+            $this->middleware(function ($request, $next) use ($column) {
+                if (!($this->auth_role[$column] >= 1))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
 
                 return $next($request);
             })->only('index');
 
-            $this->middleware(function ($request, $next) {
-                if (!($this->auth_role[$this->column] >= 1))
-                    return response()->json([
-                        "error" => "Unauthorized"
-                    ], 403);
+            $this->middleware(function ($request, $next) use ($column) {
+                if (!($this->auth_role[$column] >= 1))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
+
                 return $next($request);
             })->only('index');
 
-            $this->middleware(function ($request, $next) {
-                if (!($this->auth_role[$this->column] >= 1))
-                    return response()->json([
-                        "error" => "Unauthorized"
-                    ], 403);
+            $this->middleware(function ($request, $next) use ($column) {
+                if (!($this->auth_role[$column] >= 1))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
+
                 return $next($request);
             })->only('show');
 
-            $this->middleware(function ($request, $next) {
-                if (!($this->auth_role[$this->column] >= 2))
-                    return response()->json([
-                        "error" => "Unauthorized"
-                    ], 403);
+            $this->middleware(function ($request, $next) use ($column) {
+                if (!($this->auth_role[$column] >= 2))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
+
                 return $next($request);
             })->only('update');
 
-            $this->middleware(function ($request, $next) {
-                if (!($this->auth_role[$this->column] >= 3))
-                    return response()->json([
-                        "error" => "Unauthorized"
-                    ], 403);
+            $this->middleware(function ($request, $next) use ($column) {
+                if (!($this->auth_role[$column] >= 3))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
+
                 return $next($request);
             })->only('store');
 
-            $this->middleware(function ($request, $next) {
-                if (!($this->auth_role[$this->column] >= 4))
-                    return response()->json([
-                        "error" => "Unauthorized"
-                    ], 403);
+            $this->middleware(function ($request, $next) use ($column) {
+                if (!($this->auth_role[$column] >= 4))
+                    return $this->sendResponse(
+                        success: false,
+                        status: 403,
+                        name: 'unauthorized',
+                    );
+
                 return $next($request);
             })->only('destroy');
         }

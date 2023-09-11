@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class TeacherController extends Controller
+class AssistantTeacherController extends Controller
 {
     use SendValidatorMessagesTrait, SendResponseTrait;
 
-    private $Teacher;
+    private $AssistantTeacher;
 
     public function __construct()
     {
@@ -26,9 +26,9 @@ class TeacherController extends Controller
         parent::__construct('teachers', true);
 
         $this->middleware(function ($request, $next) {
-            $this->Teacher = Branch::find($this->auth_branch_id)
+            $this->AssistantTeacher = Branch::find($this->auth_branch_id)
                 ->teachers()
-                ->where('is_assistant', false);
+                ->where('is_assistant', true);
 
             return $next($request);
         });
@@ -36,11 +36,11 @@ class TeacherController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/manage/teacher",
-     * summary="Get all teachers data",
-     * description="Teacher index",
-     * operationId="indexTeacher",
-     * tags={"Teacher"},
+     * path="/api/manage/teacher/assistant",
+     * summary="Get all assistant teachers data",
+     * description="AssistantTeacher index",
+     * operationId="indexAssistantTeacher",
+     * tags={"AssistantTeacher"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
      *    response=403,
@@ -54,7 +54,7 @@ class TeacherController extends Controller
 
     public function index()
     {
-        $teachers = $this->Teacher->orderByDesc('id')->paginate();
+        $teachers = $this->AssistantTeacher->orderByDesc('id')->paginate();
 
         return $this->sendResponse(
             success: true,
@@ -67,11 +67,11 @@ class TeacherController extends Controller
 
     /**
      * @OA\Post(
-     * path="/api/manage/teacher",
-     * summary="Set new teacher",
-     * description="Teacher store",
-     * operationId="storeTeacher",
-     * tags={"Teacher"},
+     * path="/api/manage/teacher/assistant",
+     * summary="Set new assistant teacher",
+     * description="AssistantTeacher store",
+     * operationId="storeAssistantTeacher",
+     * tags={"AssistantTeacher"},
      * security={ {"bearerAuth": {} }},
      * 
      * @OA\RequestBody(
@@ -83,7 +83,6 @@ class TeacherController extends Controller
      *       @OA\Property(property="lastname", type="string", example="Doe"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
      *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
-     *       @OA\Property(property="is_assistant", type="boolean", example=false),
      *    ),
      * ),
      * @OA\Response(
@@ -107,7 +106,6 @@ class TeacherController extends Controller
                 . '|unique:stparents,email'
                 . '|unique:students,email',
             'contact_no' => 'required|string',
-            "role_id" => 'required|exists:roles,id',
             'groups' => 'array',
             'groups.*' => 'numeric|distinct|exists:groups,id',
             'branches' => 'required|array',
@@ -123,8 +121,7 @@ class TeacherController extends Controller
             'email' => $request->email,
             'password' => Hash::make('12345678'),
             'contact_no' => $request->contact_no,
-            'is_assistant' => false,
-            'role_id' => $request->role_id,
+            'is_assistant' => true,
         ]);
 
         if ($request->has('groups'))
@@ -141,18 +138,18 @@ class TeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 201,
-            name: "teacher_created",
+            name: "assistant_teacher_created",
             data: ["id" => $newTeacher->id],
         );
     }
 
     /**
      * @OA\Get(
-     * path="/api/manage/teacher/{id}",
+     * path="/api/manage/teacher/assistant/{id}",
      * summary="Get specific teacher data",
-     * description="Teacher show",
-     * operationId="showTeacher",
-     * tags={"Teacher"},
+     * description="AssistantTeacher show",
+     * operationId="showAssistantTeacher",
+     * tags={"AssistantTeacher"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -175,31 +172,31 @@ class TeacherController extends Controller
 
     public function show(string $id)
     {
-        $teacher = $this->Teacher->find($id);
+        $teacher = $this->AssistantTeacher->find($id);
 
         if (!$teacher)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "teacher_not_found",
+                name: "assistant_teacher_not_found",
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "teacher_found",
+            name: "assistant_teacher_found",
             data: TeacherResource::make($teacher)
         );
     }
 
     /**
      * @OA\Put(
-     * path="/api/manage/teacher/{id}",
-     * summary="Update specific Teacher",
-     * description="Teacher update",
-     * operationId="updateTeacher",
-     * tags={"Teacher"},
+     * path="/api/manage/teacher/assistant/{id}",
+     * summary="Update specific AssistantTeacher",
+     * description="AssistantTeacher update",
+     * operationId="updateAssistantTeacher",
+     * tags={"AssistantTeacher"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -234,12 +231,12 @@ class TeacherController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $teacher = $this->Teacher->find($id);
+        $teacher = $this->AssistantTeacher->find($id);
         if (!$teacher)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "teacher_not_found",
+                name: "assistant_teacher_not_found",
                 data: ["id" => $id]
             );
 
@@ -253,7 +250,6 @@ class TeacherController extends Controller
                 . '|unique:students,email',
             'contact_no' => 'required|string',
             'is_assistant' => 'boolean',
-            "role_id" => 'required|exists:roles,id',
             'groups' => 'array',
             'groups.*' => 'numeric|distinct|exists:groups,id',
             'branches' => 'required|array',
@@ -268,8 +264,7 @@ class TeacherController extends Controller
             'lastname' => $request->lastname,
             'email' => $request->email,
             'contact_no' => $request->contact_no,
-            'is_assistant' => $request->is_assistant ?? false,
-            'role_id' => $request->role_id,
+            'is_assistant' => $request->is_assistant ?? true,
         ]);
 
         if ($request->has('groups'))
@@ -287,18 +282,18 @@ class TeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "teacher_updated",
+            name: "assistant_teacher_updated",
             data: ["id" => $id]
         );
     }
 
     /**
      * @OA\Delete(
-     * path="/api/manage/teacher/{id}",
-     * summary="Delete specific Teacher",
-     * description="Teacher delete",
-     * operationId="destroyTeacher",
-     * tags={"Teacher"},
+     * path="/api/manage/teacher/assistant/{id}",
+     * summary="Delete specific AssistantTeacher",
+     * description="AssistantTeacher delete",
+     * operationId="destroyAssistantTeacher",
+     * tags={"AssistantTeacher"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -321,13 +316,13 @@ class TeacherController extends Controller
 
     public function destroy(string $id)
     {
-        $teacher = $this->Teacher->find($id);
+        $teacher = $this->AssistantTeacher->find($id);
 
         if (!$teacher)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "teacher_not_found",
+                name: "assistant_teacher_not_found",
                 data: ["id" => $id]
             );
 
@@ -335,7 +330,7 @@ class TeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: "teacher_has_groups",
+                name: "assistant_teacher_has_groups",
                 data: GroupResource::collection($teacher->groups)
             );
 
@@ -350,7 +345,7 @@ class TeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "teacher_deleted",
+            name: "assistant_teacher_deleted",
             data: ["id" => $id]
         );
     }

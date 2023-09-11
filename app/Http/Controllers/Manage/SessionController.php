@@ -3,17 +3,32 @@
 namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Session\SessionResource;
+use App\Models\Branch;
 use App\Models\Session;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
 class SessionController extends Controller
 {
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
+    private $Session;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('sessions');
+        parent::__construct('sessions', true);
+
+        $this->middleware(function ($request, $next) {
+            $this->Session = Branch::find($this->auth_branch_id)->sessions();
+
+            return $next($request);
+        });
     }
 
     /**
@@ -36,7 +51,15 @@ class SessionController extends Controller
 
     public function index()
     {
-        return response()->json(Session::all());
+        $sessions = $this->Session->orderByDesc('start')->paginate();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_sessions',
+            data: SessionResource::collection($sessions),
+            pagination: $sessions
+        );
     }
 
     /**
@@ -47,15 +70,21 @@ class SessionController extends Controller
      * operationId="storeSession",
      * tags={"Session"},
      * security={ {"bearerAuth": {} }},
+     * 
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass session credentials",
      *    @OA\JsonContent(
-     *       required={"from","to"},
-     *       @OA\Property(property="from", type="string", format="text", example="08:30"),
-     *       @OA\Property(property="to", type="string", format="text", example="16:30"),
+     *       required={"start","end"},
+     *       @OA\Property(property="start", type="string", format="text", example="08:30"),
+     *       @OA\Property(property="end", type="string", format="text", example="16:30"),
+     *       @OA\Property(
+     *         property="branches", type="array", collectionFormat="multi",
+     *         @OA\Items(type="integer", example=1)
+     *      ),
      *    ),
      * ),
+     * 
      * @OA\Response(
      *    response=403,
      *    description="Wrong credentials response",
@@ -69,23 +98,36 @@ class SessionController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "from" => 'required|date_format:H:i',
-            "to" => 'required|date_format:H:i|after:from',
+            "start" => 'required|date_format:H:i:s',
+            "end" => [
+                'required',
+                'date_format:H:i:s',
+                'after:start',
+                Rule::unique('sessions')->where(function ($query) use ($request) {
+                    return $query->where('start', $request->start);
+                }),
+            ],
+            "branches" => 'array',
+            "branches.*" => 'numeric|distinct|exists:branches,id'
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
-
-        // check duration for uniqueness
+            return $this->sendValidatorMessages($validator);
 
         $newSession = Session::create([
-            "duration" => $request->from . ' - ' . $request->to
+            "start" => $request->start,
+            "end" => $request->end
         ]);
 
-        return response()->json([
-            "message" => "New session has been created successfully",
-            "session_id" => $newSession->id
-        ]);
+        if ($request->has('branches'))
+            $newSession->branches()->attach($request->branches);
+
+        return $this->sendResponse(
+            success: true,
+            status: 201,
+            name: 'session_created',
+            data: ["id" => $newSession->id]
+        );
     }
 
     /**
@@ -117,16 +159,22 @@ class SessionController extends Controller
 
     public function show(string $id)
     {
-        $session = Session::find($id);
+        $session = $this->Session->find($id);
 
         if (!$session)
-            return response()->json([
-                "error" => "not found"
-            ]);
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'session_not_found',
+                data: ["id" => $id]
+            );
 
-        return response()->json([
-            "data" => $session
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_session',
+            data: SessionResource::make($session)
+        );
     }
 
     /**
@@ -148,13 +196,18 @@ class SessionController extends Controller
      *
      * @OA\RequestBody(
      *    required=true,
-     *    description="Pass user credentials",
+     *    description="Pass session credentials",
      *    @OA\JsonContent(
-     *       required={"from","to"},
-     *       @OA\Property(property="from", type="string", format="text", example="08:30"),
-     *       @OA\Property(property="to", type="string", format="text", example="16:30"),
+     *       required={"start","end"},
+     *       @OA\Property(property="start", type="string", format="text", example="08:30"),
+     *       @OA\Property(property="end", type="string", format="text", example="16:30"),
+     *       @OA\Property(
+     *         property="branches", type="array", collectionFormat="multi",
+     *         @OA\Items(type="integer", example=1)
+     *      ),
      *    ),
      * ),
+     * 
      * @OA\Response(
      *    response=403,
      *    description="Wrong credentials response",
@@ -167,31 +220,47 @@ class SessionController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $session = Session::find($id);
+        $session = $this->Session->find($id);
 
         if (!$session)
-            return response()->json([
-                "error" => "not found"
-            ]);
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'session_not_found',
+                data: ["id" => $id]
+            );
 
         $validator = Validator::make($request->all(), [
-            "from" => 'required|date_format:H:i',
-            "to" => 'required|date_format:H:i|after:from',
+            "start" => 'required|date_format:H:i:s',
+            "end" => [
+                'required',
+                'date_format:H:i:s',
+                'after:start',
+                Rule::unique('sessions')->ignore($id)->where(function ($query) use ($request) {
+                    return $query->where('start', $request->start);
+                }),
+            ],
+            "branches" => 'array',
+            "branches.*" => 'numeric|distinct|exists:branches,id'
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
-
-        // check duration for uniqueness
+            return $this->sendValidatorMessages($validator);
 
         $session->update([
-            "duration" => $request->from . ' - ' . $request->to
+            "start" => $request->start,
+            "end" => $request->end,
         ]);
 
-        return response()->json([
-            "message" => "New session has been updated successfully",
-            "session_id" => $session->id
-        ]);
+        if ($request->has('branches'))
+            $session->branches()->sync($request->branches);
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'session_updated',
+            data: ["id" => $session->id]
+        );
     }
 
     /**
@@ -223,18 +292,23 @@ class SessionController extends Controller
 
     public function destroy(string $id)
     {
-        $session = Session::find($id);
+        $session = $this->Session->find($id);
 
         if (!$session)
-            return response()->json([
-                "error" => "not found"
-            ]);
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'session_not_found',
+                data: ["id" => $id]
+            );
 
         $session->delete();
 
-        return response()->json([
-            "message" => "Session has been deleted successfully",
-            "session_id" =>$id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'session_deleted',
+            data: ["id" => $session->id]
+        );
     }
 }

@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthTeacherController;
 use App\Http\Controllers\AuthParentController;
 use App\Http\Controllers\AuthStudentController;
 
-// use App\Http\Controllers\Manage\PaymentController;
+use App\Http\Controllers\Manage\AssistantTeacherController;
 use App\Http\Controllers\Manage\BranchController;
 use App\Http\Controllers\Manage\CourseController;
 use App\Http\Controllers\Manage\GroupController;
@@ -17,9 +17,9 @@ use App\Http\Controllers\Manage\StudentController;
 use App\Http\Controllers\Manage\TeacherController;
 use App\Http\Controllers\Manage\RoleController;
 use App\Http\Controllers\Manage\InactiveUserController;
-use App\Models\Stparent;
-use App\Models\Student;
-use App\Models\User;
+use App\Http\Controllers\Manage\UserController;
+// use App\Http\Controllers\Manage\PaymentController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => '/auth'], function () {
@@ -53,10 +53,16 @@ Route::group(['prefix' => '/student'], function () {
 
 Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/user/inactive', InactiveUserController::class);
+    Route::apiResource('/user', UserController::class);
+
+    Route::apiResource('/teacher/assistant', AssistantTeacherController::class);
     Route::apiResource('/teacher', TeacherController::class);
+
     Route::apiResource('/parent', ParentController::class);
-    Route::apiResource('/student', StudentController::class);
+
     Route::post('/student/search', [StudentController::class, 'search']);
+    Route::apiResource('/student', StudentController::class);
+
     Route::apiResource('/course', CourseController::class);
     Route::apiResource('/branch', BranchController::class);
     Route::apiResource('/lesson', LessonController::class);
@@ -65,20 +71,6 @@ Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/schedule', ScheduleController::class);
     Route::apiResource('/role', RoleController::class);
 });
-
-Route::get('test', function () {
-
-    $specificBranchIds = [2];
-
-    $usersFromSpecificBranches = User::whereHas('branches', function ($query) use ($specificBranchIds) {
-        $query->whereIn('branch_id', $specificBranchIds);
-    })->get();
-
-    return response()->json([
-        "data" => $usersFromSpecificBranches
-    ]);
-});
-
 
 
 // Route::get('/student/{id}/certificates', [StudentController::class, 'certificates']);

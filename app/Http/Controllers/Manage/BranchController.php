@@ -4,40 +4,29 @@ namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Branch\BranchResource;
-use App\Http\Resources\Schedule\ScheduleResourceThroughBranch;
 use App\Models\Branch;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class BranchController extends Controller
 {
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
+    private $Branch;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('branches');
+        parent::__construct('branches', true);
 
-        // $this->middleware(function ($request, $next) {
-        //     if (!($this->auth_role['rooms'] >= 1))
-        //         return response()->json([
-        //             "error" => "Unauthorized"
-        //         ], 403);
-        //     return $next($request);
-        // })->only('rooms');
-        // $this->middleware(function ($request, $next) {
-        //     if (!($this->auth_role['branches'] >= 2))
-        //         return response()->json([
-        //             "error" => "Unauthorized"
-        //         ], 403);
-        //     return $next($request);
-        // })->only('addRooms');
-        // $this->middleware(function ($request, $next) {
-        //     if (!($this->auth_role['schedules'] >= 1))
-        //         return response()->json([
-        //             "error" => "Unauthorized"
-        //         ], 403);
-        //     return $next($request);
-        // })->only('getSchedule');
+        $this->middleware(function ($request, $next) {
+            $this->Branch = Branch::find($this->auth_branch_id);
+
+            return $next($request);
+        });
     }
 
     /**
@@ -60,9 +49,12 @@ class BranchController extends Controller
 
     public function index()
     {
-        $branches = Branch::orderByDesc('id')->paginate();
-
-        return BranchResource::collection($branches);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_branch',
+            data: BranchResource::make($this->Branch),
+        );
     }
 
     /**
@@ -92,19 +84,19 @@ class BranchController extends Controller
      * )
      */
 
-    public function store(Request $req)
+    public function store(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "name" => 'required|string',
             "location" => 'required|string',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $newBranch = Branch::create([
-            'name' => $req->name,
-            'location' => $req->location,
+            'name' => $request->name,
+            'location' => $request->location,
         ]);
 
         // auth('api')->user()->makeChanges(
@@ -113,48 +105,23 @@ class BranchController extends Controller
         //     $newBranch
         // );
 
-        return response()->json([
-            "message" => "Branch created successfully",
-            "branch" => $newBranch->id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'branch_created',
+            data: ["id" => $newBranch->id],
+        );
     }
 
-    /**
-     * @OA\Get(
-     * path="/api/manage/branch/{id}",
-     * summary="Branch show",
-     * description="Get specific branch data",
-     * operationId="show",
-     * tags={"Branch"},
-     * security={ {"bearerAuth": {} }},
-     *
-     * @OA\Parameter(
-     *    in="path",
-     *    name="id",
-     *    required=true,
-     *    description="ID to fetch the targeted campaigns.",
-     *    @OA\Schema(type="string")
-     * ),
-     *
-     * @OA\Response(
-     *    response=403,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Unauthorized")
-     *        )
-     *     )
-     * )
-     */
+    // public function show(string $id)
+    // {
+    //     $branch = Branch::find($id);
 
-    public function show(string $id)
-    {
-        $branch = Branch::find($id);
+    //     if ($branch === null)
+    //         return response()->json(["error" => "Not found"]);
 
-        if ($branch === null)
-            return response()->json(["error" => "Not found"]);
-
-        return new BranchResource($branch);
-    }
+    //     return new BranchResource($branch);
+    // }
 
     /**
      * @OA\Put(
@@ -192,24 +159,29 @@ class BranchController extends Controller
      * )
      */
 
-    public function update(Request $req, string $id)
+    public function update(Request $request, string $id)
     {
-        $branch = Branch::find($id);
+        $branch = $this->Branch->find($id);
 
-        if ($branch === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$branch)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'branch_not_found',
+                data: ["id" => $id],
+            );
 
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "name" => 'required|string',
             "location" => 'required|string',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $branch->update([
-            'name' => $req->name,
-            'location' => $req->location,
+            'name' => $request->name,
+            'location' => $request->location,
         ]);
 
         // auth('api')->user()->makeChanges(
@@ -218,10 +190,12 @@ class BranchController extends Controller
         //     $branch
         // );
 
-        return response()->json([
-            "message" => "Branch updated successfully",
-            "branch" => $branch->id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'branch_updated',
+            data: ["id" => $branch->id],
+        );
     }
 
     /**
@@ -253,10 +227,15 @@ class BranchController extends Controller
 
     public function destroy(string $id)
     {
-        $branch = Branch::find($id);
+        $branch = $this->Branch->find($id);
 
-        if ($branch === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$branch)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'branch_not_found',
+                data: ["id" => $id],
+            );
 
         $branch->delete();
 
@@ -266,10 +245,12 @@ class BranchController extends Controller
         //     $branch
         // );
 
-        return response()->json([
-            "message" => "Branch deleted successfully",
-            "branch" => $id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'branch_deleted',
+            data: ["id" => $branch->id],
+        );
     }
 
     // /**
@@ -344,12 +325,12 @@ class BranchController extends Controller
     //  *   )
     //  * )
     //  */
-    // public function addRooms(Request $req, string $id)
+    // public function addRooms(Request $request, string $id)
     // {
     //     $branch = Branch::find($id);
     //     if ($branch === null)
     //         return response()->json(["error" => "Not found"]);
-    //     $validator = Validator::make($req->all(), [
+    //     $validator = Validator::make($request->all(), [
     //         "rooms" => 'required|array',
     //         // unique in one specific branch
     //         // "rooms.*" => 'required|string|distinct|unique:rooms,name', 
@@ -357,7 +338,7 @@ class BranchController extends Controller
     //     ]);
     //     if ($validator->fails())
     //         return response()->json($validator->messages());
-    //     foreach ($req->rooms as $room)
+    //     foreach ($request->rooms as $room)
     //         $branch->rooms()->create(["name" => $room]);
     //     auth('api')->user()->makeChanges(
     //         'Branch updated from $val1 to $val2',
@@ -396,15 +377,15 @@ class BranchController extends Controller
     //  *   )
     //  * )
     //  */
-    // public function getSchedule(Request $req)
+    // public function getSchedule(Request $request)
     // {
-    //     $validator = Validator::make($req->all(), [
+    //     $validator = Validator::make($request->all(), [
     //         "branch_id" => 'required|exists:branches,id',
     //         "weekday_id" => 'required|exists:weekdays,id',
     //     ]);
     //     if ($validator->fails())
     //         return response()->json($validator->messages());
-    //     $schedules = Branch::find($req->branch_id)->schedules()->where('weekday_id', $req->weekday_id)->get();
+    //     $schedules = Branch::find($request->branch_id)->schedules()->where('weekday_id', $request->weekday_id)->get();
     //     return ScheduleResourceThroughBranch::collection($schedules);
     // }
 }

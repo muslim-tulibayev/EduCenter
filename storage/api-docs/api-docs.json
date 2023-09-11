@@ -25,7 +25,8 @@
                                     "firstname",
                                     "lastname",
                                     "contact_no",
-                                    "password_confirmation"
+                                    "password_confirmation",
+                                    "role_id"
                                 ],
                                 "properties": {
                                     "firstname": {
@@ -48,6 +49,10 @@
                                         "format": "phone number",
                                         "example": "+998 93 819 88 43"
                                     },
+                                    "role_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
                                     "password": {
                                         "type": "string",
                                         "format": "password, min:8",
@@ -57,6 +62,14 @@
                                         "type": "string",
                                         "format": "password",
                                         "example": "12345678"
+                                    },
+                                    "branches": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
                                     }
                                 },
                                 "type": "object"
@@ -757,6 +770,273 @@
                 ]
             }
         },
+        "/api/manage/teacher/assistant": {
+            "get": {
+                "tags": [
+                    "AssistantTeacher"
+                ],
+                "summary": "Get all assistant teachers data",
+                "description": "AssistantTeacher index",
+                "operationId": "indexAssistantTeacher",
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "AssistantTeacher"
+                ],
+                "summary": "Set new assistant teacher",
+                "description": "AssistantTeacher store",
+                "operationId": "storeAssistantTeacher",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "email",
+                                    "contact_no",
+                                    "is_assistant"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "+998 56 789 09 87"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/manage/teacher/assistant/{id}": {
+            "get": {
+                "tags": [
+                    "AssistantTeacher"
+                ],
+                "summary": "Get specific teacher data",
+                "description": "AssistantTeacher show",
+                "operationId": "showAssistantTeacher",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "AssistantTeacher"
+                ],
+                "summary": "Update specific AssistantTeacher",
+                "description": "AssistantTeacher update",
+                "operationId": "updateAssistantTeacher",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "email",
+                                    "contact_no"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "+998 56 789 09 87"
+                                    },
+                                    "is_assistant": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "AssistantTeacher"
+                ],
+                "summary": "Delete specific AssistantTeacher",
+                "description": "AssistantTeacher delete",
+                "operationId": "destroyAssistantTeacher",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/branch": {
             "get": {
                 "tags": [
@@ -849,48 +1129,6 @@
             }
         },
         "/api/manage/branch/{id}": {
-            "get": {
-                "tags": [
-                    "Branch"
-                ],
-                "summary": "Branch show",
-                "description": "Get specific branch data",
-                "operationId": "show",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID to fetch the targeted campaigns.",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "403": {
-                        "description": "Wrong credentials response",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthorized"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
             "put": {
                 "tags": [
                     "Branch"
@@ -1560,6 +1798,91 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "InactiveUser"
+                ],
+                "summary": "Set new user",
+                "description": "InactiveUser store",
+                "operationId": "storeInactiveUser",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "contact_no",
+                                    "email",
+                                    "role_id",
+                                    "status",
+                                    "branches"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "+998 98 765 56 78"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "role_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "branches": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "numeric",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/manage/user/inactive/{id}": {
@@ -1737,6 +2060,37 @@
             }
         },
         "/api/manage/lesson": {
+            "get": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Get all Lessons data",
+                "description": "Lesson index",
+                "operationId": "indexLesson",
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Lesson"
@@ -1762,10 +2116,6 @@
                                     "name": {
                                         "type": "string",
                                         "example": "New Lesson"
-                                    },
-                                    "course_id": {
-                                        "type": "numeric",
-                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1799,6 +2149,48 @@
             }
         },
         "/api/manage/lesson/{id}": {
+            "get": {
+                "tags": [
+                    "Lesson"
+                ],
+                "summary": "Get specific Lesson data",
+                "description": "Lesson show",
+                "operationId": "showLesson",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Lesson"
@@ -1835,10 +2227,6 @@
                                     "name": {
                                         "type": "string",
                                         "example": "New Lesson"
-                                    },
-                                    "course_id": {
-                                        "type": "numeric",
-                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -1913,7 +2301,162 @@
                 ]
             }
         },
+        "/api/manage/parent": {
+            "get": {
+                "tags": [
+                    "Parent"
+                ],
+                "summary": "Get all parents data",
+                "description": "Parent index",
+                "operationId": "indexParent",
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Parent"
+                ],
+                "summary": "Set new Parent",
+                "description": "Parent store",
+                "operationId": "storeParent",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "email",
+                                    "contact_no",
+                                    "role_id",
+                                    "students"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "+998 56 789 09 87"
+                                    },
+                                    "role_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "students": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/parent/{id}": {
+            "get": {
+                "tags": [
+                    "Parent"
+                ],
+                "summary": "Get specific parent data",
+                "description": "Parent show",
+                "operationId": "showParent",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Parent"
@@ -1942,7 +2485,9 @@
                                     "firstname",
                                     "lastname",
                                     "email",
-                                    "contact_no"
+                                    "contact_no",
+                                    "role_id",
+                                    "students"
                                 ],
                                 "properties": {
                                     "firstname": {
@@ -1957,13 +2502,21 @@
                                         "type": "string",
                                         "example": "user@gmail.com"
                                     },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "12345678"
-                                    },
                                     "contact_no": {
                                         "type": "string",
-                                        "example": "+998 92 894 83 21"
+                                        "example": "+998 56 789 09 87"
+                                    },
+                                    "role_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "students": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
                                     }
                                 },
                                 "type": "object"
@@ -2909,19 +3462,27 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "from",
-                                    "to"
+                                    "start",
+                                    "end"
                                 ],
                                 "properties": {
-                                    "from": {
+                                    "start": {
                                         "type": "string",
                                         "format": "text",
                                         "example": "08:30"
                                     },
-                                    "to": {
+                                    "end": {
                                         "type": "string",
                                         "format": "text",
                                         "example": "16:30"
+                                    },
+                                    "branches": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
                                     }
                                 },
                                 "type": "object"
@@ -3016,25 +3577,33 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Pass user credentials",
+                    "description": "Pass session credentials",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "from",
-                                    "to"
+                                    "start",
+                                    "end"
                                 ],
                                 "properties": {
-                                    "from": {
+                                    "start": {
                                         "type": "string",
                                         "format": "text",
                                         "example": "08:30"
                                     },
-                                    "to": {
+                                    "end": {
                                         "type": "string",
                                         "format": "text",
                                         "example": "16:30"
+                                    },
+                                    "branches": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
                                     }
                                 },
                                 "type": "object"
@@ -3181,27 +3750,10 @@
                                         "type": "boolean",
                                         "example": false
                                     },
-                                    "group_id": {
-                                        "type": "numeric",
-                                        "example": 1
-                                    },
-                                    "parents": {
+                                    "groups": {
                                         "type": "array",
                                         "items": {
-                                            "type": "object",
-                                            "example": {
-                                                "firstname": "John",
-                                                "lastname": "Doe",
-                                                "email": "user@gmail.com",
-                                                "contact_no": "+998 98 545 46 78"
-                                            }
-                                        },
-                                        "collectionFormat": "multi"
-                                    },
-                                    "exist_parents": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer",
+                                            "type": "numeric",
                                             "example": 1
                                         },
                                         "collectionFormat": "multi"
@@ -3462,7 +4014,7 @@
                 ]
             }
         },
-        "/api/manage/teacher?role={role}": {
+        "/api/manage/teacher": {
             "get": {
                 "tags": [
                     "Teacher"
@@ -3470,17 +4022,6 @@
                 "summary": "Get all teachers data",
                 "description": "Teacher index",
                 "operationId": "indexTeacher",
-                "parameters": [
-                    {
-                        "name": "role",
-                        "in": "path",
-                        "description": "Role to fetch the targeted campaigns.",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
                 "responses": {
                     "403": {
                         "description": "Wrong credentials response",
@@ -3504,9 +4045,7 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/manage/teacher": {
+            },
             "post": {
                 "tags": [
                     "Teacher"
@@ -3745,6 +4284,298 @@
                     }
                 ]
             }
+        },
+        "/api/manage/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get all User data",
+                "description": "User index",
+                "operationId": "indexUser",
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Set new user",
+                "description": "User store",
+                "operationId": "storeUser",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "contact_no",
+                                    "email",
+                                    "role_id",
+                                    "status",
+                                    "branches"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "+998 98 765 56 78"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "role_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "branches": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "numeric",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/manage/user/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get specific User data",
+                "description": "User show",
+                "operationId": "showUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update specific User",
+                "description": "User update",
+                "operationId": "updateUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "firstname",
+                                    "lastname",
+                                    "contact_no",
+                                    "email",
+                                    "role",
+                                    "branch_id",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "firstname": {
+                                        "type": "string",
+                                        "example": "address"
+                                    },
+                                    "lastname": {
+                                        "type": "string",
+                                        "example": "address"
+                                    },
+                                    "contact_no": {
+                                        "type": "string",
+                                        "example": "address"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@gmail.com"
+                                    },
+                                    "role_id": {
+                                        "type": "number",
+                                        "example": 1
+                                    },
+                                    "branch_id": {
+                                        "type": "number",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete specific User",
+                "description": "User delete",
+                "operationId": "destroyUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -3771,6 +4602,10 @@
         {
             "name": "AuthStudent",
             "description": "AuthStudent"
+        },
+        {
+            "name": "User",
+            "description": "User"
         },
         {
             "name": "InactiveUser",
@@ -3807,6 +4642,10 @@
         {
             "name": "Teacher",
             "description": "Teacher"
+        },
+        {
+            "name": "AssistantTeacher",
+            "description": "AssistantTeacher"
         },
         {
             "name": "Session",

@@ -29,5 +29,6 @@ class TeacherSeeder extends Seeder
         ];
 
         Teacher::insert($teachers);
+        Teacher::factory(10)->create();
     }
 }

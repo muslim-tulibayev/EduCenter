@@ -31,5 +31,6 @@ class StudentSeeder extends Seeder
         ];
 
         Student::insert($students);
+        Student::factory(100)->create();
     }
 }

@@ -3,29 +3,31 @@
 namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Parent\ParentResource;
-use App\Models\Stparent;
+use App\Http\Resources\User\UserResource;
+use App\Models\Branch;
+use App\Models\User;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class ParentController extends Controller
+class UserController extends Controller
 {
     use SendValidatorMessagesTrait, SendResponseTrait;
 
-    private $Stparent;
+    private $User;
 
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('stparents', true);
+        parent::__construct('users', true);
 
         $this->middleware(function ($request, $next) {
-            $this->Stparent = Stparent::whereHas('students.groups.branch', function ($query) {
-                $query->where('id', $this->auth_branch_id);
-            });
+            $this->User = Branch::find($this->auth_branch_id)
+                ->users()
+                ->where('status', true);
 
             return $next($request);
         });
@@ -33,17 +35,17 @@ class ParentController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/manage/parent",
-     * summary="Get all parents data",
-     * description="Parent index",
-     * operationId="indexParent",
-     * tags={"Parent"},
+     * path="/api/manage/user",
+     * summary="Get all User data",
+     * description="User index",
+     * operationId="indexUser",
+     * tags={"User"},
      * security={ {"bearerAuth": {} }},
      * @OA\Response(
      *    response=403,
      *    description="Wrong credentials response",
      *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *       @OA\Property(property="error", type="string", example="Unauthorized")
      *        )
      *     )
      * )
@@ -51,43 +53,42 @@ class ParentController extends Controller
 
     public function index()
     {
-        $parents = $this->Stparent->orderByDesc('id')->paginate();
+        $users = $this->User->orderByDesc('id')->paginate();
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_parents',
-            data: ParentResource::collection($parents),
-            pagination: $parents
+            name: "get_users",
+            data: UserResource::collection($users),
+            pagination: $users
         );
     }
 
     /**
      * @OA\Post(
-     * path="/api/manage/parent",
-     * summary="Set new Parent",
-     * description="Parent store",
-     * operationId="storeParent",
-     * tags={"Parent"},
+     * path="/api/manage/user",
+     * summary="Set new user",
+     * description="User store",
+     * operationId="storeUser",
+     * tags={"User"},
      * security={ {"bearerAuth": {} }},
-     * 
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no", "role_id", "students"},
+     *       required={"firstname", "lastname", "contact_no", "email", "role_id", "status", "branches"},
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
+     *       @OA\Property(property="contact_no", type="string", example="+998 98 765 56 78"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
      *       @OA\Property(property="role_id", type="numeric", example=1),
+     *       @OA\Property(property="status", type="boolean", example=false),
      *       @OA\Property(
-     *         property="students", type="array", collectionFormat="multi",
-     *         @OA\Items(type="integer", example=1)
+     *         property="branches", type="array", collectionFormat="multi",
+     *         @OA\Items(type="numeric", example=1)
      *      ),
      *    ),
      * ),
-     * 
      * @OA\Response(
      *    response=403,
      *    description="Wrong credentials response",
@@ -97,50 +98,50 @@ class ParentController extends Controller
      *     )
      * )
      */
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "firstname" => 'required|string',
-            "lastname" => 'required|string',
-            'email' => 'required|email'
-                . '|unique:users,email'
-                . '|unique:teachers,email'
-                . '|unique:stparents,email'
-                . '|unique:students,email',
-            "contact_no" => 'required|string',
-            "role_id" => 'required|exists:roles,id',
-            'students' => 'required|array',
-            'students.*' => 'numeric|distinct|exists:students,id',
+            "firstname" => "required|string",
+            "lastname" => "required|string",
+            "contact_no" => "required|string",
+            "email" => "required|email|unique:users,email",
+            "role_id" => "required|exists:roles,id",
+            "status" => "required|boolean",
+            "branches" => "required|array",
+            "branches.*" => "numeric|distinct|exists:branches,id",
         ]);
 
         if ($validator->fails())
             return $this->sendValidatorMessages($validator);
 
-        $newParent = Stparent::create([
+        $newUser = User::create([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'email' => $request->email,
             'contact_no' => $request->contact_no,
+            'email' => $request->email,
             'role_id' => $request->role_id,
+            'status' => $request->status,
+            'password' => Hash::make('12345678'),
         ]);
 
-        $newParent->students()->attach($request->students);
+        $newUser->branches()->attach($request->branches);
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'parent_created',
-            data: ["id" => $newParent->id]
+            name: 'user_created',
+            data: ["user_id" => $newUser->id]
         );
     }
 
     /**
      * @OA\Get(
-     * path="/api/manage/parent/{id}",
-     * summary="Get specific parent data",
-     * description="Parent show",
-     * operationId="showParent",
-     * tags={"Parent"},
+     * path="/api/manage/user/{id}",
+     * summary="Get specific User data",
+     * description="User show",
+     * operationId="showUser",
+     * tags={"User"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -163,31 +164,31 @@ class ParentController extends Controller
 
     public function show(string $id)
     {
-        $parent = $this->Stparent->find($id);
+        $user = $this->User->find($id);
 
-        if (!$parent)
+        if (!$user)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'parent_not_found',
-                data: ["id" => $id]
+                name: 'user_not_found',
+                data: ["user_id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_parent',
-            data: ParentResource::make($parent)
+            name: 'user_found',
+            data: UserResource::make($user)
         );
     }
 
     /**
      * @OA\Put(
-     * path="/api/manage/parent/{id}",
-     * summary="Update specific parent",
-     * description="Parent update",
-     * operationId="updateParent",
-     * tags={"Parent"},
+     * path="/api/manage/user/{id}",
+     * summary="Update specific User",
+     * description="User update",
+     * operationId="updateUser",
+     * tags={"User"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -202,16 +203,13 @@ class ParentController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no", "role_id", "students"},
-     *       @OA\Property(property="firstname", type="string", example="John"),
-     *       @OA\Property(property="lastname", type="string", example="Doe"),
+     *       required={"firstname", "lastname", "contact_no", "email","role","branch_id", "password"},
+     *       @OA\Property(property="firstname", type="string", example="address"),
+     *       @OA\Property(property="lastname", type="string", example="address"),
+     *       @OA\Property(property="contact_no", type="string", example="address"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
-     *       @OA\Property(property="role_id", type="numeric", example=1),
-     *       @OA\Property(
-     *         property="students", type="array", collectionFormat="multi",
-     *         @OA\Items(type="integer", example=1)
-     *      ),
+     *       @OA\Property(property="role_id", type="number", example=1),
+     *       @OA\Property(property="branch_id", type="number", example=1),
      *    ),
      * ),
      * 
@@ -227,65 +225,56 @@ class ParentController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $parent = $this->Stparent->find($id);
+        $user = $this->User->find($id);
 
-        if (!$parent)
+        if (!$user)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'parent_not_found',
-                data: ["id" => $id]
+                name: 'user_not_found',
+                data: ["user_id" => $id]
             );
 
         $validator = Validator::make($request->all(), [
-            "firstname" => 'required|string',
-            "lastname" => 'required|string',
-            'email' => 'required|email'
-                . '|unique:users,email'
-                . '|unique:teachers,email'
-                . '|unique:stparents,email,' . $id
-                . '|unique:students,email',
-            "contact_no" => 'required|string',
+            'firstname' => 'required|string',
+            'lastname' => 'required|string',
+            'contact_no' => 'required|string',
+            'email' => 'required|email|unique:users,email,' . $id,
             "role_id" => 'required|exists:roles,id',
-            'students' => 'required|array',
-            'students.*' => 'numeric|distinct|exists:students,id',
+            'status' => 'required|boolean',
+            "branches" => 'required|array',
+            "branches.*" => 'numeric|distinct|exists:branches,id',
         ]);
 
         if ($validator->fails())
             return $this->sendValidatorMessages($validator);
 
-        $parent->update([
+        $user->update([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'email' => $request->email,
             'contact_no' => $request->contact_no,
-            'role_id' => $request->role_id,
+            'email' => $request->email,
+            "role_id" => $request->role_id,
+            'status' => $request->status,
         ]);
 
-        $parent->students()->sync($request->students);
-
-        // if (auth('parent')->user() !== null)
-        //     auth('parent')->user()->makeChanges(
-        //         'Parent updated from $val1 to $val2',
-        //         '$col-name',
-        //         $parent
-        //     );
+        $user->branches()->sync($request->branches);
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'parent_updated',
-            data: ["id" => $parent->id]
+            name: 'user_updated',
+            data: ["user_id" => $user->id]
         );
     }
 
     /**
      * @OA\Delete(
-     * path="/api/manage/parent/{id}",
-     * summary="Delete specific parent",
-     * description="Parent delete",
-     * operationId="destroyParent",
-     * tags={"Parent"},
+     * path="/api/manage/user/{id}",
+     * summary="Delete specific User",
+     * description="User delete",
+     * operationId="destroyUser",
+     * tags={"User"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
@@ -306,31 +295,25 @@ class ParentController extends Controller
      * )
      */
 
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        $parent = $this->Stparent->find($id);
+        $user = $this->User->find($id);
 
-        if (!$parent)
+        if (!$user)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'parent_not_found',
-                data: ["id" => $id]
+                name: 'user_not_found',
+                data: ["user_id" => $id]
             );
 
-        $parent->delete();
-
-        // auth('api')->user()->makeChanges(
-        //     'Parent deleted',
-        //     'deleted',
-        //     $parent
-        // );
+        $user->delete();
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'parent_deleted',
-            data: ["id" => $parent->id]
+            name: 'user_deleted',
+            data: ["user_id" => $user->id]
         );
     }
 }

@@ -5,16 +5,30 @@ namespace App\Http\Controllers\Manage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Schedule\ScheduleResource;
 use App\Models\Schedule;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends Controller
 {
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
+    private $Schedule;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('schedules');
+        parent::__construct('schedules', true);
+
+        $this->middleware(function ($request, $next) {
+            $this->Schedule = Schedule::whereHas('room', function ($query) {
+                $query->where('branch_id', $this->auth_branch_id);
+            });
+
+            return $next($request);
+        });
     }
 
     /**
@@ -37,9 +51,16 @@ class ScheduleController extends Controller
 
     public function index()
     {
-        $schedules = Schedule::with('group', 'weekday', 'session', 'room.branch')->orderByDesc('id')->paginate();
+        // $schedules = Schedule::with('group', 'weekday', 'session', 'room.branch')->orderByDesc('id')->paginate();
+        $schedules = $this->Schedule->orderByDesc('id')->paginate();
 
-        return ScheduleResource::collection($schedules);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_schedules',
+            data: ScheduleResource::collection($schedules),
+            pagination: $schedules
+        );
     }
 
     /**
@@ -71,21 +92,25 @@ class ScheduleController extends Controller
      * )
      */
 
-    public function store(Request $req)
+    public function store(Request $request)
     {
-        $validator = Validator::make($req->all(), [
-            "group_id" => 'required|numeric|exists:groups,id',
+        // Check for group_id, session_id, room_id for specific branch
+        $validator = Validator::make($request->all(), [
             "weekday_id" => 'required|numeric|exists:weekdays,id',
+            "group_id" => 'required|numeric|exists:groups,id',
             "session_id" => 'required|numeric|exists:sessions,id',
             "room_id" => 'required|numeric|exists:rooms,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
-        $newSchedule = Schedule::create(
-            $validator->validated()
-        );
+        $newSchedule = Schedule::create([
+            "weekday_id" => $request->weekday_id,
+            "group_id" => $request->group_id,
+            "session_id" => $request->session_id,
+            "room_id" => $request->room_id,
+        ]);
 
         // auth('api')->user()->makeChanges(
         //     'New schedule created',
@@ -93,10 +118,12 @@ class ScheduleController extends Controller
         //     $newSchedule
         // );
 
-        return response()->json([
-            "message" => "Schedule created successfully",
-            "schedule" => $newSchedule->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'schedule_created',
+            data: ["id" => $newSchedule->id],
+        );
     }
 
     /**
@@ -128,12 +155,23 @@ class ScheduleController extends Controller
 
     public function show(string $id)
     {
-        $schedule = Schedule::with('group', 'weekday', 'session', 'room.branch')->find($id);
+        // $schedule = Schedule::with('group', 'weekday', 'session', 'room.branch')->find($id);
+        $schedule = $this->Schedule->find($id);
 
-        if ($schedule === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$schedule)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'schedule_not_found',
+                data: ["id" => $id]
+            );
 
-        return new ScheduleResource($schedule);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_schedule',
+            data: ScheduleResource::make($schedule),
+        );
     }
 
     /**
@@ -174,26 +212,34 @@ class ScheduleController extends Controller
      * )
      */
 
-    public function update(Request $req, string $id)
+    public function update(Request $request, string $id)
     {
-        $schedule = Schedule::find($id);
+        $schedule = $this->Schedule->find($id);
 
-        if ($schedule === null)
-            return response()->json(["error" => "Not found"], 422);
+        if (!$schedule)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'schedule_not_found',
+                data: ["id" => $id]
+            );
 
-        $validator = Validator::make($req->all(), [
-            "group_id" => 'required|numeric|exists:groups,id',
+        $validator = Validator::make($request->all(), [
             "weekday_id" => 'required|numeric|exists:weekdays,id',
+            "group_id" => 'required|numeric|exists:groups,id',
             "session_id" => 'required|numeric|exists:sessions,id',
             "room_id" => 'required|numeric|exists:rooms,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
-        $newSchedule = Schedule::create(
-            $validator->validated()
-        );
+        $newSchedule = Schedule::create([
+            "weekday_id" => $request->weekday_id,
+            "group_id" => $request->group_id,
+            "session_id" => $request->session_id,
+            "room_id" => $request->room_id,
+        ]);
 
         // auth('api')->user()->makeChanges(
         //     'Schedule updated from $val1 to $val2',
@@ -201,10 +247,12 @@ class ScheduleController extends Controller
         //     $schedule
         // );
 
-        return response()->json([
-            "message" => "Schedule updated successfully",
-            "schedule" => $newSchedule->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'schedule_updated',
+            data: ["id" => $newSchedule->id],
+        );
     }
 
     /**
@@ -236,10 +284,15 @@ class ScheduleController extends Controller
 
     public function destroy(string $id)
     {
-        $schedule = Schedule::find($id);
+        $schedule = $this->Schedule->find($id);
 
-        if ($schedule === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$schedule)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'schedule_not_found',
+                data: ["id" => $id]
+            );
 
         $schedule->delete();
 
@@ -249,9 +302,11 @@ class ScheduleController extends Controller
         //     $schedule
         // );
 
-        return response()->json([
-            "message" => "Schedule deleted successfully",
-            "schedule" => $id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'schedule_deleted',
+            data: ["id" => $id],
+        );
     }
 }

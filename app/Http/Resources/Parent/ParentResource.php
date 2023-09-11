@@ -1,12 +1,17 @@
 <?php
 
-namespace App\Http\Resources\Teacher;
+namespace App\Http\Resources\Parent;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TeacherResource extends JsonResource
+class ParentResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -16,7 +21,7 @@ class TeacherResource extends JsonResource
             "email" => $this->email,
             // "password" => $this->password,
             "contact_no" => $this->contact_no,
-            "is_assistant" => $this->is_assistant,
+            "role_id" => $this->role_id,
         ];
     }
 }

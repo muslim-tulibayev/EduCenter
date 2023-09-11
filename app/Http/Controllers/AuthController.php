@@ -3,21 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Permission\ParentPermissionResource;
+use App\Http\Resources\Permission\StudentPermissionResource;
+use App\Http\Resources\Permission\TeacherPermissionResource;
+use App\Http\Resources\Permission\UserPermissionResource;
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Traits\CheckEmailUniqueness;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    use CheckEmailUniqueness;
+    use SendResponseTrait, SendValidatorMessagesTrait;
 
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student')->except(['register', 'login']);
 
-        parent::__construct(); // Call parent constructor
+        parent::__construct();
     }
 
     /**
@@ -27,19 +32,26 @@ class AuthController extends Controller
      * description="Register by email, password",
      * operationId="authRegister",
      * tags={"Auth"},
+     * 
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"email","password", "firstname", "lastname", "contact_no", "password_confirmation"},
+     *       required={"email","password", "firstname", "lastname", "contact_no", "password_confirmation", "role_id"},
      *       @OA\Property(property="firstname", type="string", format="text", example="John"),
      *       @OA\Property(property="lastname", type="string", format="text", example="Doe"),
      *       @OA\Property(property="email", type="string", format="email", example="user@gmail.com"),
      *       @OA\Property(property="contact_no", type="string", format="phone number", example="+998 93 819 88 43"),
+     *       @OA\Property(property="role_id", type="numeric", example=1),
      *       @OA\Property(property="password", type="string", format="password, min:8", example="12345678"),
      *       @OA\Property(property="password_confirmation", type="string", format="password", example="12345678"),
+     *       @OA\Property(
+     *         property="branches", type="array", collectionFormat="multi",
+     *         @OA\Items(type="integer", example=1)
+     *      ),
      *    ),
      * ),
+     * 
      * @OA\Response(
      *    response=422,
      *    description="Wrong credentials response",
@@ -50,34 +62,36 @@ class AuthController extends Controller
      * )
      */
 
-    public function register(Request $req)
+    public function register(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'contact_no' => 'required|string',
             'email' => 'required|email|unique:users,email',
-            "role_id" => 'required|exists:roles,id',
-            // "branch_id" => 'required|exists:branches,id',
             'password' => 'required|confirmed|string|min:8',
+            "role_id" => 'required|exists:roles,id',
+            "branches" => 'array',
+            "branches.*" => 'numeric|distinct|exists:branches,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
+            return $this->sendValidatorMessages($validator);
 
         $newUser = User::create([
-            'firstname' => $req->firstname,
-            'lastname' => $req->lastname,
-            'contact_no' => $req->contact_no,
-            'email' => $req->email,
-            "role_id" => $req->role_id,
-            // "branch_id" => $req->branch_id,
-            'password' => Hash::make($req->password),
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'contact_no' => $request->contact_no,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            "role_id" => $request->role_id,
         ]);
 
-        return response()->json([
-            "message" => "Inactive user has been created successfully.",
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'user_registered'
+        );
     }
 
     /**
@@ -106,15 +120,15 @@ class AuthController extends Controller
      * )
      */
 
-    public function login(Request $req)
+    public function login(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string',
             'password' => 'required|string',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 422);
+            return $this->sendValidatorMessages($validator);
 
         if (auth('api')->validate($validator->validated())) {
             $token = auth('api')->setTTL(60 * 12)->attempt($validator->validated());
@@ -129,66 +143,45 @@ class AuthController extends Controller
             $token = auth('student')->setTTL(60 * 12)->attempt($validator->validated());
             $auth_type = 'student';
         } else {
-            $token = null;
-            $auth_type = null;
+            return $this->sendResponse(
+                success: false,
+                status: 422,
+                name: 'wrong_credentials'
+            );
         }
 
-        if (!$token)
-            return response()->json(['error' => 'Unauthenticated'], 401);
+        if (!auth($auth_type)->user()->status)
+            return $this->sendResponse(
+                success: false,
+                status: 422,
+                name: 'inactive_user'
+            );
 
         switch ($auth_type) {
             case 'api':
-                $show = [
-                    [],
-                ];
+                $permissions = UserPermissionResource::make(auth($auth_type)->user()->role);
                 break;
             case 'teacher':
-                $show = [
-                    [
-                        "name" => "my-groups",
-                        "window" => "default",
-                    ],
-                ];
+                $permissions = TeacherPermissionResource::make(auth($auth_type)->user()->role);
                 break;
             case 'parent':
-                $show = [
-                    [
-                        "name" => "my-children",
-                        "window" => "default",
-                    ],
-                    [
-                        "name" => "my-cards",
-                        "window" => null,
-                    ],
-                    [
-                        "name" => "all-courses",
-                        "window" => null,
-                    ],
-                ];
+                $permissions = ParentPermissionResource::make(auth($auth_type)->user()->role);
                 break;
             case 'student':
-                $show = [
-                    [
-                        "name" => "my-courses",
-                        "window" => "default",
-                    ],
-                    [
-                        "name" => "my-cards",
-                        "window" => null,
-                    ],
-                    [
-                        "name" => "all-courses",
-                        "window" => null,
-                    ],
-                ];
+                $permissions = StudentPermissionResource::make(auth($auth_type)->user()->role);
                 break;
         }
 
-        return response()->json([
-            'token' => $token,
-            'role' => auth($auth_type)->user()->role,
-            'show' => $show
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'logged_in',
+            data: [
+                "token" => $token,
+                "name" => auth($auth_type)->user()->role->name,
+                "permissions" => $permissions
+            ]
+        );
     }
 
     /**
@@ -212,9 +205,12 @@ class AuthController extends Controller
     public function logout()
     {
         auth($this->auth_type)->logout();
-        return response()->json([
-            'message' => 'User logged out'
-        ], 201);
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'logged_out'
+        );
     }
 
     /**
@@ -237,9 +233,22 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json([
-            "data" => $this->auth_user
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'me',
+            data: [
+                // "id": 1,
+                "firstname" => $this->auth_user->firstname,
+                "lastname" => $this->auth_user->lastname,
+                "email" => $this->auth_user->email,
+                "contact_no" => $this->auth_user->contact_no,
+                // "role_id" =>$this->auth_user->firstname,
+                "status" => $this->auth_user->status ?? null,
+                // "created_by" =>$this->auth_user->firstname,
+                // "created_at" => $this->auth_user->firstname,
+            ]
+        );
     }
 
     /**
@@ -310,8 +319,22 @@ class AuthController extends Controller
 
     public function branches()
     {
+        $data = [];
+
+        foreach ($this->auth_user->branches as $branch) {
+            $encoded_data = base64_encode(json_encode([
+                "id" => $branch->id,
+                "time" => time(),
+            ]));
+
+            $data[] = [
+                "branch_name" => $branch->name,
+                "branch" => $encoded_data,
+            ];
+        }
+
         return response()->json([
-            "data" => $this->auth_user->branches
+            "data" => $data
         ]);
     }
 

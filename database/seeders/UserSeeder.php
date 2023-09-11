@@ -38,5 +38,6 @@ class UserSeeder extends Seeder
         ];
 
         User::insert($users);
+        User::factory(10)->create();
     }
 }

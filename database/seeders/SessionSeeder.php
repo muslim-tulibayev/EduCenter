@@ -14,12 +14,30 @@ class SessionSeeder extends Seeder
     public function run(): void
     {
         $sessions = [
-            ["duration" => "08:30 - 09:50"],
-            ["duration" => "10:00 - 11:20"],
-            ["duration" => "11:30 - 12:50"],
-            ["duration" => "13:30 - 14:50"],
-            ["duration" => "15:00 - 16:20"],
-            ["duration" => "16:30 - 17:50"],
+            [
+                "start" => "08:30:00",
+                "end" => "09:50:00",
+            ],
+            [
+                "start" => "10:00:00",
+                "end" => "11:20:00",
+            ],
+            [
+                "start" => "11:30:00",
+                "end" => "12:50:00",
+            ],
+            [
+                "start" => "13:30:00",
+                "end" => "14:50:00",
+            ],
+            [
+                "start" => "15:00:00",
+                "end" => "16:20:00",
+            ],
+            [
+                "start" => "16:30:00",
+                "end" => "17:50:00",
+            ]
         ];
 
         Session::insert($sessions);

@@ -23,6 +23,7 @@ class StparentFactory extends Factory
             'lastname' => fake()->lastName(),
             'email' => fake()->safeEmail(),
             'contact_no' => fake()->phoneNumber(),
+            'status' => fake()->boolean(50),
             'role_id' => Role::where('name', 'parent')->first()->id,
             'password' => Hash::make('12345678'),
         ];

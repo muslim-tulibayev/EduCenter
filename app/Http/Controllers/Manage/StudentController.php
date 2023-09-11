@@ -4,23 +4,24 @@ namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\StudentResource;
-use App\Http\Resources\Student\StudentResourceForSearch;
-use App\Models\Stparent;
 use App\Models\Student;
-use App\Traits\CheckEmailUniqueness;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
-    use CheckEmailUniqueness;
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
+    private $Student;
 
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('students');
+        parent::__construct('students', true);
 
         $this->middleware(function ($request, $next) {
             if (!($this->auth_role['student_search'] >= 1))
@@ -30,6 +31,14 @@ class StudentController extends Controller
 
             return $next($request);
         })->only('search');
+
+        $this->middleware(function ($request, $next) {
+            $this->Student = Student::whereHas('groups.branch', function ($query) {
+                $query->where('id', $this->auth_branch_id);
+            });
+
+            return $next($request);
+        });
     }
 
     /**
@@ -52,9 +61,15 @@ class StudentController extends Controller
 
     public function index()
     {
-        $students = Student::with('groups')->with('stparents')->orderByDesc('id')->paginate();
+        $students = $this->Student->orderByDesc('id')->paginate();
 
-        return StudentResource::collection($students);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: "all_students",
+            data: StudentResource::collection($students),
+            pagination: $students
+        );
     }
 
     /**
@@ -75,19 +90,9 @@ class StudentController extends Controller
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
      *       @OA\Property(property="contact_no", type="string", example="address"),
      *       @OA\Property(property="status", type="boolean", example=false),
-     *       @OA\Property(property="group_id", type="numeric", example=1),
      *       @OA\Property(
-     *         property="parents", type="array", collectionFormat="multi",
-     *         @OA\Items(type="object", example={
-     *              "firstname": "John",
-     *              "lastname": "Doe",
-     *              "email": "user@gmail.com",
-     *              "contact_no": "+998 98 545 46 78",
-     *         }),
-     *      ),
-     *       @OA\Property(
-     *         property="exist_parents", type="array", collectionFormat="multi",
-     *         @OA\Items(type="integer", example=1)
+     *         property="groups", type="array", collectionFormat="multi",
+     *         @OA\Items(type="numeric", example=1)
      *      ),
      *    ),
      * ),
@@ -101,72 +106,63 @@ class StudentController extends Controller
      * )
      */
 
-    public function store(Request $req)
+    public function store(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'email' => 'required|email|unique:students,email',
+            'email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email',
             'contact_no' => 'required|string',
-            'status' => 'boolean',
-            'group_id' => 'numeric|exists:groups,id',
-            'parents' => 'array',
-            'parents.*.firstname' => 'required|string',
-            'parents.*.lastname' => 'required|string',
-            'parents.*.email' => 'required|email|unique:stparents,email',
-            'parents.*.contact_no' => 'required|string',
-            'exist_parents' => 'array',
-            'exist_parents.*' => 'required|numeric|exists:stparents,id',
+            'status' => 'required|boolean',
+            'groups' => 'array',
+            'groups.*' => 'numeric|distinct|exists:groups,id',
+            // 'parents' => 'array',
+            // 'parents.*.firstname' => 'required|string',
+            // 'parents.*.lastname' => 'required|string',
+            // 'parents.*.email' => 'required|email|unique:stparents,email',
+            // 'parents.*.contact_no' => 'required|string',
+            // 'exist_parents' => 'array',
+            // 'exist_parents.*' => 'required|numeric|exists:stparents,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $newStudent = Student::create([
-            'firstname' => $req->firstname,
-            'lastname' => $req->lastname,
-            'email' => $req->email,
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'email' => $request->email,
             'password' => Hash::make('12345678'),
-            'contact_no' => $req->contact_no,
-            'status' => $req->status ?? false,
-            'created_by' => auth('api')->user()->id,
+            'contact_no' => $request->contact_no,
+            'status' => $request->status,
+            // morph
+            'created_by' => $this->auth_user->id,
+            // 'created_by' => auth('api')->user()->id,
             'created_at' => date('Y-m-d h:i:s')
         ]);
 
-        if ($req->has('group_id'))
-            $newStudent->groups()->attach($req->group_id);
+        if ($request->has('groups')) {
+            $newStudent->groups()->attach($request->groups);
 
-        $attaches = [];
-
-        if ($req->has('parents')) {
-            foreach ($req->parents as $parent) {
-                $newParent = Stparent::create([
-                    "firstname" => $parent['firstname'],
-                    "lastname" => $parent['lastname'],
-                    "email" => $parent['email'],
-                    "password" => Hash::make('12345678'),
-                    "contact_no" => $parent['contact_no']
-                ]);
-                array_push($attaches, $newParent->id);
-            }
+            // $current_time = new DateTime();
+            // foreach ($request->groups as $group_id)
+            //     $newStudent->accessForCourses()->create([
+            //         "course_id" => $group_id,
+            //         'pay_time' => $current_time->format('Y-m-d H:i:s'),
+            //         'expire_time' => $current_time->modify('+1 month')->format('Y-m-d H:i:s'),
+            //     ]);
         }
 
-        if ($req->has('exist_parents'))
-            array_merge($attaches, $req->exist_parents);
-
-        $newStudent->stparents()->attach($attaches);
-
-        // if (auth('api')->user() !== null)
-        //     auth('api')->user()->makeChanges(
-        //         'New student created',
-        //         'created',
-        //         $newStudent
-        //     );
-
-        return response()->json([
-            "message" => "Student created successfully",
-            "student" => $newStudent->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: "student_created",
+            data: ["id" => $newStudent->id],
+        );
     }
 
     /**
@@ -198,12 +194,22 @@ class StudentController extends Controller
 
     public function show(string $id)
     {
-        $student = Student::with('stparents')->with('groups')->find($id);
+        $student = $this->Student->find($id);
 
-        if ($student === null)
-            return response()->json(['error' => 'Not found'], 400);
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: "student_not_found",
+                data: ["id" => $id]
+            );
 
-        return new StudentResource($student);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: "student_found",
+            data: StudentResource::make($student)
+        );
     }
 
     /**
@@ -246,21 +252,24 @@ class StudentController extends Controller
      * )
      */
 
-    public function update(Request $req, string $id)
+    public function update(Request $request, string $id)
     {
         $student = Student::find($id);
         if ($student === null)
             return response()->json(["error" => "Not found"]);
 
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'email' => 'required|email',
-            'password' => 'confirmed|string|min:8',
+            'email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email,' . $id,
             'contact_no' => 'required|string',
-            // 'is_paid' => 'boolean',
-            'status' => 'boolean',
-            // 'group_id' => 'numeric|exists:groups,id',
+            'status' => 'required|boolean',
+            'groups' => 'array',
+            'groups.*' => 'numeric|distinct|exists:groups,id',
             // 'parents' => 'array',
             // 'parents.*.firstname' => 'required|string',
             // 'parents.*.lastname' => 'required|string',
@@ -270,46 +279,36 @@ class StudentController extends Controller
             // 'exist_parents.*' => 'required|numeric|exists:stparents,id',
         ]);
 
-        if ($student->email !== $req->email) {
-            $check = $this->checkForEmailUniqueness($req->email);
-
-            if (!$check) {
-                return response([
-                    "email" => [
-                        "The email has already been taken."
-                    ]
-                ]);
-            }
-        }
-
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
-        // if ($req->has('is_paid') && (auth('api')->user() !== null)) {
-        //     $student->is_paid = $req->is_paid;
-        //     $student->save();
+        $student->update([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'email' => $request->email,
+            'contact_no' => $request->contact_no,
+            'status' => $request->status,
+        ]);
+
+        $student->groups()->sync($request->groups);
+
+        // if ($request->has('groups')) {
+        //     $student->groups()->attach($request->groups);
+        //     $current_time = new DateTime();
+        //     foreach ($request->groups as $group_id)
+        //         $student->accessForCourses()->create([
+        //             "course_id" => $group_id,
+        //             'pay_time' => $current_time->format('Y-m-d H:i:s'),
+        //             'expire_time' => $current_time->modify('+1 month')->format('Y-m-d H:i:s'),
+        //         ]);
         // }
 
-        $student->update($validator->validated());
-
-        // if (auth('api')->user() !== null)
-        //     auth('api')->user()->makeChanges(
-        //         'Student updated from $val1 to $val2',
-        //         '$col-name',
-        //         $student
-        //     );
-
-        // if (auth('student')->user() !== null)
-        //     auth('student')->user()->makeChanges(
-        //         'Student updated from $val1 to $val2',
-        //         '$col-name',
-        //         $student
-        //     );
-
-        return response()->json([
-            "message" => "Student updated successfully",
-            "student" => $student->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: "student_updated",
+            data: ["id" => $id]
+        );
     }
 
     /**
@@ -341,25 +340,24 @@ class StudentController extends Controller
 
     public function destroy($id)
     {
-        $student = Student::find($id);
-        if ($student === null)
-            return response()->json(["error" => "Not found"]);
+        $student = $this->Student->find($id);
 
-        // foreach ($student->stparents as $parent)
-        //     $parent->delete();
-
-        // auth('api')->user()->makeChanges(
-        //     'Student deleted',
-        //     'deleted',
-        //     $student
-        // );
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: "student_not_found",
+                data: ["id" => $id]
+            );
 
         $student->delete();
 
-        return response()->json([
-            "message" => "Student deleted successfully",
-            "student" => $student->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: "student_deleted",
+            data: ["id" => $id]
+        );
     }
 
     /**
@@ -388,20 +386,25 @@ class StudentController extends Controller
      * )
      */
 
-    public function search(Request $req)
+    public function search(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "data" => 'required|string'
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
-        $students = Student::where('firstname', 'LIKE', "%$req->data%")
-            ->orWhere('lastname', 'LIKE', "%$req->data%")
-            ->take(10)
+        $students = $this->Student::where('firstname', 'LIKE', "%$request->data%")
+            ->orWhere('lastname', 'LIKE', "%$request->data%")
+            ->take(15)
             ->get();
 
-        return StudentResourceForSearch::collection($students);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: "student_search",
+            data: StudentResource::collection($students)
+        );
     }
 }

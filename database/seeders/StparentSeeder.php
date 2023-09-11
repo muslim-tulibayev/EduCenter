@@ -22,11 +22,13 @@ class StparentSeeder extends Seeder
                 "email" => "parent@gmail.com", // ->unique()->index('idx_email');
                 "password" => Hash::make('12345678'), // 
                 "contact_no" => fake()->phoneNumber(), // 
+                "status" => true, // 
                 "role_id" => Role::where('name', 'parent')->first()->id, // ->constrained();
                 // "payment_token" => "", // ->nullable();
             ],
         ];
 
         Stparent::insert($parents);
+        Stparent::factory(100)->create();
     }
 }

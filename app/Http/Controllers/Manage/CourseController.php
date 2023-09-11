@@ -4,17 +4,31 @@ namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Course\CourseResource;
+use App\Models\Branch;
 use App\Models\Course;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CourseController extends Controller
 {
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
+    private $Course;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
 
-        parent::__construct('courses');
+        parent::__construct('courses', true);
+
+        $this->middleware(function ($request, $next) {
+            $this->Course = Branch::find($this->auth_branch_id)
+                ->courses();
+
+            return $next($request);
+        });
     }
 
     /**
@@ -37,9 +51,15 @@ class CourseController extends Controller
 
     public function index()
     {
-        $courses = Course::orderByDesc('id')->paginate();
+        $courses = $this->Course->orderByDesc('id')->paginate();
 
-        return CourseResource::collection($courses);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_courses',
+            data: CourseResource::collection($courses),
+            pagination: $courses
+        );
     }
 
     /**
@@ -69,20 +89,24 @@ class CourseController extends Controller
      * )
      */
 
-    public function store(Request $req)
+    public function store(Request $request)
     {
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "name" => 'required|string',
             "price" => 'required|numeric',
+            "branches" => 'required|array',
+            "branches.*" => 'numeric|distinct|exists:branches,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $newCourse = Course::create([
-            'name' => $req->name,
-            'price' => $req->price
+            'name' => $request->name,
+            'price' => $request->price
         ]);
+
+        $newCourse->branches()->attach($request->branches);
 
         // auth('api')->user()->makeChanges(
         //     'New course created',
@@ -90,10 +114,12 @@ class CourseController extends Controller
         //     $newCourse
         // );
 
-        return response()->json([
-            "message" => "Course created successfully",
-            "course" => $newCourse->id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'course_created',
+            data: ["id" => $newCourse->id],
+        );
     }
 
     /**
@@ -125,12 +151,22 @@ class CourseController extends Controller
 
     public function show(string $id)
     {
-        $course = Course::find($id);
+        $course = $this->Course->find($id);
 
-        if ($course === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$course)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'course_not_found',
+                data: ["id" => $id]
+            );
 
-        return new CourseResource($course);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_course',
+            data: CourseResource::make($course)
+        );
     }
 
     /**
@@ -169,25 +205,34 @@ class CourseController extends Controller
      * )
      */
 
-    public function update(Request $req, string $id)
+    public function update(Request $request, string $id)
     {
-        $course = Course::find($id);
+        $course = $this->Course->find($id);
 
-        if ($course === null)
-            return response()->json(["error" => "Not found"]);
+        if (!$course)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'course_not_found',
+                data: ["id" => $id]
+            );
 
-        $validator = Validator::make($req->all(), [
+        $validator = Validator::make($request->all(), [
             "name" => 'required|string',
             "price" => 'required|numeric',
+            "branches" => 'required|array',
+            "branches.*" => 'numeric|distinct|exists:branches,id',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages());
+            return $this->sendValidatorMessages($validator);
 
         $course->update([
-            'name' => $req->name,
-            'price' => $req->price,
+            'name' => $request->name,
+            'price' => $request->price,
         ]);
+
+        $course->branches()->sync($request->branches);
 
         // auth('api')->user()->makeChanges(
         //     'Course updated from $val1 to $val2',
@@ -195,10 +240,12 @@ class CourseController extends Controller
         //     $course
         // );
 
-        return response()->json([
-            "message" => "Course updated successfully",
-            "course" => $course->id,
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'course_updated',
+            data: ["id" => $course->id]
+        );
     }
 
     /**
@@ -230,9 +277,17 @@ class CourseController extends Controller
 
     public function destroy(string $id)
     {
-        $course = Course::find($id);
-        if ($course === null)
-            return response()->json(["error" => "Not found"]);
+        $course = $this->Course->find($id);
+
+        if (!$course)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'course_not_found',
+                data: ["id" => $id]
+            );
+
+        $course->delete();
 
         // auth('api')->user()->makeChanges(
         //     'Course deleted',
@@ -240,12 +295,12 @@ class CourseController extends Controller
         //     $course
         // );
 
-        $course->delete();
-
-        return response()->json([
-            "message" => "Course deleted successfully",
-            "course" => $id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'course_deleted',
+            data: ["id" => $course->id]
+        );
     }
 
     // /**

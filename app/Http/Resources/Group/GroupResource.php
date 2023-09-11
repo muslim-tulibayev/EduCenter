@@ -19,9 +19,10 @@ class GroupResource extends JsonResource
             "name" => $this->name,
             "status" => $this->status,
             "completed_lessons" => $this->completed_lessons,
-            "teacher" => $teacher->firstname . ' ' . $teacher->lastname,
-            "assistant_teacher" => $assistant_teacher->firstname . ' ' . $assistant_teacher->lastname,
-            "course" => Course::find($this->course_id)->name,
+            "teacher_id" => $this->teacher_id,
+            "assistant_teacher_id" => $this->assistant_teacher_id,
+            "course_id" => $this->course_id,
+            // "branch_id" => $this->branch_id,
         ];
     }
 }

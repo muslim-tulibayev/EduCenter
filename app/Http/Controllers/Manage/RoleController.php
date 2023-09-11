@@ -3,12 +3,17 @@
 namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Role\RoleResource;
 use App\Models\Role;
+use App\Traits\SendResponseTrait;
+use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
+    use SendResponseTrait, SendValidatorMessagesTrait;
+
     public function __construct()
     {
         $this->middleware('auth:api,teacher,parent,student');
@@ -38,9 +43,13 @@ class RoleController extends Controller
     {
         $roles = Role::orderBy('id')->paginate();
 
-        return response()->json([
-            "data" => $roles
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_roles',
+            data: RoleResource::collection($roles),
+            pagination: $roles
+        );
     }
 
     /**
@@ -115,21 +124,23 @@ class RoleController extends Controller
             'access_for_courses' => 'required|numeric|in:0,1,2,3,4',
 
             // access for functionalities
-            'student_search' => 'required|numeric|in:0,1',
-            'payment_addcard' => 'required|numeric|in:0,1',
-            'payment_cashier' => 'required|numeric|in:0,1',
-            'payment_pay' => 'required|numeric|in:0,1',
+            // 'student_search' => 'required|numeric|in:0,1',
+            // 'payment_addcard' => 'required|numeric|in:0,1',
+            // 'payment_cashier' => 'required|numeric|in:0,1',
+            // 'payment_pay' => 'required|numeric|in:0,1',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
+            return $this->sendValidatorMessages($validator);
 
         $newRole = Role::create($validator->validated());
 
-        return response()->json([
-            "message" => "new role created successfuly",
-            "id" => $newRole->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'role_created',
+            data: ["id" => $newRole->id],
+        );
     }
 
     /**
@@ -164,13 +175,19 @@ class RoleController extends Controller
         $role = Role::find($id);
 
         if (!$role)
-            return response()->json([
-                "error" => "not found"
-            ], 400);
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'role_not_found',
+                data: ["id" => $id],
+            );
 
-        return response()->json([
-            "data" => $role
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_role',
+            data: RoleResource::make($role),
+        );
     }
 
     /**
@@ -232,13 +249,16 @@ class RoleController extends Controller
         $role = Role::find($id);
 
         if (!$role)
-            return response()->json([
-                "error" => "not found"
-            ], 400);
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'role_not_found',
+                data: ["id" => $id],
+            );
 
         $validator = Validator::make($request->all(), [
             // role name
-            'name' => 'required|string',
+            'name' => 'required|string|unique:roels,name,' . $id,
 
             // access for tables (CRUD)
             'roles' => 'required|numeric|in:0,1,2,3,4',
@@ -262,28 +282,23 @@ class RoleController extends Controller
             'access_for_courses' => 'required|numeric|in:0,1,2,3,4',
 
             // access for functionalities
-            'student_search' => 'required|numeric|in:0,1',
-            'payment_addcard' => 'required|numeric|in:0,1',
-            'payment_cashier' => 'required|numeric|in:0,1',
-            'payment_pay' => 'required|numeric|in:0,1',
+            // 'student_search' => 'required|numeric|in:0,1',
+            // 'payment_addcard' => 'required|numeric|in:0,1',
+            // 'payment_cashier' => 'required|numeric|in:0,1',
+            // 'payment_pay' => 'required|numeric|in:0,1',
         ]);
 
         if ($validator->fails())
-            return response()->json($validator->messages(), 400);
-
-        $existRoleName = Role::where('name', $request->name)->first();
-
-        if ($existRoleName)
-            return response()->json([
-                "name" => "The name has already been taken."
-            ], 400);
+            return $this->sendValidatorMessages($validator);
 
         $role->update($validator->validated());
 
-        return response()->json([
-            "message" => "new role created successfuly",
-            "id" => $role->id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'role_updated',
+            data: ["id" => $role->id],
+        );
     }
 
     /**
@@ -318,15 +333,20 @@ class RoleController extends Controller
         $role = Role::find($id);
 
         if (!$role)
-            return response()->json([
-                "error" => "not found"
-            ], 400);
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'role_not_found',
+                data: ["id" => $id],
+            );
 
         $role->delete();
 
-        return response()->json([
-            "message" => "Role deleted successfully",
-            "id" => $id
-        ]);
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'role_deleted',
+            data: ["id" => $role->id],
+        );
     }
 }
