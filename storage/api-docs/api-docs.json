@@ -1034,6 +1034,102 @@
                 ]
             }
         },
+        "/api/user/cashier": {
+            "get": {
+                "tags": [
+                    "AuthUser"
+                ],
+                "summary": "Get Cashier",
+                "description": "GetCashier",
+                "operationId": "getCashierAuthUser",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/pay-for-course": {
+            "post": {
+                "tags": [
+                    "AuthUser"
+                ],
+                "summary": "Pay for course",
+                "description": "Pay for course",
+                "operationId": "payForCourseAuthUser",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "student_id",
+                                    "course_id",
+                                    "card_id"
+                                ],
+                                "properties": {
+                                    "student_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "course_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "card_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/teacher/assistant": {
             "get": {
                 "tags": [

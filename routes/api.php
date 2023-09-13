@@ -35,8 +35,8 @@ Route::group(['prefix' => '/auth'], function () {
 
 Route::group(['prefix' => '/user'], function () {
     Route::get('/statistics', [AuthUserController::class, 'statistics']);
-    // Route::get('/cashier', [AuthUserController::class, 'cashierId']);
-    // Route::post('/pay-for-course', [AuthUserController::class, 'payForCourse']);
+    Route::get('/cashier', [AuthUserController::class, 'cashierId']);
+    Route::post('/pay-for-course', [AuthUserController::class, 'payForCourse']);
 });
 
 Route::group(['prefix' => '/teacher'], function () {
@@ -98,6 +98,7 @@ Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/schedule', ScheduleController::class);
     Route::apiResource('/role', RoleController::class);
     Route::apiResource('/payment', PaymentController::class);
+    // Route::apiResource('/cashier', CashierController::class);
     // Route::apiResource('/card', CardController::class);
 });
 

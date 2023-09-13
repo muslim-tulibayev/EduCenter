@@ -176,15 +176,22 @@ class StudentController extends Controller
                 . '|unique:students,email',
             'contact_no' => 'required|string',
             'status' => 'required|boolean',
+
             'groups' => 'array',
             'groups.*' => 'numeric|distinct|exists:groups,id',
-            // 'parents' => 'array',
-            // 'parents.*.firstname' => 'required|string',
-            // 'parents.*.lastname' => 'required|string',
-            // 'parents.*.email' => 'required|email|unique:stparents,email',
-            // 'parents.*.contact_no' => 'required|string',
-            // 'exist_parents' => 'array',
-            // 'exist_parents.*' => 'required|numeric|exists:stparents,id',
+
+            'parents' => 'array',
+            'parents.*.firstname' => 'required|string',
+            'parents.*.lastname' => 'required|string',
+            'parents.*.email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email',
+            'parents.*.contact_no' => 'required|string',
+
+            'exist_parents' => 'array',
+            'exist_parents.*' => 'numeric|distinct|exists:stparents,id',
         ]);
 
         if ($validator->fails())

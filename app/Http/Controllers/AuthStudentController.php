@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Payment\PaymentMethods;
 use App\Http\Resources\AccessForCourse\AccessForCourseResource;
+use App\Http\Resources\Card\CardResource;
 use App\Http\Resources\Course\CourseResource;
 use App\Http\Resources\Lesson\LessonResource;
 use App\Models\Course;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AuthStudentController extends Controller
 {
@@ -158,7 +160,12 @@ class AuthStudentController extends Controller
 
     public function myCards()
     {
-        return $this->payment->myCards();
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_' . $this->auth_type . '_cards',
+            data: CardResource::collection($this->auth_user->cards)
+        );
     }
 
     /**
@@ -193,7 +200,27 @@ class AuthStudentController extends Controller
 
     public function addCard(Request $request)
     {
-        return $this->payment->addCard($request);
+        $validator = Validator::make($request->all(), [
+            'card_number' => 'required|string|min:16|unique:cards,card_number',
+            'card_expiration' => 'required|string',
+            'card_token' => 'required|string',
+        ]);
+
+        if ($validator->fails())
+            return $this->sendValidatorMessages($validator);
+
+        $newCard = $this->auth_user->cards()->create([
+            'card_number' => $request->card_number,
+            'card_expiration' => $request->card_expiration,
+            'card_token' => $request->card_token,
+        ]);
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: $this->auth_type . '_card_added',
+            data: ["id" => $newCard->id]
+        );
     }
 
     /**

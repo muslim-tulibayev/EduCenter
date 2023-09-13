@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Card\CardResource;
 use App\Models\Cashier;
 use App\Models\Course;
-use App\Models\Stparent;
 use App\Models\Student;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
@@ -28,133 +26,6 @@ class PaymentMethods extends Controller
         parent::__construct();
 
         $this->cashier = Cashier::find(1);
-    }
-
-
-
-    public function myCards()
-    {
-        return $this->sendResponse(
-            success: true,
-            status: 200,
-            name: 'get_' . $this->auth_type . '_cards',
-            data: CardResource::collection($this->auth_user->cards)
-        );
-    }
-
-
-
-    public function addCard(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'card_number' => 'required|string|min:16|unique:cards,card_number',
-            'card_expiration' => 'required|string',
-            'card_token' => 'required|string',
-        ]);
-
-        if ($validator->fails())
-            return $this->sendValidatorMessages($validator);
-
-        $newCard = $this->auth_user->cards()->create([
-            'card_number' => $request->card_number,
-            'card_expiration' => $request->card_expiration,
-            'card_token' => $request->card_token,
-        ]);
-
-        return $this->sendResponse(
-            success: true,
-            status: 200,
-            name: $this->auth_type . '_card_added',
-            data: ["id" => $newCard->id]
-        );
-    }
-
-
-
-    public function addCardForAdmin(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'type' => 'required|in:student,parent',
-            'id' => 'required|numeric|integer',
-            'card_number' => 'required|string|min:16|unique:cards,card_number',
-            'card_expiration' => 'required|string',
-            'card_token' => 'required|string',
-        ]);
-
-        if ($validator->fails())
-            return $this->sendValidatorMessages($validator);
-
-        if ($request->type === 'student')
-            $user = Student::find($request->id);
-        elseif ($request->type === 'parent')
-            $user = Stparent::find($request->id);
-
-        if (!$user)
-            return $this->sendResponse(
-                success: false,
-                status: 404,
-                name: $request->type . '_not_found',
-            );
-
-        $newCard = $user->cards()->create([
-            'card_number' => $request->card_number,
-            'card_expiration' => $request->card_expiration,
-            'card_token' => $request->card_token,
-        ]);
-
-        return $this->sendResponse(
-            success: true,
-            status: 200,
-            name: $request->type . '_card_added',
-            data: ["id" => $newCard->id]
-        );
-    }
-
-
-
-    public function deleteCard(string $id)
-    {
-        $card = $this->auth_user->cards()->find($id);
-
-        if (!$card)
-            return $this->sendResponse(
-                success: false,
-                status: 404,
-                name: 'card_not_found',
-                data: ["id" => $id]
-            );
-
-        $card->delete();
-
-        return $this->sendResponse(
-            success: true,
-            status: 200,
-            name: $this->auth_type . '_card_deleted',
-            data: ["id" => $id]
-        );
-    }
-
-
-    public function deleteCardForAdmin(string $id)
-    {
-        $card = $this->auth_user->cards()->find($id);
-
-        if (!$card)
-            return $this->sendResponse(
-                success: false,
-                status: 404,
-                name: 'card_not_found',
-                data: ["id" => $id]
-            );
-
-        $card->delete();
-
-        return $this->sendResponse(
-            success: true,
-            status: 200,
-            name: $this->auth_type . '_card_deleted',
-            data: ["id" => $id]
-        );
     }
 
 
@@ -319,7 +190,7 @@ class PaymentMethods extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name:'receipts_create_has_error',
+                name: 'receipts_create_has_error',
                 data: $rec_create->error
             );
 
@@ -332,7 +203,7 @@ class PaymentMethods extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name:'receipts_pay_has_error',
+                name: 'receipts_pay_has_error',
                 data: $rec_pay->error
             );
 
@@ -455,3 +326,129 @@ class PaymentMethods extends Controller
         ]);
     }
 }
+
+
+    // public function myCards()
+    // {
+    //     return $this->sendResponse(
+    //         success: true,
+    //         status: 200,
+    //         name: 'get_' . $this->auth_type . '_cards',
+    //         data: CardResource::collection($this->auth_user->cards)
+    //     );
+    // }
+
+
+
+    // public function addCard(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'card_number' => 'required|string|min:16|unique:cards,card_number',
+    //         'card_expiration' => 'required|string',
+    //         'card_token' => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails())
+    //         return $this->sendValidatorMessages($validator);
+
+    //     $newCard = $this->auth_user->cards()->create([
+    //         'card_number' => $request->card_number,
+    //         'card_expiration' => $request->card_expiration,
+    //         'card_token' => $request->card_token,
+    //     ]);
+
+    //     return $this->sendResponse(
+    //         success: true,
+    //         status: 200,
+    //         name: $this->auth_type . '_card_added',
+    //         data: ["id" => $newCard->id]
+    //     );
+    // }
+
+
+
+    // public function addCardForAdmin(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'type' => 'required|in:student,parent',
+    //         'id' => 'required|numeric|integer',
+    //         'card_number' => 'required|string|min:16|unique:cards,card_number',
+    //         'card_expiration' => 'required|string',
+    //         'card_token' => 'required|string',
+    //     ]);
+
+    //     if ($validator->fails())
+    //         return $this->sendValidatorMessages($validator);
+
+    //     if ($request->type === 'student')
+    //         $user = Student::find($request->id);
+    //     elseif ($request->type === 'parent')
+    //         $user = Stparent::find($request->id);
+
+    //     if (!$user)
+    //         return $this->sendResponse(
+    //             success: false,
+    //             status: 404,
+    //             name: $request->type . '_not_found',
+    //         );
+
+    //     $newCard = $user->cards()->create([
+    //         'card_number' => $request->card_number,
+    //         'card_expiration' => $request->card_expiration,
+    //         'card_token' => $request->card_token,
+    //     ]);
+
+    //     return $this->sendResponse(
+    //         success: true,
+    //         status: 200,
+    //         name: $request->type . '_card_added',
+    //         data: ["id" => $newCard->id]
+    //     );
+    // }
+
+
+
+    // public function deleteCard(string $id)
+    // {
+    //     $card = $this->auth_user->cards()->find($id);
+
+    //     if (!$card)
+    //         return $this->sendResponse(
+    //             success: false,
+    //             status: 404,
+    //             name: 'card_not_found',
+    //             data: ["id" => $id]
+    //         );
+
+    //     $card->delete();
+
+    //     return $this->sendResponse(
+    //         success: true,
+    //         status: 200,
+    //         name: $this->auth_type . '_card_deleted',
+    //         data: ["id" => $id]
+    //     );
+    // }
+
+
+    // public function deleteCardForAdmin(string $id)
+    // {
+    //     $card = $this->auth_user->cards()->find($id);
+
+    //     if (!$card)
+    //         return $this->sendResponse(
+    //             success: false,
+    //             status: 404,
+    //             name: 'card_not_found',
+    //             data: ["id" => $id]
+    //         );
+
+    //     $card->delete();
+
+    //     return $this->sendResponse(
+    //         success: true,
+    //         status: 200,
+    //         name: $this->auth_type . '_card_deleted',
+    //         data: ["id" => $id]
+    //     );
+    // }

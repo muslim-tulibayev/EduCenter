@@ -17,8 +17,6 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'superadmin',
 
-                // 'all_branches' => 1,
-
                 'roles' => 4,
                 'users' => 4,
                 'inactive_users' => 4,
@@ -39,14 +37,12 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 4,
                 'access_for_courses' => 4,
-                'cards' => 4,                
+                'cards' => 4,
                 'payments' => 4,
                 // 'changes' => 0,
             ],
             [
                 'name' => 'admin',
-
-                // 'all_branches' => 0,
 
                 'roles' => 0,
                 'users' => 1,
@@ -60,7 +56,7 @@ class RoleSeeder extends Seeder
                 'students' => 4,
                 'stparents' => 4,
                 'sessions' => 4,
-                'branches' => 0,
+                'branches' => 1,
                 'rooms' => 4,
                 'schedules' => 4,
                 // 'certificates' => 0,
@@ -68,15 +64,13 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 4,
                 'access_for_courses' => 4,
-                'cards' => 1,                
+                'cards' => 1,
                 'payments' => 1,
                 // 'changes' => 0,
             ],
             [
                 'name' => 'teacher',
 
-                // 'all_branches' => 0,
-
                 'roles' => 0,
                 'users' => 0,
                 'inactive_users' => 0,
@@ -97,13 +91,12 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 0,
                 'access_for_courses' => 0,
-                'cards' => 0,                
+                'cards' => 0,
                 'payments' => 0,
                 // 'changes' => 0,
-            ],[
+            ],
+            [
                 'name' => 'parent',
-
-                // 'all_branches' => 0,
 
                 'roles' => 0,
                 'users' => 0,
@@ -125,15 +118,13 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 0,
                 'access_for_courses' => 0,
-                'cards' => 0,                
+                'cards' => 0,
                 'payments' => 0,
                 // 'changes' => 0,
             ],
             [
                 'name' => 'student',
 
-                // 'all_branches' => 0,
-
                 'roles' => 0,
                 'users' => 0,
                 'inactive_users' => 0,
@@ -154,7 +145,7 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 0,
                 'access_for_courses' => 0,
-                'cards' => 0,                
+                'cards' => 0,
                 'payments' => 0,
                 // 'changes' => 0,
             ],
