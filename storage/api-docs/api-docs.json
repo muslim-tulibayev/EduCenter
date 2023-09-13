@@ -4428,6 +4428,309 @@
                 ]
             }
         },
+        "/api/manage/student/{student_id}/card": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get Student's all cards data",
+                "description": "Student get cards",
+                "operationId": "getCardsStudent",
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Set new Student card",
+                "description": "Student new card store",
+                "operationId": "StoreCardstudent",
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "card_number",
+                                    "card_expiration",
+                                    "card_token"
+                                ],
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string",
+                                        "example": "4567876543456789"
+                                    },
+                                    "card_expiration": {
+                                        "type": "string",
+                                        "example": "09/23"
+                                    },
+                                    "card_token": {
+                                        "type": "string",
+                                        "example": "ergerhguweghweirfwerrgerhfbwehfbjewhth"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/manage/student/{student_id}/card/{card_id}": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get Student's card data",
+                "description": "Student get card",
+                "operationId": "SetCardstudent",
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Update Student's specific card",
+                "description": "Student card update",
+                "operationId": "updateCardStudent",
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "card_number",
+                                    "card_expiration",
+                                    "card_token"
+                                ],
+                                "properties": {
+                                    "card_number": {
+                                        "type": "string",
+                                        "example": "4567876543456789"
+                                    },
+                                    "card_expiration": {
+                                        "type": "string",
+                                        "example": "09/23"
+                                    },
+                                    "card_token": {
+                                        "type": "string",
+                                        "example": "ergerhguweghweirfwerrgerhfbwehfbjewhth"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/manage/Student/{Student_id}/card/{card_id}": {
+            "delete": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Delete Student's specific card",
+                "description": "Student card delete",
+                "operationId": "destroyCardStudent",
+                "parameters": [
+                    {
+                        "name": "student_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/teacher": {
             "get": {
                 "tags": [

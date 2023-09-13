@@ -602,16 +602,16 @@ class StudentController extends Controller
 
     /**
      * @OA\Put(
-     * path="/api/manage/parent/{parent_id}/card/{card_id}",
-     * summary="Update parent's specific card",
-     * description="Parent card update",
-     * operationId="updateCardParent",
-     * tags={"Parent"},
+     * path="/api/manage/student/{student_id}/card/{card_id}",
+     * summary="Update Student's specific card",
+     * description="Student card update",
+     * operationId="updateCardStudent",
+     * tags={"Student"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
      *    in="path",
-     *    name="parent_id",
+     *    name="student_id",
      *    required=true,
      *    description="ID to fetch the targeted campaigns.",
      *    @OA\Schema(type="string")
@@ -645,19 +645,19 @@ class StudentController extends Controller
      * )
      */
 
-    public function updateCard(Request $request, string $parent_id, string $card_id)
+    public function updateCard(Request $request, string $student_id, string $card_id)
     {
-        $parent = $this->Stparent->find($parent_id);
+        $student = $this->Student->find($student_id);
 
-        if (!$parent)
+        if (!$student)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'parent_not_found',
-                data: ["parent_id" => $parent_id]
+                name: 'student_not_found',
+                data: ["student_id" => $student_id]
             );
 
-        $card = $parent->cards()->find($card_id);
+        $card = $student->cards()->find($card_id);
 
         if (!$card)
             return $this->sendResponse(
@@ -685,23 +685,23 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'parent_card_updated',
+            name: 'student_card_updated',
             data: ["id" => $card->id]
         );
     }
 
     /**
      * @OA\Delete(
-     * path="/api/manage/parent/{parent_id}/card/{card_id}",
-     * summary="Delete parent's specific card",
-     * description="Parent card delete",
-     * operationId="destroyCardParent",
-     * tags={"Parent"},
+     * path="/api/manage/Student/{Student_id}/card/{card_id}",
+     * summary="Delete Student's specific card",
+     * description="Student card delete",
+     * operationId="destroyCardStudent",
+     * tags={"Student"},
      * security={ {"bearerAuth": {} }},
      *
      * @OA\Parameter(
      *    in="path",
-     *    name="parent_id",
+     *    name="student_id",
      *    required=true,
      *    description="ID to fetch the targeted campaigns.",
      *    @OA\Schema(type="string")
@@ -724,19 +724,19 @@ class StudentController extends Controller
      * )
      */
 
-    public function destroyCard(string $parent_id, string $card_id)
+    public function destroyCard(string $student_id, string $card_id)
     {
-        $parent = $this->Stparent->find($parent_id);
+        $student = $this->Student->find($student_id);
 
-        if (!$parent)
+        if (!$student)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'parent_not_found',
-                data: ["parent_id" => $parent_id]
+                name: 'student_not_found',
+                data: ["student_id" => $student_id]
             );
 
-        $card = $parent->cards()->find($card_id);
+        $card = $student->cards()->find($card_id);
 
         if (!$card)
             return $this->sendResponse(
@@ -751,7 +751,7 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'parent_card_deleted',
+            name: 'student_card_deleted',
             data: ["id" => $card->id]
         );
     }
