@@ -42,6 +42,61 @@ class StudentController extends Controller
 
             return $next($request);
         });
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['cards'] >= 1))
+                return $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
+
+            return $next($request);
+        })->only('getCards');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['cards'] >= 1))
+                return $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
+
+            return $next($request);
+        })->only('getCard');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['cards'] >= 2))
+                return $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
+
+            return $next($request);
+        })->only('updateCard');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['cards'] >= 3))
+                return $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
+
+            return $next($request);
+        })->only('storeCard');
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['cards'] >= 4))
+                return $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
+
+            return $next($request);
+        })->only('destroyCard');
     }
 
     /**

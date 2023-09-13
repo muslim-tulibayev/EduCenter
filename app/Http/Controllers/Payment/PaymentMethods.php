@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Throwable;
 use DateTime;
 
-class Payment extends Controller
+class PaymentMethods extends Controller
 {
     use SendResponseTrait, SendValidatorMessagesTrait;
 

@@ -23,7 +23,8 @@ class BranchController extends Controller
         parent::__construct('branches', true);
 
         $this->middleware(function ($request, $next) {
-            $this->Branch = Branch::find($this->auth_branch_id);
+            // $this->Branch = Branch::find($this->auth_branch_id);
+            $this->Branch = $this->auth_user->branches();
 
             return $next($request);
         });
@@ -49,11 +50,14 @@ class BranchController extends Controller
 
     public function index()
     {
+        $branches = $this->Branch->orderByDesc('id')->paginate();
+
         return $this->sendResponse(
             success: true,
             status: 200,
             name: 'get_branch',
-            data: BranchResource::make($this->Branch),
+            data: BranchResource::collection($branches),
+            pagination: $branches
         );
     }
 
@@ -99,6 +103,11 @@ class BranchController extends Controller
             'location' => $request->location,
         ]);
 
+        if ($this->auth_type === 'api')
+            $newBranch->users()->attach($this->auth_user->id);
+        elseif ($this->auth_type === 'teacher')
+            $newBranch->teachers()->attach($this->auth_user->id);
+
         // auth('api')->user()->makeChanges(
         //     'New branch created',
         //     'created',
@@ -113,15 +122,52 @@ class BranchController extends Controller
         );
     }
 
-    // public function show(string $id)
-    // {
-    //     $branch = Branch::find($id);
+    /**
+     * @OA\Get(
+     * path="/api/manage/branch/{id}",
+     * summary="Get specific Branch data",
+     * description="Branch show",
+     * operationId="showBranch",
+     * tags={"Branch"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
-    //     if ($branch === null)
-    //         return response()->json(["error" => "Not found"]);
+    public function show(string $id)
+    {
+        $branch = $this->Branch->find($id);
 
-    //     return new BranchResource($branch);
-    // }
+        if (!$branch)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'branch_not_found',
+                data: ["id" => $id]
+            );
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_branch',
+            data: BranchResource::make($branch),
+        );
+    }
 
     /**
      * @OA\Put(
@@ -252,6 +298,8 @@ class BranchController extends Controller
             data: ["id" => $branch->id],
         );
     }
+}
+
 
     // /**
     //  * @OA\Get(
@@ -388,4 +436,3 @@ class BranchController extends Controller
     //     $schedules = Branch::find($request->branch_id)->schedules()->where('weekday_id', $request->weekday_id)->get();
     //     return ScheduleResourceThroughBranch::collection($schedules);
     // }
-}

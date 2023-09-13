@@ -15,4 +15,14 @@ class Payment extends Model
         "amount",
         // $table->morphs('paymentable');
     ];
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function paymentable()
+    {
+        return $this->morphTo();
+    }
 }

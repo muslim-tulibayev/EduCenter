@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Payment\Payment;
+use App\Http\Controllers\Payment\PaymentMethods;
 use App\Http\Resources\AccessForCourse\AccessForCourseResource;
 use App\Http\Resources\Course\CourseResource;
 use App\Http\Resources\Lesson\LessonResource;
@@ -21,7 +21,7 @@ class AuthStudentController extends Controller
     public function __construct()
     {
         $this->middleware('auth:student');
-        $this->payment = new Payment();
+        $this->payment = new PaymentMethods();
         parent::__construct();
     }
 

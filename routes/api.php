@@ -18,8 +18,8 @@ use App\Http\Controllers\Manage\StudentController;
 use App\Http\Controllers\Manage\TeacherController;
 use App\Http\Controllers\Manage\RoleController;
 use App\Http\Controllers\Manage\InactiveUserController;
+use App\Http\Controllers\Manage\PaymentController;
 use App\Http\Controllers\Manage\UserController;
-use App\Http\Controllers\Payment\Payment;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Route;
@@ -82,6 +82,11 @@ Route::group(['prefix' => '/manage'], function () {
 
     Route::post('/student/search', [StudentController::class, 'search']);
     Route::apiResource('/student', StudentController::class);
+    Route::get('/student/{student_id}/card', [StudentController::class, 'getCards']);
+    Route::get('/student/{student_id}/card/{card_id}', [StudentController::class, 'getCard']);
+    Route::post('/student/{student_id}/card', [StudentController::class, 'storeCard']);
+    Route::put('/student/{student_id}/card/{card_id}', [StudentController::class, 'updateCard']);
+    Route::delete('/student/{student_id}/card/{card_id}', [StudentController::class, 'destroyCard']);
 
     Route::apiResource('/course', CourseController::class);
     Route::get('/course/{id}/lessons', [CourseController::class, 'lessons']);
@@ -92,6 +97,7 @@ Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/session', SessionController::class);
     Route::apiResource('/schedule', ScheduleController::class);
     Route::apiResource('/role', RoleController::class);
+    Route::apiResource('/payment', PaymentController::class);
     // Route::apiResource('/card', CardController::class);
 });
 

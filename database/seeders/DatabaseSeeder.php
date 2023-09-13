@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             RoomSeeder::class,
             ScheduleSeeder::class,
             CardSeeder::class,
+            PaymentSeeder::class,
         ]);
 
         // Certificate::factory(100)->create();

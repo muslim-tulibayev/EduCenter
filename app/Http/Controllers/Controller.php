@@ -199,17 +199,6 @@ class Controller extends BaseController
                     );
 
                 return $next($request);
-            })->only('index');
-
-            $this->middleware(function ($request, $next) use ($column) {
-                if (!($this->auth_role[$column] >= 1))
-                    return $this->sendResponse(
-                        success: false,
-                        status: 403,
-                        name: 'unauthorized',
-                    );
-
-                return $next($request);
             })->only('show');
 
             $this->middleware(function ($request, $next) use ($column) {

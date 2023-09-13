@@ -62,8 +62,18 @@ class UserPermissionResource extends JsonResource
                 "default" => false
             ],
             [
+                "name" => 'inactive_users',
+                "value" => $this->inactive_users,
+                "default" => false
+            ],
+            [
                 "name" => 'teachers',
                 "value" => $this->teachers,
+                "default" => false
+            ],
+            [
+                "name" => 'assistant_teachers',
+                "value" => $this->assistant_teachers,
                 "default" => false
             ],
             [
@@ -119,6 +129,16 @@ class UserPermissionResource extends JsonResource
             [
                 "name" => 'access-for-courses',
                 "value" => $this->access_for_courses,
+                "default" => false
+            ],
+            // [
+            //     "name" => 'cards',
+            //     "value" => $this->cards,
+            //     "default" => false
+            // ],
+            [
+                "name" => 'payments',
+                "value" => $this->payments,
                 "default" => false
             ],
         ];

@@ -1393,6 +1393,48 @@
             }
         },
         "/api/manage/branch/{id}": {
+            "get": {
+                "tags": [
+                    "Branch"
+                ],
+                "summary": "Get specific Branch data",
+                "description": "Branch show",
+                "operationId": "showBranch",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "put": {
                 "tags": [
                     "Branch"
