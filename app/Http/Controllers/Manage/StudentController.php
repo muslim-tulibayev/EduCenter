@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Manage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Card\CardResource;
 use App\Http\Resources\Student\StudentResource;
+use App\Models\Role;
+use App\Models\Stparent;
 use App\Models\Student;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
@@ -148,8 +150,16 @@ class StudentController extends Controller
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
      *       @OA\Property(property="contact_no", type="string", example="address"),
      *       @OA\Property(property="status", type="boolean", example=false),
+     *       @OA\Property(property="parents", type="array",
+     *             @OA\Items( type="object",
+     *                 @OA\Property(property="firstname", type="string", example="John"),
+     *                 @OA\Property(property="lastname", type="string", example="Doe"),
+     *                 @OA\Property(property="email", type="number", example="user@gmail.com"),
+     *                 @OA\Property(property="contact_no", type="string", example="+998 65 445 67 89"),
+     *             ),
+     *       ),
      *       @OA\Property(
-     *         property="groups", type="array", collectionFormat="multi",
+     *         property="exist_parents", type="array", collectionFormat="multi",
      *         @OA\Items(type="numeric", example=1)
      *      ),
      *    ),
@@ -177,9 +187,6 @@ class StudentController extends Controller
             'contact_no' => 'required|string',
             'status' => 'required|boolean',
 
-            'groups' => 'array',
-            'groups.*' => 'numeric|distinct|exists:groups,id',
-
             'parents' => 'array',
             'parents.*.firstname' => 'required|string',
             'parents.*.lastname' => 'required|string',
@@ -197,6 +204,24 @@ class StudentController extends Controller
         if ($validator->fails())
             return $this->sendValidatorMessages($validator);
 
+        if ($request->has('parents')) {
+            $emails = [$request->email];
+
+            foreach ($request->parents as $parent)
+                $emails[] = $parent['email'];
+
+            if (count($emails) !== count(array_unique($emails)))
+                return $this->sendResponse(
+                    success: false,
+                    status: 400,
+                    name: 'validation_error',
+                    data: [
+                        "field" => 'emails_combination',
+                        "message" => 'The email fields must contain distinct email values.'
+                    ]
+                );
+        }
+
         $newStudent = Student::create([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
@@ -204,23 +229,29 @@ class StudentController extends Controller
             'password' => Hash::make('12345678'),
             'contact_no' => $request->contact_no,
             'status' => $request->status,
-            // morph
+            'role_id' => Role::where('name', 'student')->first()->id,
+            //! morph
             'created_by' => $this->auth_user->id,
-            // 'created_by' => auth('api')->user()->id,
             'created_at' => date('Y-m-d h:i:s')
         ]);
 
-        if ($request->has('groups')) {
-            $newStudent->groups()->attach($request->groups);
+        if ($request->has('parents'))
+            foreach ($request->parents as $parent) {
+                $newParent = Stparent::create([
+                    "firstname" => $parent['firstname'],
+                    "lastname" => $parent['lastname'],
+                    "email" => $parent['email'],
+                    "password" => Hash::make('12345678'),
+                    "contact_no" => $parent['contact_no'],
+                    "status" => true,
+                    "role_id" => Role::where('name', 'parent')->first()->id,
+                ]);
 
-            // $current_time = new DateTime();
-            // foreach ($request->groups as $group_id)
-            //     $newStudent->accessForCourses()->create([
-            //         "course_id" => $group_id,
-            //         'pay_time' => $current_time->format('Y-m-d H:i:s'),
-            //         'expire_time' => $current_time->modify('+1 month')->format('Y-m-d H:i:s'),
-            //     ]);
-        }
+                $newStudent->stparents()->attach($newParent->id);
+            }
+
+        if ($request->has('exist_parents'))
+            $newStudent->stparents()->attach($request->exist_parents);
 
         return $this->sendResponse(
             success: true,

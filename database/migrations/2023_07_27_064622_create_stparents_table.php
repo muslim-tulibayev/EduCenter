@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('contact_no');
             $table->boolean('status')->default(false);
             $table->foreignId('role_id')->constrained();
-            // $table->text('payment_token')->nullable();
         });
     }
 

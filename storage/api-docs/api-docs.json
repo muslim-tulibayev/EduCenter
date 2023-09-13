@@ -4302,7 +4302,31 @@
                                         "type": "boolean",
                                         "example": false
                                     },
-                                    "groups": {
+                                    "parents": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "firstname": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "lastname": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "number",
+                                                    "example": "user@gmail.com"
+                                                },
+                                                "contact_no": {
+                                                    "type": "string",
+                                                    "example": "+998 65 445 67 89"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "exist_parents": {
                                         "type": "array",
                                         "items": {
                                             "type": "numeric",

@@ -32,6 +32,7 @@ class Student extends Authenticatable implements JWTSubject
         'password',
         'updated_by',
         'created_by',
+        'created_at',
     ];
 
     protected $hidden = [
