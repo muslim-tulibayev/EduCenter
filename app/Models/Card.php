@@ -18,9 +18,9 @@ class Card extends Model
         'card_token',
     ];
 
-    // protected $hidden = [
-    //     'card_token'
-    // ];
+    protected $hidden = [
+        'card_token'
+    ];
 
     public function cardable(): MorphTo
     {

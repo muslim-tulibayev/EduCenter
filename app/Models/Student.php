@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 // // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -31,7 +32,6 @@ class Student extends Authenticatable implements JWTSubject
         'password',
         'updated_by',
         'created_by',
-        // 'payment_token',
     ];
 
     protected $hidden = [
@@ -58,9 +58,9 @@ class Student extends Authenticatable implements JWTSubject
         return $this->morphMany(Card::class, 'cardable');
     }
 
-    public function getBranchesAttribute()
+    public function paymentable()
     {
-        return $this->groups->pluck('branch')->unique();
+        return $this->morphMany(Payment::class, 'paymentable');
     }
 
     // ------------------------------------------------------
@@ -79,11 +79,6 @@ class Student extends Authenticatable implements JWTSubject
             "data_key" => $data_key,
             "created_at" => date('Y-m-d h:i:s'),
         ]);
-    }
-
-    public function certificates(): HasMany
-    {
-        return $this->hasMany(Certificate::class);
     }
 
     public function getJWTIdentifier()

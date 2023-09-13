@@ -23,9 +23,6 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50)->unique();
-            
-            // manage all branches data
-            // $table->unsignedTinyInteger('all_branches')->default(0);
 
             // access for tables (CRUD)
             $table->unsignedTinyInteger('roles')->default(0);
@@ -41,18 +38,13 @@ return new class extends Migration
             $table->unsignedTinyInteger('branches')->default(0);
             $table->unsignedTinyInteger('rooms')->default(0);
             $table->unsignedTinyInteger('schedules')->default(0);
-            // $table->unsignedTinyInteger('changes')->default(0);
             // $table->unsignedTinyInteger('certificates')->default(0);
             // $table->unsignedTinyInteger('failedsts')->default(0);
             // $table->unsignedTinyInteger('failedgroups')->default(0);
             $table->unsignedTinyInteger('cashiers')->default(0);
             $table->unsignedTinyInteger('access_for_courses')->default(0);
-
-            // access for functionalities
-            // $table->unsignedTinyInteger('student_search')->default(0);
-            // $table->unsignedTinyInteger('payment_addcard')->default(0);
-            // $table->unsignedTinyInteger('payment_cashier')->default(0);
-            // $table->unsignedTinyInteger('payment_pay')->default(0);
+            $table->unsignedTinyInteger('cards')->default(0);
+            $table->unsignedTinyInteger('changes')->default(0);
 
             // $table->index(['name']);
         });

@@ -37,6 +37,7 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 4,
                 'access_for_courses' => 4,
+                'cards' => 4,
                 // 'changes' => 0,
             ],
             [
@@ -62,6 +63,7 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 4,
                 'access_for_courses' => 4,
+                'cards' => 1,
                 // 'changes' => 0,
             ],
             [
@@ -87,6 +89,7 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 0,
                 'access_for_courses' => 0,
+                'cards' => 0,
                 // 'changes' => 0,
             ],[
                 'name' => 'parent',
@@ -111,6 +114,7 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 0,
                 'access_for_courses' => 0,
+                'cards' => 0,
                 // 'changes' => 0,
             ],
             [
@@ -136,6 +140,7 @@ class RoleSeeder extends Seeder
                 // 'failedgroups' => 0,
                 'cashiers' => 0,
                 'access_for_courses' => 0,
+                'cards' => 0,
                 // 'changes' => 0,
             ],
         ];

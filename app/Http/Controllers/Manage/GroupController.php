@@ -20,7 +20,7 @@ class GroupController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student');
+        $this->middleware('auth:api,teacher');
 
         parent::__construct('groups', true);
 
@@ -338,6 +338,7 @@ class GroupController extends Controller
             data: ["id" => $group->id]
         );
     }
+}
 
     // /**
     //  * @OA\Get(
@@ -434,4 +435,3 @@ class GroupController extends Controller
     //         "group" => $id
     //     ]);
     // }
-}

@@ -43,6 +43,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Branch::class);
     }
 
+    public function paymentable()
+    {
+        return $this->morphMany(Payment::class, 'paymentable');
+    }
+
     // ---------------------------------------------------------
 
     public function changes(): MorphMany

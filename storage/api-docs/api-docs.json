@@ -325,6 +325,72 @@
                 ]
             }
         },
+        "/api/parent/my-children": {
+            "get": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "myChildren",
+                "description": "myChildren",
+                "operationId": "authMyChildren",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/parent/all-courses": {
+            "get": {
+                "tags": [
+                    "AuthParent"
+                ],
+                "summary": "AllCourses",
+                "description": "AllCourses",
+                "operationId": "authParentAllCourses",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/parent/my-cards": {
             "get": {
                 "tags": [
@@ -332,7 +398,7 @@
                 ],
                 "summary": "MyCards",
                 "description": "MyCards",
-                "operationId": "authMyCards",
+                "operationId": "authParentMyCards",
                 "responses": {
                     "401": {
                         "description": "Unauthenticated",
@@ -465,14 +531,14 @@
                 ]
             }
         },
-        "/api/parent/my-children": {
+        "/api/parent/cashier": {
             "get": {
                 "tags": [
                     "AuthParent"
                 ],
-                "summary": "myChildren",
-                "description": "myChildren",
-                "operationId": "authMyChildren",
+                "summary": "Get Cashier",
+                "description": "GetCashier",
+                "operationId": "authParentGetCashier",
                 "responses": {
                     "401": {
                         "description": "Unauthenticated",
@@ -498,14 +564,154 @@
                 ]
             }
         },
-        "/api/parent/all-courses": {
-            "get": {
+        "/api/parent/pay-for-course": {
+            "post": {
                 "tags": [
                     "AuthParent"
                 ],
+                "summary": "Pay for course",
+                "description": "Pay for course",
+                "operationId": "payForCourseAuthParent",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "student_id",
+                                    "course_id",
+                                    "card_id"
+                                ],
+                                "properties": {
+                                    "student_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "course_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "card_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/my-courses": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "MyCourses",
+                "description": "MyCourses",
+                "operationId": "authMyCourses",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/all-courses": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
                 "summary": "AllCourses",
                 "description": "AllCourses",
-                "operationId": "authParentAllCourses",
+                "operationId": "authAllCourses",
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/course/{id}/lessons": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "CourseLessons",
+                "description": "CourseLessons",
+                "operationId": "authCourseLessons",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "401": {
                         "description": "Unauthenticated",
@@ -538,7 +744,7 @@
                 ],
                 "summary": "MyCards",
                 "description": "MyCards",
-                "operationId": "myCardsAuthStudent",
+                "operationId": "authStudentMyCards",
                 "responses": {
                     "401": {
                         "description": "Unauthenticated",
@@ -671,14 +877,14 @@
                 ]
             }
         },
-        "/api/student/my-courses": {
+        "/api/student/cashier": {
             "get": {
                 "tags": [
                     "AuthStudent"
                 ],
-                "summary": "MyCourses",
-                "description": "MyCourses",
-                "operationId": "authMyCourses",
+                "summary": "Get Cashier",
+                "description": "GetCashier",
+                "operationId": "authStudentGetCashier",
                 "responses": {
                     "401": {
                         "description": "Unauthenticated",
@@ -704,24 +910,49 @@
                 ]
             }
         },
-        "/api/student/all-courses": {
-            "get": {
+        "/api/student/pay-for-course": {
+            "post": {
                 "tags": [
                     "AuthStudent"
                 ],
-                "summary": "AllCourses",
-                "description": "AllCourses",
-                "operationId": "authAllCourses",
+                "summary": "Pay for course",
+                "description": "Pay for course",
+                "operationId": "payForCourseAuthStudent",
+                "requestBody": {
+                    "description": "Pass user credentials",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "course_id",
+                                    "card_id"
+                                ],
+                                "properties": {
+                                    "course_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    },
+                                    "card_id": {
+                                        "type": "numeric",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "401": {
-                        "description": "Unauthenticated",
+                    "403": {
+                        "description": "Wrong credentials response",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "error": {
+                                        "message": {
                                             "type": "string",
-                                            "example": "Unauthenticated"
+                                            "example": "Unauthorized"
                                         }
                                     },
                                     "type": "object"
@@ -2624,35 +2855,90 @@
                 ]
             }
         },
-        "/api/payment/addcard": {
+        "/api/manage/parent/{parent_id}/card": {
+            "get": {
+                "tags": [
+                    "Parent"
+                ],
+                "summary": "Get parent's all cards data",
+                "description": "Parent get cards",
+                "operationId": "getCardsParent",
+                "parameters": [
+                    {
+                        "name": "parent_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
-                    "Payment"
+                    "Parent"
                 ],
-                "summary": "Add new card for parent or student",
-                "description": "Payment store",
-                "operationId": "addCardPayment",
+                "summary": "Set new Parent card",
+                "description": "Parent new card store",
+                "operationId": "storeCardParent",
+                "parameters": [
+                    {
+                        "name": "parent_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
-                    "description": "Pass payment credentials",
+                    "description": "Pass user credentials",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "payment_token"
+                                    "card_number",
+                                    "card_expiration",
+                                    "card_token"
                                 ],
                                 "properties": {
-                                    "type": {
+                                    "card_number": {
                                         "type": "string",
-                                        "example": "student"
+                                        "example": "4567876543456789"
                                     },
-                                    "id": {
-                                        "type": "numeric",
-                                        "example": 1
-                                    },
-                                    "payment_token": {
+                                    "card_expiration": {
                                         "type": "string",
-                                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEzNzo4MDAwL2FwaS91c2VyL2VtYWlsdmVyaWZpY2F0aW9uIiwiaWF0IjoxNjkyOTYyMTI5LCJleHAiOjE2OTMwMDUzMj"
+                                        "example": "09/23"
+                                    },
+                                    "card_token": {
+                                        "type": "string",
+                                        "example": "ergerhguweghweirfwerrgerhfbwehfbjewhth"
                                     }
                                 },
                                 "type": "object"
@@ -2685,14 +2971,34 @@
                 ]
             }
         },
-        "/api/payment/cashier": {
+        "/api/manage/parent/{parent_id}/card/{card_id}": {
             "get": {
                 "tags": [
-                    "Payment"
+                    "Parent"
                 ],
-                "summary": "Get cashier's id",
-                "description": "Cashier id",
-                "operationId": "cashierId",
+                "summary": "Get parent's card data",
+                "description": "Parent get card",
+                "operationId": "getCardParent",
+                "parameters": [
+                    {
+                        "name": "parent_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "403": {
                         "description": "Wrong credentials response",
@@ -2700,7 +3006,7 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "error": {
+                                        "message": {
                                             "type": "string",
                                             "example": "Unauthorized"
                                         }
@@ -2716,33 +3022,57 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/api/payment/pay": {
-            "post": {
+            },
+            "put": {
                 "tags": [
-                    "Payment"
+                    "Parent"
                 ],
-                "summary": "Buy new courses or extend their expire date",
-                "description": "Payment pay",
-                "operationId": "payPayment",
+                "summary": "Update parent's specific card",
+                "description": "Parent card update",
+                "operationId": "updateCardParent",
+                "parameters": [
+                    {
+                        "name": "parent_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
-                    "description": "Pass payment credentials",
+                    "description": "Pass user credentials",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "course_id"
+                                    "card_number",
+                                    "card_expiration",
+                                    "card_token"
                                 ],
                                 "properties": {
-                                    "student_id": {
-                                        "type": "numeric",
-                                        "example": 1
+                                    "card_number": {
+                                        "type": "string",
+                                        "example": "4567876543456789"
                                     },
-                                    "course_id": {
-                                        "type": "numeric",
-                                        "example": 1
+                                    "card_expiration": {
+                                        "type": "string",
+                                        "example": "09/23"
+                                    },
+                                    "card_token": {
+                                        "type": "string",
+                                        "example": "ergerhguweghweirfwerrgerhfbwehfbjewhth"
                                     }
                                 },
                                 "type": "object"
@@ -2750,6 +3080,57 @@
                         }
                     }
                 },
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Parent"
+                ],
+                "summary": "Delete parent's specific card",
+                "description": "Parent card delete",
+                "operationId": "destroyCardParent",
+                "parameters": [
+                    {
+                        "name": "parent_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "card_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "403": {
                         "description": "Wrong credentials response",

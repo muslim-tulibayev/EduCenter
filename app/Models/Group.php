@@ -42,4 +42,9 @@ class Group extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+
+    public function course(): BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
 }

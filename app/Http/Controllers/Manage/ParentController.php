@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Card\CardResource;
 use App\Http\Resources\Parent\ParentResource;
 use App\Models\Stparent;
 use App\Traits\SendResponseTrait;
@@ -18,7 +19,7 @@ class ParentController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student');
+        $this->middleware('auth:api,teacher');
 
         parent::__construct('stparents', true);
 
@@ -331,6 +332,346 @@ class ParentController extends Controller
             status: 200,
             name: 'parent_deleted',
             data: ["id" => $parent->id]
+        );
+    }
+
+    /**
+     * @OA\Get(
+     * path="/api/manage/parent/{parent_id}/card",
+     * summary="Get parent's all cards data",
+     * description="Parent get cards",
+     * operationId="getCardsParent",
+     * tags={"Parent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="parent_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getCards(string $parent_id)
+    {
+        $parent = $this->Stparent->find($parent_id);
+
+        if (!$parent)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'parent_not_found',
+                data: ["parent_id" => $parent_id]
+            );
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_parent_cards',
+            data: CardResource::collection($parent->cards)
+        );
+    }
+
+    /**
+     * @OA\Get(
+     * path="/api/manage/parent/{parent_id}/card/{card_id}",
+     * summary="Get parent's card data",
+     * description="Parent get card",
+     * operationId="getCardParent",
+     * tags={"Parent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="parent_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     *    in="path",
+     *    name="card_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getCard(string $parent_id, string $card_id)
+    {
+        $parent = $this->Stparent->find($parent_id);
+
+        if (!$parent)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'parent_not_found',
+                data: ["parent_id" => $parent_id]
+            );
+
+        $card = $parent->cards()->find($card_id);
+
+        if (!$card)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'card_not_found',
+                data: ["card_id" => $card_id]
+            );
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_parent_card',
+            data: CardResource::make($card)
+        );
+    }
+
+    /**
+     * @OA\Post(
+     * path="/api/manage/parent/{parent_id}/card",
+     * summary="Set new Parent card",
+     * description="Parent new card store",
+     * operationId="storeCardParent",
+     * tags={"Parent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="parent_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"card_number", "card_expiration", "card_token",},
+     *       @OA\Property(property="card_number", type="string", example="4567876543456789"),
+     *       @OA\Property(property="card_expiration", type="string", example="09/23"),
+     *       @OA\Property(property="card_token", type="string", example="ergerhguweghweirfwerrgerhfbwehfbjewhth"),
+     *    ),
+     * ),
+     * 
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function storeCard(Request $request, string $parent_id)
+    {
+        $parent = $this->Stparent->find($parent_id);
+
+        if (!$parent)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'parent_not_found',
+                data: ["parent_id" => $parent_id]
+            );
+
+        $validator = Validator::make($request->all(), [
+            'card_number' => 'required|string|min:16|unique:cards,card_number',
+            'card_expiration' => 'required|string',
+            'card_token' => 'required|string',
+        ]);
+
+        if ($validator->fails())
+            return $this->sendValidatorMessages($validator);
+
+        $newCard = $parent->cards()->create([
+            'card_number' => $request->card_number,
+            'card_expiration' => $request->card_expiration,
+            'card_token' => $request->card_token,
+        ]);
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'parent_card_created',
+            data: ["id" => $newCard->id]
+        );
+    }
+
+    /**
+     * @OA\Put(
+     * path="/api/manage/parent/{parent_id}/card/{card_id}",
+     * summary="Update parent's specific card",
+     * description="Parent card update",
+     * operationId="updateCardParent",
+     * tags={"Parent"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="parent_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     *    in="path",
+     *    name="card_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"card_number", "card_expiration", "card_token",},
+     *       @OA\Property(property="card_number", type="string", example="4567876543456789"),
+     *       @OA\Property(property="card_expiration", type="string", example="09/23"),
+     *       @OA\Property(property="card_token", type="string", example="ergerhguweghweirfwerrgerhfbwehfbjewhth"),
+     *    ),
+     * ),
+     * 
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function updateCard(Request $request, string $parent_id, string $card_id)
+    {
+        $parent = $this->Stparent->find($parent_id);
+
+        if (!$parent)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'parent_not_found',
+                data: ["parent_id" => $parent_id]
+            );
+
+        $card = $parent->cards()->find($card_id);
+
+        if (!$card)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'card_not_found',
+                data: ["card_id" => $card_id]
+            );
+
+        $validator = Validator::make($request->all(), [
+            'card_number' => 'required|string|min:16|max:20|unique:cards,card_number,' . $card_id,
+            'card_expiration' => 'required|string',
+            'card_token' => 'required|string',
+        ]);
+
+        if ($validator->fails())
+            return $this->sendValidatorMessages($validator);
+
+        $card->update([
+            'card_number' => $request->card_number,
+            'card_expiration' => $request->card_expiration,
+            'card_token' => $request->card_token,
+        ]);
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'parent_card_updated',
+            data: ["id" => $card->id]
+        );
+    }
+
+    /**
+     * @OA\Delete(
+     * path="/api/manage/parent/{parent_id}/card/{card_id}",
+     * summary="Delete parent's specific card",
+     * description="Parent card delete",
+     * operationId="destroyCardParent",
+     * tags={"Parent"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="parent_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * @OA\Parameter(
+     *    in="path",
+     *    name="card_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function destroyCard(string $parent_id, string $card_id)
+    {
+        $parent = $this->Stparent->find($parent_id);
+
+        if (!$parent)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'parent_not_found',
+                data: ["parent_id" => $parent_id]
+            );
+
+        $card = $parent->cards()->find($card_id);
+
+        if (!$card)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'card_not_found',
+                data: ["card_id" => $card_id]
+            );
+
+        $card->delete();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'parent_card_deleted',
+            data: ["id" => $card->id]
         );
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\Lesson\LessonResource;
 use App\Models\Branch;
 use App\Models\Course;
 use App\Traits\SendResponseTrait;
@@ -19,7 +20,7 @@ class CourseController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student');
+        $this->middleware('auth:api,teacher');
 
         parent::__construct('courses', true);
 
@@ -29,6 +30,17 @@ class CourseController extends Controller
 
             return $next($request);
         });
+
+        $this->middleware(function ($request, $next) {
+            if (!($this->auth_role['lessons'] >= 1))
+                return $this->sendResponse(
+                    success: false,
+                    status: 403,
+                    name: 'unauthorized',
+                );
+
+            return $next($request);
+        })->only('lessons');
     }
 
     /**
@@ -303,6 +315,32 @@ class CourseController extends Controller
         );
     }
 
+    public function lessons(string $id)
+    {
+        $course = $this->Course->find($id);
+
+        if (!$course)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'course_not_found',
+                data: ["id" => $id]
+            );
+
+        $lessons = $course->lessons()
+            ->orderByRaw('CAST(SUBSTRING_INDEX(sequence_number, " ", 1) AS UNSIGNED) DESC')
+            ->paginate();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_lessons',
+            data: LessonResource::collection($lessons),
+            pagination: $lessons
+        );
+    }
+}
+
     // /**
     //  * @OA\Get(
     //  * path="/api/manage/course/{id}/lessons",
@@ -339,4 +377,3 @@ class CourseController extends Controller
     //     //     return CourseLessonResourceForAdmin::collection($lessons);
     //     return LessonResource::collection($lessons);
     // }
-}

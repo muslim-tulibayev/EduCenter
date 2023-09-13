@@ -13,6 +13,12 @@ class CardResource extends JsonResource
             'id' => $this->id,
             'card_number' => $this->card_number,
             'card_expiration' =>$this->card_expiration,
+
+            // "id" => $this->id,
+            // "cardable_type" => $this->cardable_type,
+            // "cardable_id" => $this->cardable_id,
+            // "card_number" => $this->card_number,
+            // "card_expiration" => $this->card_expiration
         ];
     }
 }

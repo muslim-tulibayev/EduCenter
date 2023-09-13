@@ -16,7 +16,7 @@ class RoleController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api,teacher,parent,student');
+        $this->middleware('auth:api,teacher');
 
         parent::__construct('roles');
     }
@@ -258,7 +258,7 @@ class RoleController extends Controller
 
         $validator = Validator::make($request->all(), [
             // role name
-            'name' => 'required|string|unique:roels,name,' . $id,
+            'name' => 'required|string|unique:roles,name,' . $id,
 
             // access for tables (CRUD)
             'roles' => 'required|numeric|in:0,1,2,3,4',

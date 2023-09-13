@@ -42,12 +42,24 @@ class Stparent extends Authenticatable implements JWTSubject
         return $this->morphMany(Card::class, 'cardable');
     }
 
-    public function getBranchesAttribute()
+    public function paymentable()
     {
-        return $this->students->flatMap(function ($student) {
-            return $student->branches;
-        })->unique();
+        return $this->morphMany(Payment::class, 'paymentable');
     }
+
+    // public function getBranchesAttribute()
+    // {
+    //     return $this->students->flatMap(function ($student) {
+    //         return $student->branches;
+    //     })->unique();
+    // }
+
+    // public function branches()
+    // {
+    //     return $this->students->flatMap(function ($student) {
+    //         return $student->branches;
+    //     })->unique();
+    // }
 
     // ----------------------------------------------------------
 
