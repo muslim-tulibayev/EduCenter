@@ -74,6 +74,7 @@ Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/teacher', TeacherController::class);
 
     Route::apiResource('/parent', ParentController::class);
+    Route::get('/parent/{parent_id}/students', [ParentController::class, 'getStudents']);
     Route::get('/parent/{parent_id}/card', [ParentController::class, 'getCards']);
     Route::get('/parent/{parent_id}/card/{card_id}', [ParentController::class, 'getCard']);
     Route::post('/parent/{parent_id}/card', [ParentController::class, 'storeCard']);
@@ -99,7 +100,10 @@ Route::group(['prefix' => '/manage'], function () {
     Route::get('/group/{group}/students', [GroupController::class, 'getStudents']);
 
     Route::apiResource('/session', SessionController::class);
+
+    Route::post('/schedule/by-filter', [ScheduleController::class, 'getSchedulesByFilter']);
     Route::apiResource('/schedule', ScheduleController::class);
+
     Route::apiResource('/role', RoleController::class);
     Route::apiResource('/payment', PaymentController::class);
     // Route::apiResource('/cashier', CashierController::class);

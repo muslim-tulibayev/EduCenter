@@ -13,11 +13,11 @@ class UserFactory extends Factory
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
-            'contact_no' => fake()->phoneNumber(),
+            'contact' => fake()->phoneNumber(),
             'role_id' => rand(1, 2),
-            // 'branch_id' => rand(1, 3),
             'status' => fake()->boolean(70),
             'password' => Hash::make('12345678'),
+            "lang" => fake()->randomElement(['en', 'ru', 'uz']),
         ];
     }
 

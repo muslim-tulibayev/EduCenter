@@ -25,7 +25,8 @@ class ScheduleController extends Controller
         $this->middleware(function ($request, $next) {
             $this->Schedule = Schedule::whereHas('room', function ($query) {
                 $query->where('branch_id', $this->auth_branch_id);
-            });
+            })
+                ->with('group', 'weekday', 'session', 'room');
 
             return $next($request);
         });
@@ -307,6 +308,72 @@ class ScheduleController extends Controller
             status: 200,
             name: 'schedule_deleted',
             data: ["id" => $id],
+        );
+    }
+
+    /**
+     * @OA\Post(
+     * path="/api/manage/schedule/by-filter",
+     * summary="Get schedules by-filter",
+     * description="Get schedules by-filter",
+     * operationId="getSchedulesByFilterSchedule",
+     * tags={"Schedule"},
+     * security={ {"bearerAuth": {} }},
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={},
+     *       @OA\Property(property="group_id", type="numeric", example=1),
+     *       @OA\Property(property="weekday_id", type="numeric", example=1),
+     *       @OA\Property(property="session_id", type="numeric", example=1),
+     *       @OA\Property(property="room_id", type="numeric", example=1),
+     *    ),
+     * ),
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getSchedulesByFilter(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "group_id" => 'integer|exists:groups,id',
+            "weekday_id" => 'integer|exists:weekdays,id',
+            "session_id" => 'integer|exists:sessions,id',
+            "room_id" => 'integer|exists:rooms,id',
+        ]);
+
+        if ($validator->fails())
+            return $this->sendValidatorMessages($validator);
+
+        if ($request->has('group_id'))
+            $this->Schedule = $this->Schedule->where('group_id', $request->group_id);
+
+        if ($request->has('weekday_id'))
+            $this->Schedule = $this->Schedule->where('weekday_id', $request->weekday_id);
+
+        if ($request->has('session_id'))
+            $this->Schedule = $this->Schedule->where('session_id', $request->session_id);
+
+        if ($request->has('room_id'))
+            $this->Schedule = $this->Schedule->where('room_id', $request->room_id);
+
+        $schedules = $this->Schedule
+            ->orderByDesc('id')
+            ->paginate();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_schedules_by_filter',
+            data: ScheduleResource::collection($schedules),
+            pagination: $schedules
         );
     }
 }

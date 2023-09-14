@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Group\GroupResource;
 use App\Http\Resources\Teacher\TeacherResource;
 use App\Models\Branch;
+use App\Models\Role;
 use App\Models\Teacher;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
@@ -78,11 +79,11 @@ class TeacherController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no", "is_assistant", },
+     *       required={"firstname", "lastname", "email", "contact", "is_assistant", },
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
+     *       @OA\Property(property="contact", type="string", example="+998 56 789 09 87"),
      *       @OA\Property(property="is_assistant", type="boolean", example=false),
      *    ),
      * ),
@@ -106,8 +107,10 @@ class TeacherController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            'contact_no' => 'required|string',
-            "role_id" => 'required|exists:roles,id',
+            'contact' => 'required|string',
+            'status' => 'required|boolean',
+            "role_id" => 'exists:roles,id',
+
             'groups' => 'array',
             'groups.*' => 'numeric|distinct|exists:groups,id',
             'branches' => 'required|array',
@@ -122,9 +125,10 @@ class TeacherController extends Controller
             'lastname' => $request->lastname,
             'email' => $request->email,
             'password' => Hash::make('12345678'),
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'is_assistant' => false,
-            'role_id' => $request->role_id,
+            'status' => $request->status,
+            'role_id' => $request->role_id ?? Role::where('name', 'teacher')->first()->id,
         ]);
 
         if ($request->has('groups'))
@@ -214,11 +218,11 @@ class TeacherController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no"},
+     *       required={"firstname", "lastname", "email", "contact"},
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
+     *       @OA\Property(property="contact", type="string", example="+998 56 789 09 87"),
      *       @OA\Property(property="is_assistant", type="boolean", example=false),
      *    ),
      * ),
@@ -251,9 +255,11 @@ class TeacherController extends Controller
                 . '|unique:teachers,email,' . $id
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            'contact_no' => 'required|string',
+            'contact' => 'required|string',
             'is_assistant' => 'boolean',
-            "role_id" => 'required|exists:roles,id',
+            'status' => 'required|boolean',
+            "role_id" => 'exists:roles,id',
+
             'groups' => 'array',
             'groups.*' => 'numeric|distinct|exists:groups,id',
             'branches' => 'required|array',
@@ -267,9 +273,10 @@ class TeacherController extends Controller
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'is_assistant' => $request->is_assistant ?? false,
-            'role_id' => $request->role_id,
+            'status' => $request->status,
+            'role_id' => $request->role_id ?? Role::where('name', 'teacher')->first()->id,
         ]);
 
         if ($request->has('groups'))

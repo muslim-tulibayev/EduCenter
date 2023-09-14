@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Manage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Card\CardResource;
 use App\Http\Resources\Parent\ParentResource;
+use App\Http\Resources\Student\StudentResource;
 use App\Models\Stparent;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
@@ -131,11 +132,11 @@ class ParentController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no", "role_id", "students"},
+     *       required={"firstname", "lastname", "email", "contact", "role_id", "students"},
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
+     *       @OA\Property(property="contact", type="string", example="+998 56 789 09 87"),
      *       @OA\Property(property="role_id", type="numeric", example=1),
      *       @OA\Property(
      *         property="students", type="array", collectionFormat="multi",
@@ -163,7 +164,7 @@ class ParentController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            "contact_no" => 'required|string',
+            "contact" => 'required|string',
             "role_id" => 'required|exists:roles,id',
             'students' => 'required|array',
             'students.*' => 'numeric|distinct|exists:students,id',
@@ -176,7 +177,7 @@ class ParentController extends Controller
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'role_id' => $request->role_id,
         ]);
 
@@ -258,11 +259,11 @@ class ParentController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no", "role_id", "students"},
+     *       required={"firstname", "lastname", "email", "contact", "role_id", "students"},
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 56 789 09 87"),
+     *       @OA\Property(property="contact", type="string", example="+998 56 789 09 87"),
      *       @OA\Property(property="role_id", type="numeric", example=1),
      *       @OA\Property(
      *         property="students", type="array", collectionFormat="multi",
@@ -301,9 +302,10 @@ class ParentController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email,' . $id
                 . '|unique:students,email',
-            "contact_no" => 'required|string',
+            "contact" => 'required|string',
             "role_id" => 'required|exists:roles,id',
-            'students' => 'required|array',
+
+            'students' => 'array',
             'students.*' => 'numeric|distinct|exists:students,id',
         ]);
 
@@ -314,11 +316,12 @@ class ParentController extends Controller
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'role_id' => $request->role_id,
         ]);
 
-        $parent->students()->sync($request->students);
+        if ($request->has('students'))
+            $parent->students()->sync($request->students);
 
         // if (auth('parent')->user() !== null)
         //     auth('parent')->user()->makeChanges(
@@ -727,6 +730,55 @@ class ParentController extends Controller
             status: 200,
             name: 'parent_card_deleted',
             data: ["id" => $card->id]
+        );
+    }
+
+    /**
+     * @OA\Get(
+     * path="/api/manage/parent/{parent_id}/students",
+     * summary="Get students of a parent",
+     * description="Get students of a parent",
+     * operationId="getStudentsParent",
+     * tags={"Parent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="parent_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getStudents(string $parent_id)
+    {
+        $parent = $this->Stparent->find($parent_id);
+
+        if (!$parent)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'parent_not_found',
+                data: ["id" => $parent_id]
+            );
+
+        $students = $parent->students;
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_parent_students',
+            data: StudentResource::collection($students)
         );
     }
 }

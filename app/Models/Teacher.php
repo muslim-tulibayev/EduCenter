@@ -23,9 +23,11 @@ class Teacher extends Authenticatable implements JWTSubject
         "lastname",
         "email",
         "password",
-        "contact_no",
+        "contact",
         'role_id',
-        "is_assistant"
+        "status",
+        "is_assistant",
+        'lang',
     ];
 
     protected $hidden = [

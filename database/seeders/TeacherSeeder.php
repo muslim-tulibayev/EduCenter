@@ -21,10 +21,11 @@ class TeacherSeeder extends Seeder
                 "lastname" => fake()->lastName(), // 
                 "email" => "teacher@gmail.com", // unique()->index('idx_email');
                 "password" => Hash::make('12345678'), // 
-                "contact_no" => fake()->phoneNumber(), // 
+                "contact" => fake()->phoneNumber(), // 
                 "is_assistant" => false, // 
                 "status" => true, // 
                 "role_id" => Role::where('name', 'teacher')->first()->id, // constrained();
+                "lang" => 'ru', // ['en', 'ru', 'uz'])->default('en');
             ],
         ];
 

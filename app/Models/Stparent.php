@@ -23,9 +23,9 @@ class Stparent extends Authenticatable implements JWTSubject
         'lastname',
         'email',
         'password',
-        'contact_no',
+        'contact',
         'role_id',
-        // 'payment_token',
+        'lang',
     ];
 
     protected $hidden = [

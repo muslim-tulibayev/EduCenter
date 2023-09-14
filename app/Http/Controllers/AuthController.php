@@ -37,11 +37,11 @@ class AuthController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"email","password", "firstname", "lastname", "contact_no", "password_confirmation", "role_id"},
+     *       required={"email","password", "firstname", "lastname", "contact", "password_confirmation", "role_id"},
      *       @OA\Property(property="firstname", type="string", format="text", example="John"),
      *       @OA\Property(property="lastname", type="string", format="text", example="Doe"),
      *       @OA\Property(property="email", type="string", format="email", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", format="phone number", example="+998 93 819 88 43"),
+     *       @OA\Property(property="contact", type="string", format="phone number", example="+998 93 819 88 43"),
      *       @OA\Property(property="role_id", type="numeric", example=1),
      *       @OA\Property(property="password", type="string", format="password, min:8", example="12345678"),
      *       @OA\Property(property="password_confirmation", type="string", format="password", example="12345678"),
@@ -67,7 +67,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'contact_no' => 'required|string',
+            'contact' => 'required|string',
             'email' => 'required|email'
                 . '|unique:users,email'
                 . '|unique:teachers,email'
@@ -85,7 +85,7 @@ class AuthController extends Controller
         $newUser = User::create([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             "role_id" => $request->role_id,
@@ -246,7 +246,7 @@ class AuthController extends Controller
                 "firstname" => $this->auth_user->firstname,
                 "lastname" => $this->auth_user->lastname,
                 "email" => $this->auth_user->email,
-                "contact_no" => $this->auth_user->contact_no,
+                "contact" => $this->auth_user->contact,
                 // "role_id" =>$this->auth_user->firstname,
                 "status" => $this->auth_user->status,
                 // "created_by" =>$this->auth_user->firstname,
@@ -266,11 +266,11 @@ class AuthController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no", "password", "password_confirmation"},
+     *       required={"firstname", "lastname", "email", "contact", "password", "password_confirmation"},
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
      *       @OA\Property(property="email", type="string", format="email", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 98 887 65 43 45"),
+     *       @OA\Property(property="contact", type="string", example="+998 98 887 65 43 45"),
      *       @OA\Property(property="password", type="string", example="12345678"),
      *       @OA\Property(property="password_confirmation", type="string", example="12345678"),
      *    ),
@@ -366,7 +366,7 @@ class AuthController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            'contact_no' => 'required|string',
+            'contact' => 'required|string',
             'password' => 'string|min:8|confirmed',
         ]);
 
@@ -376,7 +376,7 @@ class AuthController extends Controller
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
         $this->auth_user->email = $request->email;
-        $this->auth_user->contact_no = $request->contact_no;
+        $this->auth_user->contact = $request->contact;
 
         if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
@@ -400,7 +400,7 @@ class AuthController extends Controller
                 . '|unique:teachers,email,' . $this->auth_user->id
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            "contact_no" => 'required|string',
+            "contact" => 'required|string',
             'password' => 'string|min:8|confirmed',
         ]);
 
@@ -410,7 +410,7 @@ class AuthController extends Controller
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
         $this->auth_user->email = $request->email;
-        $this->auth_user->contact_no = $request->contact_no;
+        $this->auth_user->contact = $request->contact;
 
         if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
@@ -434,7 +434,7 @@ class AuthController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email,' . $this->auth_user->id
                 . '|unique:students,email',
-            "contact_no" => 'required|string',
+            "contact" => 'required|string',
             'password' => 'string|min:8|confirmed',
             // 'payment_token',
         ]);
@@ -445,7 +445,7 @@ class AuthController extends Controller
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
         $this->auth_user->email = $request->email;
-        $this->auth_user->contact_no = $request->contact_no;
+        $this->auth_user->contact = $request->contact;
 
         if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);
@@ -469,7 +469,7 @@ class AuthController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email,' . $this->auth_user->id,
-            "contact_no" => 'required|string',
+            "contact" => 'required|string',
             'password' => 'string|min:8|confirmed',
             // 'payment_token',
         ]);
@@ -480,7 +480,7 @@ class AuthController extends Controller
         $this->auth_user->firstname = $request->firstname;
         $this->auth_user->lastname = $request->lastname;
         $this->auth_user->email = $request->email;
-        $this->auth_user->contact_no = $request->contact_no;
+        $this->auth_user->contact = $request->contact;
 
         if ($request->has('password'))
             $this->auth_user->password = Hash::make($request->password);

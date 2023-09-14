@@ -21,10 +21,10 @@ class StparentSeeder extends Seeder
                 "lastname" => fake()->lastName(), // 
                 "email" => "parent@gmail.com", // ->unique()->index('idx_email');
                 "password" => Hash::make('12345678'), // 
-                "contact_no" => fake()->phoneNumber(), // 
+                "contact" => fake()->phoneNumber(), // 
                 "status" => true, // 
                 "role_id" => Role::where('name', 'parent')->first()->id, // ->constrained();
-                // "payment_token" => "", // ->nullable();
+                "lang" => 'ru', // ['en', 'ru', 'uz'])->default('en');
             ],
         ];
 

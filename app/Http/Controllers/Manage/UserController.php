@@ -76,10 +76,10 @@ class UserController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "contact_no", "email", "role_id", "status", "branches"},
+     *       required={"firstname", "lastname", "contact", "email", "role_id", "status", "branches"},
      *       @OA\Property(property="firstname", type="string", example="John"),
      *       @OA\Property(property="lastname", type="string", example="Doe"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 98 765 56 78"),
+     *       @OA\Property(property="contact", type="string", example="+998 98 765 56 78"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
      *       @OA\Property(property="role_id", type="numeric", example=1),
      *       @OA\Property(property="status", type="boolean", example=false),
@@ -104,7 +104,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             "firstname" => "required|string",
             "lastname" => "required|string",
-            "contact_no" => "required|string",
+            "contact" => "required|string",
             "email" => "required|email|unique:users,email",
             "role_id" => "required|exists:roles,id",
             "status" => "required|boolean",
@@ -118,7 +118,7 @@ class UserController extends Controller
         $newUser = User::create([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'email' => $request->email,
             'role_id' => $request->role_id,
             'status' => $request->status,
@@ -203,10 +203,10 @@ class UserController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "contact_no", "email","role","branch_id", "password"},
+     *       required={"firstname", "lastname", "contact", "email","role","branch_id", "password"},
      *       @OA\Property(property="firstname", type="string", example="address"),
      *       @OA\Property(property="lastname", type="string", example="address"),
-     *       @OA\Property(property="contact_no", type="string", example="address"),
+     *       @OA\Property(property="contact", type="string", example="address"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
      *       @OA\Property(property="role_id", type="number", example=1),
      *       @OA\Property(property="branch_id", type="number", example=1),
@@ -238,7 +238,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string',
             'lastname' => 'required|string',
-            'contact_no' => 'required|string',
+            'contact' => 'required|string',
             'email' => 'required|email|unique:users,email,' . $id,
             "role_id" => 'required|exists:roles,id',
             'status' => 'required|boolean',
@@ -252,7 +252,7 @@ class UserController extends Controller
         $user->update([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'email' => $request->email,
             "role_id" => $request->role_id,
             'status' => $request->status,

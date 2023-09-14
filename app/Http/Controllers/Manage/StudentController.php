@@ -144,11 +144,11 @@ class StudentController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no"},
+     *       required={"firstname", "lastname", "email", "contact"},
      *       @OA\Property(property="firstname", type="string", example="address"),
      *       @OA\Property(property="lastname", type="string", example="address"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="address"),
+     *       @OA\Property(property="contact", type="string", example="address"),
      *       @OA\Property(property="status", type="boolean", example=false),
      *       @OA\Property(
      *         property="groups", type="array", collectionFormat="multi",
@@ -159,7 +159,7 @@ class StudentController extends Controller
      *                 @OA\Property(property="firstname", type="string", example="John"),
      *                 @OA\Property(property="lastname", type="string", example="Doe"),
      *                 @OA\Property(property="email", type="number", example="user@gmail.com"),
-     *                 @OA\Property(property="contact_no", type="string", example="+998 65 445 67 89"),
+     *                 @OA\Property(property="contact", type="string", example="+998 65 445 67 89"),
      *             ),
      *       ),
      *       @OA\Property(
@@ -188,7 +188,7 @@ class StudentController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            'contact_no' => 'required|string',
+            'contact' => 'required|string',
             'status' => 'required|boolean',
 
             'groups' => 'array',
@@ -202,7 +202,7 @@ class StudentController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            'parents.*.contact_no' => 'required|string',
+            'parents.*.contact' => 'required|string',
 
             'exist_parents' => 'array',
             'exist_parents.*' => 'numeric|distinct|exists:stparents,id',
@@ -234,7 +234,7 @@ class StudentController extends Controller
             'lastname' => $request->lastname,
             'email' => $request->email,
             'password' => Hash::make('12345678'),
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'status' => $request->status,
             'role_id' => Role::where('name', 'student')->first()->id,
             //! morph
@@ -252,7 +252,7 @@ class StudentController extends Controller
                     "lastname" => $parent['lastname'],
                     "email" => $parent['email'],
                     "password" => Hash::make('12345678'),
-                    "contact_no" => $parent['contact_no'],
+                    "contact" => $parent['contact'],
                     "status" => true,
                     "role_id" => Role::where('name', 'parent')->first()->id,
                 ]);
@@ -339,11 +339,11 @@ class StudentController extends Controller
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
-     *       required={"firstname", "lastname", "email", "contact_no"},
+     *       required={"firstname", "lastname", "email", "contact"},
      *       @OA\Property(property="firstname", type="string", example="address"),
      *       @OA\Property(property="lastname", type="string", example="address"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="contact_no", type="string", example="address"),
+     *       @OA\Property(property="contact", type="string", example="address"),
      *       @OA\Property(property="status", type="boolean", example=false),
      *       @OA\Property(
      *         property="groups", type="array", collectionFormat="multi",
@@ -354,7 +354,7 @@ class StudentController extends Controller
      *                 @OA\Property(property="firstname", type="string", example="John"),
      *                 @OA\Property(property="lastname", type="string", example="Doe"),
      *                 @OA\Property(property="email", type="number", example="user@gmail.com"),
-     *                 @OA\Property(property="contact_no", type="string", example="+998 65 445 67 89"),
+     *                 @OA\Property(property="contact", type="string", example="+998 65 445 67 89"),
      *             ),
      *       ),
      *       @OA\Property(
@@ -393,7 +393,7 @@ class StudentController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email,' . $id,
-            'contact_no' => 'required|string',
+            'contact' => 'required|string',
             'status' => 'required|boolean',
 
             'groups' => 'array',
@@ -407,7 +407,7 @@ class StudentController extends Controller
                 . '|unique:teachers,email'
                 . '|unique:stparents,email'
                 . '|unique:students,email',
-            'parents.*.contact_no' => 'required|string',
+            'parents.*.contact' => 'required|string',
 
             'exist_parents' => 'array',
             'exist_parents.*' => 'numeric|distinct|exists:stparents,id',
@@ -441,7 +441,7 @@ class StudentController extends Controller
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'email' => $request->email,
-            'contact_no' => $request->contact_no,
+            'contact' => $request->contact,
             'status' => $request->status,
         ]);
 
@@ -452,7 +452,7 @@ class StudentController extends Controller
                     "lastname" => $parent['lastname'],
                     "email" => $parent['email'],
                     "password" => Hash::make('12345678'),
-                    "contact_no" => $parent['contact_no'],
+                    "contact" => $parent['contact'],
                     "status" => true,
                     "role_id" => Role::where('name', 'parent')->first()->id,
                 ]);

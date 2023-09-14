@@ -27,7 +27,7 @@ class PaymentResource extends JsonResource
                     "firstname" => $this->paymentable->firstname,
                     "lastname" => $this->paymentable->lastname,
                     "email" => $this->paymentable->email,
-                    "contact_no" => $this->paymentable->contact_no,
+                    "contact" => $this->paymentable->contact,
                 ];
             }),
         ];

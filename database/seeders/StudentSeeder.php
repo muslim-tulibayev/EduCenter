@@ -21,12 +21,13 @@ class StudentSeeder extends Seeder
                 "lastname" => fake()->lastName(), // 
                 "email" => "student@gmail.com", // unique()->index('idx_email');
                 "password" => Hash::make('12345678'), // 
-                "contact_no" => fake()->phoneNumber(), // 
+                "contact" => fake()->phoneNumber(), // 
                 "role_id" => Role::where('name', 'student')->first()->id, // constrained();
                 "status" => true, // default(false);
                 // "payment_token" => "", // nullable();
                 "created_by" => 1, // 
                 "created_at" => fake()->dateTimeBetween('-1 year', 'now')->format('Y-m-d H:i:s'),
+                "lang" => 'ru', // ['en', 'ru', 'uz'])->default('en');
             ],
         ];
 

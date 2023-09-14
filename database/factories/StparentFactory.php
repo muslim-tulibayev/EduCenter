@@ -22,10 +22,11 @@ class StparentFactory extends Factory
             'firstname' => fake()->firstName(),
             'lastname' => fake()->lastName(),
             'email' => fake()->safeEmail(),
-            'contact_no' => fake()->phoneNumber(),
+            'contact' => fake()->phoneNumber(),
             'status' => fake()->boolean(50),
             'role_id' => Role::where('name', 'parent')->first()->id,
             'password' => Hash::make('12345678'),
+            "lang" => fake()->randomElement(['en', 'ru', 'uz']),
         ];
     }
 }

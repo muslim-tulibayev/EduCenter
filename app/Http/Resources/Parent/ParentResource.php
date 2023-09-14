@@ -20,7 +20,7 @@ class ParentResource extends JsonResource
             "lastname" => $this->lastname,
             "email" => $this->email,
             // "password" => $this->password,
-            "contact_no" => $this->contact_no,
+            "contact" => $this->contact,
             "role_id" => $this->role_id,
         ];
     }

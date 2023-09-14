@@ -148,6 +148,12 @@ class Controller extends BaseController
         if ($this->auth_user)
             $this->auth_role = $this->auth_user->role;
 
+        // Set user language
+        if ($this->auth_user) {
+            $locale = $this->auth_user->lang;
+            app()->setLocale($locale);
+        }
+
         // define user's branch
         if ($checkBranch)
             $this->middleware(function ($request, $next) {

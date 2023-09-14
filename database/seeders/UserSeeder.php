@@ -18,22 +18,22 @@ class UserSeeder extends Seeder
             [
                 "firstname" => fake()->firstName(), // 
                 "lastname" => fake()->lastName(), // 
-                "contact_no" => fake()->phoneNumber(), // 
+                "contact" => fake()->phoneNumber(), // 
                 "email" => "superadmin@gmail.com", // unique()->index('idx_email');
                 "password" => Hash::make('12345678'), // 
                 "status" => true, // default(false);
                 "role_id" => Role::where('name', 'superadmin')->first()->id, // constrained();
-                // "branch_id" => "1", // constrained();
+                "lang" => 'uz', // ['en', 'ru', 'uz'])->default('en');
             ],
             [
                 "firstname" => fake()->firstName(), // 
                 "lastname" => fake()->lastName(), // 
-                "contact_no" => fake()->phoneNumber(), // 
+                "contact" => fake()->phoneNumber(), // 
                 "email" => "admin@gmail.com", // unique()->index('idx_email');
                 "password" => Hash::make('12345678'), // 
                 "status" => true, // default(false);
                 "role_id" => Role::where('name', 'admin')->first()->id, // constrained();
-                // "branch_id" => "2", // constrained();
+                "lang" => 'ru', // ['en', 'ru', 'uz'])->default('en');
             ],
         ];
 

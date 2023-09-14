@@ -23,11 +23,12 @@ class StudentFactory extends Factory
             'lastname' => fake()->lastName(),
             'email' => fake()->safeEmail(),
             'password' => Hash::make('12345678'),
-            'contact_no' => fake()->phoneNumber(),
+            'contact' => fake()->phoneNumber(),
             'role_id' => Role::where('name', 'student')->first()->id,
             'status' => fake()->boolean(),
             'created_by' => rand(1, 10),
             'created_at' => fake()->dateTime(),
+            "lang" => fake()->randomElement(['en', 'ru', 'uz']),
         ];
     }
 }

@@ -17,10 +17,11 @@ return new class extends Migration
             $table->string('lastname');
             $table->string('email')->unique()->index('idx_email');
             $table->string('password');
-            $table->string('contact_no');
+            $table->string('contact');
             $table->boolean('is_assistant');
-            $table->boolean('status');
+            $table->boolean('status')->default(false);
             $table->foreignId('role_id')->constrained();
+            $table->enum('lang', ['en', 'ru', 'uz'])->default('en');
         });
     }
 
