@@ -2169,6 +2169,50 @@
                 ]
             }
         },
+        "/api/manage/group/{id}/students": {
+            "get": {
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Get specific group students data",
+                "description": "Group students",
+                "operationId": "studentsGroup",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "403": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorized"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/manage/user/inactive": {
             "get": {
                 "tags": [
@@ -4302,6 +4346,14 @@
                                         "type": "boolean",
                                         "example": false
                                     },
+                                    "groups": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "numeric",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
+                                    },
                                     "parents": {
                                         "type": "array",
                                         "items": {
@@ -4441,27 +4493,63 @@
                                 "properties": {
                                     "firstname": {
                                         "type": "string",
-                                        "example": "John"
+                                        "example": "address"
                                     },
                                     "lastname": {
                                         "type": "string",
-                                        "example": "Doe"
+                                        "example": "address"
                                     },
                                     "email": {
                                         "type": "string",
                                         "example": "user@gmail.com"
                                     },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "12345678"
-                                    },
                                     "contact_no": {
                                         "type": "string",
-                                        "example": "+998 92 894 83 21"
+                                        "example": "address"
                                     },
                                     "status": {
                                         "type": "boolean",
                                         "example": false
+                                    },
+                                    "groups": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "numeric",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
+                                    },
+                                    "parents": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "firstname": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "lastname": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "number",
+                                                    "example": "user@gmail.com"
+                                                },
+                                                "contact_no": {
+                                                    "type": "string",
+                                                    "example": "+998 65 445 67 89"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "exist_parents": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "numeric",
+                                            "example": 1
+                                        },
+                                        "collectionFormat": "multi"
                                     }
                                 },
                                 "type": "object"

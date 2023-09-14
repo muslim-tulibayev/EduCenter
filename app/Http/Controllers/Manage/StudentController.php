@@ -150,6 +150,10 @@ class StudentController extends Controller
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
      *       @OA\Property(property="contact_no", type="string", example="address"),
      *       @OA\Property(property="status", type="boolean", example=false),
+     *       @OA\Property(
+     *         property="groups", type="array", collectionFormat="multi",
+     *         @OA\Items(type="numeric", example=1)
+     *      ),
      *       @OA\Property(property="parents", type="array",
      *             @OA\Items( type="object",
      *                 @OA\Property(property="firstname", type="string", example="John"),
@@ -186,6 +190,9 @@ class StudentController extends Controller
                 . '|unique:students,email',
             'contact_no' => 'required|string',
             'status' => 'required|boolean',
+
+            'groups' => 'array',
+            'groups.*' => 'numeric|distinct|exists:groups,id',
 
             'parents' => 'array',
             'parents.*.firstname' => 'required|string',
@@ -234,6 +241,9 @@ class StudentController extends Controller
             'created_by' => $this->auth_user->id,
             'created_at' => date('Y-m-d h:i:s')
         ]);
+
+        if ($request->has('groups'))
+            $newStudent->groups()->attach($request->groups);
 
         if ($request->has('parents'))
             foreach ($request->parents as $parent) {
@@ -330,14 +340,30 @@ class StudentController extends Controller
      *    description="Pass user credentials",
      *    @OA\JsonContent(
      *       required={"firstname", "lastname", "email", "contact_no"},
-     *       @OA\Property(property="firstname", type="string", example="John"),
-     *       @OA\Property(property="lastname", type="string", example="Doe"),
+     *       @OA\Property(property="firstname", type="string", example="address"),
+     *       @OA\Property(property="lastname", type="string", example="address"),
      *       @OA\Property(property="email", type="string", example="user@gmail.com"),
-     *       @OA\Property(property="password", type="string", example="12345678"),
-     *       @OA\Property(property="contact_no", type="string", example="+998 92 894 83 21"),
+     *       @OA\Property(property="contact_no", type="string", example="address"),
      *       @OA\Property(property="status", type="boolean", example=false),
+     *       @OA\Property(
+     *         property="groups", type="array", collectionFormat="multi",
+     *         @OA\Items(type="numeric", example=1)
+     *      ),
+     *       @OA\Property(property="parents", type="array",
+     *             @OA\Items( type="object",
+     *                 @OA\Property(property="firstname", type="string", example="John"),
+     *                 @OA\Property(property="lastname", type="string", example="Doe"),
+     *                 @OA\Property(property="email", type="number", example="user@gmail.com"),
+     *                 @OA\Property(property="contact_no", type="string", example="+998 65 445 67 89"),
+     *             ),
+     *       ),
+     *       @OA\Property(
+     *         property="exist_parents", type="array", collectionFormat="multi",
+     *         @OA\Items(type="numeric", example=1)
+     *      ),
      *    ),
      * ),
+     * 
      * @OA\Response(
      *    response=403,
      *    description="Wrong credentials response",
@@ -369,19 +395,47 @@ class StudentController extends Controller
                 . '|unique:students,email,' . $id,
             'contact_no' => 'required|string',
             'status' => 'required|boolean',
+
             'groups' => 'array',
             'groups.*' => 'numeric|distinct|exists:groups,id',
-            // 'parents' => 'array',
-            // 'parents.*.firstname' => 'required|string',
-            // 'parents.*.lastname' => 'required|string',
-            // 'parents.*.email' => 'required|email|unique:stparents,email',
-            // 'parents.*.contact_no' => 'required|string',
-            // 'exist_parents' => 'array',
-            // 'exist_parents.*' => 'required|numeric|exists:stparents,id',
+
+            'parents' => 'array',
+            'parents.*.firstname' => 'required|string',
+            'parents.*.lastname' => 'required|string',
+            'parents.*.email' => 'required|email'
+                . '|unique:users,email'
+                . '|unique:teachers,email'
+                . '|unique:stparents,email'
+                . '|unique:students,email',
+            'parents.*.contact_no' => 'required|string',
+
+            'exist_parents' => 'array',
+            'exist_parents.*' => 'numeric|distinct|exists:stparents,id',
         ]);
 
         if ($validator->fails())
             return $this->sendValidatorMessages($validator);
+
+        if ($request->has('groups'))
+            $student->groups()->sync($request->groups);
+
+        if ($request->has('parents')) {
+            $emails = [$request->email];
+
+            foreach ($request->parents as $parent)
+                $emails[] = $parent['email'];
+
+            if (count($emails) !== count(array_unique($emails)))
+                return $this->sendResponse(
+                    success: false,
+                    status: 400,
+                    name: 'validation_error',
+                    data: [
+                        "field" => 'emails_combination',
+                        "message" => 'The email fields must contain distinct email values.'
+                    ]
+                );
+        }
 
         $student->update([
             'firstname' => $request->firstname,
@@ -391,18 +445,23 @@ class StudentController extends Controller
             'status' => $request->status,
         ]);
 
-        $student->groups()->sync($request->groups);
+        if ($request->has('parents'))
+            foreach ($request->parents as $parent) {
+                $newParent = Stparent::create([
+                    "firstname" => $parent['firstname'],
+                    "lastname" => $parent['lastname'],
+                    "email" => $parent['email'],
+                    "password" => Hash::make('12345678'),
+                    "contact_no" => $parent['contact_no'],
+                    "status" => true,
+                    "role_id" => Role::where('name', 'parent')->first()->id,
+                ]);
 
-        // if ($request->has('groups')) {
-        //     $student->groups()->attach($request->groups);
-        //     $current_time = new DateTime();
-        //     foreach ($request->groups as $group_id)
-        //         $student->accessForCourses()->create([
-        //             "course_id" => $group_id,
-        //             'pay_time' => $current_time->format('Y-m-d H:i:s'),
-        //             'expire_time' => $current_time->modify('+1 month')->format('Y-m-d H:i:s'),
-        //         ]);
-        // }
+                $student->stparents()->attach($newParent->id);
+            }
+
+        if ($request->has('exist_parents'))
+            $student->stparents()->sync($request->exist_parents);
 
         return $this->sendResponse(
             success: true,
@@ -849,3 +908,66 @@ class StudentController extends Controller
         );
     }
 }
+
+/*
+    public function addGroup(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'student_id' => 'required|integer',
+            'group_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails())
+            return $this->sendValidatorMessages($validator);
+
+        $student = $this->Student->find($request->student_id);
+
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'student_not_found',
+                data: ["student_id" => $request->student_id]
+            );
+
+        $group = Group::whereHas('branch', function ($query) {
+            $query->where('id', $this->auth_branch_id);
+        })
+            ->find($request->group_id);
+
+        if (!$group)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'group_not_found',
+                data: ["group_id" => $request->group_id]
+            );
+
+        $access = $student->accessForCourses()->find($group->course->id);
+
+        if (!$access)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'student_has_no_access',
+            );
+
+        $currentTime = new DateTime('1983-10-12 20:31:32');
+        $expireTime = new DateTime($access->expire_time);
+
+        if ($currentTime >= $expireTime)
+            return $this->sendResponse(
+                success: false,
+                status: 400,
+                name: 'student_access_expired',
+            );
+
+        $student->groups()->attach($request->group_id);
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'student_added_group',
+        );
+    } 
+ */

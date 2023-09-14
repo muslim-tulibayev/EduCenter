@@ -20,7 +20,6 @@ use App\Http\Controllers\Manage\RoleController;
 use App\Http\Controllers\Manage\InactiveUserController;
 use App\Http\Controllers\Manage\PaymentController;
 use App\Http\Controllers\Manage\UserController;
-use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +40,7 @@ Route::group(['prefix' => '/user'], function () {
 
 Route::group(['prefix' => '/teacher'], function () {
     Route::get('/my-groups', [AuthTeacherController::class, 'groups']);
+    // Route::get('/my-groups/{group}/students', [AuthTeacherController::class, 'getStudents']);
     Route::get('/course/{id}', [AuthTeacherController::class, 'course']);
     Route::get('/course/{id}/lessons', [AuthTeacherController::class, 'lessons']);
 });
@@ -82,6 +82,7 @@ Route::group(['prefix' => '/manage'], function () {
 
     Route::post('/student/search', [StudentController::class, 'search']);
     Route::apiResource('/student', StudentController::class);
+    Route::post('/student/add-group', [StudentController::class, 'addGroup']);
     Route::get('/student/{student_id}/card', [StudentController::class, 'getCards']);
     Route::get('/student/{student_id}/card/{card_id}', [StudentController::class, 'getCard']);
     Route::post('/student/{student_id}/card', [StudentController::class, 'storeCard']);
@@ -93,7 +94,10 @@ Route::group(['prefix' => '/manage'], function () {
 
     Route::apiResource('/branch', BranchController::class);
     Route::apiResource('/lesson', LessonController::class);
+
     Route::apiResource('/group', GroupController::class);
+    Route::get('/group/{group}/students', [GroupController::class, 'getStudents']);
+
     Route::apiResource('/session', SessionController::class);
     Route::apiResource('/schedule', ScheduleController::class);
     Route::apiResource('/role', RoleController::class);
@@ -101,27 +105,6 @@ Route::group(['prefix' => '/manage'], function () {
     // Route::apiResource('/cashier', CashierController::class);
     // Route::apiResource('/card', CardController::class);
 });
-
-
-// Route::get('/student/{id}/certificates', [StudentController::class, 'certificates']);
-// Route::get('/course/{course}/lessons', [CourseController::class, 'lessons']);
-// Route::get('/group/{group}/students', [GroupController::class, 'students']);
-// Route::post('/group/{group}/students', [GroupController::class, 'changeStudents']);
-
-// Route::post('/payment/addcard', [PaymentController::class, 'addCard']);
-// Route::get('/payment/cashier', [PaymentController::class, 'cashierId']);
-// Route::post('/payment/pay', [PaymentController::class, 'pay']);
-
-Route::get('test', function (Request $request) {
-
-    // $obj = new Payment();
-
-    // return $obj->myCards();
-    // return $obj->cashierId();
-    // return $obj->addCardForAdmin($request);
-
-});
-
 
 Route::any('/login', function () {
     return response()->json([

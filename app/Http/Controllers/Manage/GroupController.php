@@ -266,9 +266,8 @@ class GroupController extends Controller
             "course_id" => $request->course_id,
         ]);
 
-        if ($request->has('students')) {
+        if ($request->has('students'))
             $group->students()->sync($request->students);
-        }
 
         // auth('api')->user()->makeChanges(
         //     'Group updated from $val1 to $val2',
@@ -338,100 +337,54 @@ class GroupController extends Controller
             data: ["id" => $group->id]
         );
     }
-}
 
-    // /**
-    //  * @OA\Get(
-    //  * path="/api/manage/group/{id}/students",
-    //  * summary="Get specific group students data",
-    //  * description="Group students",
-    //  * operationId="studentsGroup",
-    //  * tags={"Group"},
-    //  * security={ {"bearerAuth": {} }},
-    //  *
-    //  * @OA\Parameter(
-    //  *    in="path",
-    //  *    name="id",
-    //  *    required=true,
-    //  *    description="ID to fetch the targeted campaigns.",
-    //  *    @OA\Schema(type="string")
-    //  * ),
-    //  *
-    //  * @OA\Response(
-    //  *    response=403,
-    //  *    description="Wrong credentials response",
-    //  *    @OA\JsonContent(
-    //  *       @OA\Property(property="message", type="string", example="Unauthorized")
-    //  *        )
-    //  *     )
-    //  * )
-    //  */
-    // public function students(string $id)
-    // {
-    //     $group = Group::find($id);
-    //     if ($group === null)
-    //         return response()->json(["error" => "Not found"]);
-    //     $students = $group->students()->orderByDesc('id')->paginate();
-    //     return StudentResource::collection($students);
-    // }
-    // /**
-    //  * @OA\Post(
-    //  * path="/api/manage/group/{id}/students",
-    //  * summary="Change group students",
-    //  * description="Group changeStudents",
-    //  * operationId="changeStudentsGroup",
-    //  * tags={"Group"},
-    //  * security={ {"bearerAuth": {} }},
-    //  *
-    //  * @OA\Parameter(
-    //  *    in="path",
-    //  *    name="id",
-    //  *    required=true,
-    //  *    description="ID to fetch the targeted campaigns.",
-    //  *    @OA\Schema(type="string")
-    //  * ),
-    //  *
-    //  * @OA\RequestBody(
-    //  *    required=true,
-    //  *    description="Pass user credentials",
-    //  *    @OA\JsonContent(
-    //  *       required={"students"},
-    //  *       @OA\Property(
-    //  *         property="students", type="array", collectionFormat="multi",
-    //  *         @OA\Items(type="integer", example=1)
-    //  *      ),
-    //  *    ),
-    //  * ),
-    //  *
-    //  * @OA\Response(
-    //  *    response=403,
-    //  *    description="Wrong credentials response",
-    //  *    @OA\JsonContent(
-    //  *       @OA\Property(property="message", type="string", example="Unauthorized")
-    //  *        )
-    //  *     )
-    //  * )
-    //  */
-    // public function changeStudents(Request $request, string $id)
-    // {
-    //     $group = Group::find($id);
-    //     if ($group === null)
-    //         return response()->json(["error" => "Not found"]);
-    //     $validator = Validator::make($request->all(), [
-    //         "students" => 'required|array',
-    //         "students.*" => 'required|numeric|distinct|exists:students,id',
-    //     ]);
-    //     if ($validator->fails())
-    //         return response()->json($validator->messages());
-    //     $group->students()->detach();
-    //     $group->students()->attach($request->students);
-    //     auth('api')->user()->makeChanges(
-    //         'Group updated from $val1 to $val2',
-    //         '$col-name',
-    //         $group
-    //     );
-    //     return response()->json([
-    //         "message" => "Students of the group are changed successfully",
-    //         "group" => $id
-    //     ]);
-    // }
+    /**
+     * @OA\Get(
+     * path="/api/manage/group/{id}/students",
+     * summary="Get specific group students data",
+     * description="Group students",
+     * operationId="studentsGroup",
+     * tags={"Group"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getStudents(string $group_id)
+    {
+        $group = $this->Group->find($group_id);
+
+        if (!$group)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                name: 'group_not_found',
+                data: ["id" => $group_id]
+            );
+
+        $students = $group->students()->orderByDesc('id')->paginate();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            name: 'get_group_students',
+            data: StudentResource::collection($students),
+            pagination: $students
+        );
+    }
+}
