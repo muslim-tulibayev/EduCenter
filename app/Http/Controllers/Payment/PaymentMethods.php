@@ -35,13 +35,12 @@ class PaymentMethods extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'cashier_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.cashier')])
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_cashier_id',
             data: [
                 "cashier_id" => $this->cashier->cashier_id
             ]
@@ -68,18 +67,20 @@ class PaymentMethods extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'card_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
             );
 
         $course = Course::find($request->course_id);
         $rec_create = $this->receiptsCreate($course);
 
+        //! fix this
         if (isset($rec_create->error))
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: 'receipts_create_has_error',
-                data: $rec_create->error
+                // name: 'receipts_create_has_error',
+                // data: $rec_create->error
+                message: trans('msg.error', ['attribute' => __('msg.attributes.payment')])
             );
 
         $rec_pay = $this->receiptsPay(
@@ -87,12 +88,14 @@ class PaymentMethods extends Controller
             $card->card_token
         );
 
+        //! fix this
         if (isset($rec_pay->error))
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: 'receipts_pay_has_error',
-                data: $rec_pay->error
+                // name: 'receipts_pay_has_error',
+                // data: $rec_pay->error
+                message: trans('msg.error', ['attribute' => __('msg.attributes.payment')])
             );
 
         $this->savePayment($student, $course->id, 'card', $course->price);
@@ -100,7 +103,7 @@ class PaymentMethods extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'paid_by_admin'
+            message: trans('msg.paid')
         );
     }
 
@@ -121,19 +124,21 @@ class PaymentMethods extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'card_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')])
             );
 
         $course = Course::find($request->course_id);
 
         $rec_create = $this->receiptsCreate($course);
 
+        //! fix this
         if (isset($rec_create->error))
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: 'receipts_create_has_error',
-                data: $rec_create->error
+                // name: 'receipts_create_has_error',
+                // data: $rec_create->error
+                message: trans('msg.error', ['attribute' => __('msg.attributes.payment')])
             );
 
         $rec_pay = $this->receiptsPay(
@@ -141,12 +146,14 @@ class PaymentMethods extends Controller
             $card->card_token
         );
 
+        //! fix this
         if (isset($rec_pay->error))
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: 'receipts_pay_has_error',
-                data: $rec_pay->error
+                // name: 'receipts_pay_has_error',
+                // data: $rec_pay->error
+                message: trans('msg.error', ['attribute' => __('msg.attributes.payment')])
             );
 
         $this->savePayment(
@@ -159,7 +166,7 @@ class PaymentMethods extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'paid_by_parent'
+            message: trans('msg.paid')
         );
     }
 
@@ -179,19 +186,21 @@ class PaymentMethods extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'card_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')])
             );
 
         $course = Course::find($request->course_id);
 
         $rec_create = $this->receiptsCreate($course);
 
+        //! fix this
         if (isset($rec_create->error))
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: 'receipts_create_has_error',
-                data: $rec_create->error
+                // name: 'receipts_create_has_error',
+                // data: $rec_create->error
+                message: trans('msg.error', ['attribute' => __('msg.attributes.payment')])
             );
 
         $rec_pay = $this->receiptsPay(
@@ -199,12 +208,14 @@ class PaymentMethods extends Controller
             $card->card_token
         );
 
+        //! fix this
         if (isset($rec_pay->error))
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: 'receipts_pay_has_error',
-                data: $rec_pay->error
+                // name: 'receipts_pay_has_error',
+                // data: $rec_pay->error
+                message: trans('msg.error', ['attribute' => __('msg.attributes.payment')])
             );
 
         $this->savePayment($this->auth_user, $course->id, 'card', $course->price);
@@ -212,7 +223,7 @@ class PaymentMethods extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'paid_by_student'
+            message: trans('msg.paid')
         );
     }
 
@@ -320,7 +331,7 @@ class PaymentMethods extends Controller
         }
 
         $this->auth_user->paymentable()->create([
-            "student_id" => $student_id,
+            "student_id" => $student->id,
             "type" => $type,
             "amount" => $amount,
         ]);

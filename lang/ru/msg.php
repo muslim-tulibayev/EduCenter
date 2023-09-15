@@ -15,6 +15,8 @@ return [
     'unauthenticated' => 'Неаутентифицированный',
     'val_distinct' => 'Поля :attribute должны иметь разные значения адреса электронной почты.',
     'no_branch' => ':attribute не имеет ветки',
+    'error' => 'Что-то пошло не так с :attribute',
+    'paid' => 'Платеж прошел успешно',
 
     'attributes' => [
         'email' => 'Электронная почта',
@@ -31,6 +33,11 @@ return [
         'branch' => 'Филиал',
         'role' => 'Роль',
         'payment' => 'Оплата',
+        'group' => 'Группа',
+        'route' => 'Маршрут',
+        'schedule' => 'Расписание',
+        'session' => 'Сессия',
+        'cashier' => 'Кассир',
     ],
 
 ];

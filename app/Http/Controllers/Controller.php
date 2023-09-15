@@ -173,7 +173,6 @@ class Controller extends BaseController
                         return $this->sendResponse(
                             success: false,
                             status: 404,
-                            // name: 'user_has_no_branch',
                             message: trans('msg.no_branch', ['attribute' => __('msg.attributes.' . $this->auth_type)])
                         );
                 } else {
@@ -184,7 +183,6 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        // name: 'unauthorized',
                         message: trans('msg.unauthorized')
                     );
 
@@ -198,7 +196,6 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        // name: 'unauthorized',
                         message: trans('msg.unauthorized')
                     );
 
@@ -210,7 +207,6 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        // name: 'unauthorized',
                         message: trans('msg.unauthorized')
                     );
 
@@ -222,7 +218,6 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        // name: 'unauthorized',
                         message: trans('msg.unauthorized')
                     );
 
@@ -234,7 +229,6 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        // name: 'unauthorized',
                         message: trans('msg.unauthorized')
                     );
 
@@ -246,7 +240,6 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        // name: 'unauthorized',
                         message: trans('msg.unauthorized')
                     );
 

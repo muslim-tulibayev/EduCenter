@@ -67,7 +67,6 @@ class LessonController extends Controller
         return $this->sendResponse(
             success: true,
             status: 201,
-            // name: 'lesson_created',
             message: trans('msg.created', ['attribute' => __('msg.attributes.lesson')]),
             data: ["id" => $newLesson->id]
         );
@@ -108,7 +107,6 @@ class LessonController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'lesson_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')]),
                 data: ["id" => $id]
             );
@@ -116,7 +114,6 @@ class LessonController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_lesson',
             data: LessonResource::make($lesson)
         );
     }
@@ -165,7 +162,6 @@ class LessonController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'lesson_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')]),
                 data: ["id" => $id]
             );
@@ -188,7 +184,6 @@ class LessonController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'lesson_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.lesson')]),
             data: ["id" => $lesson->id]
         );
@@ -229,7 +224,6 @@ class LessonController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'lesson_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')]),
                 data: ["id" => $id]
             );
@@ -239,7 +233,6 @@ class LessonController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'lesson_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.attributes.lesson')]),
             data: ["id" => $lesson->id]
         );

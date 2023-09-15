@@ -21,7 +21,6 @@ class SessionController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher');
-
         parent::__construct('sessions', true);
 
         $this->middleware(function ($request, $next) {
@@ -56,7 +55,6 @@ class SessionController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_sessions',
             data: SessionResource::collection($sessions),
             pagination: $sessions
         );
@@ -125,7 +123,7 @@ class SessionController extends Controller
         return $this->sendResponse(
             success: true,
             status: 201,
-            name: 'session_created',
+            message: trans('msg.created', ['attribute' => __('msg.attributes.session')]),
             data: ["id" => $newSession->id]
         );
     }
@@ -165,14 +163,13 @@ class SessionController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'session_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.session')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_session',
             data: SessionResource::make($session)
         );
     }
@@ -226,7 +223,7 @@ class SessionController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'session_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.session')]),
                 data: ["id" => $id]
             );
 
@@ -258,7 +255,7 @@ class SessionController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'session_updated',
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.session')]),
             data: ["id" => $session->id]
         );
     }
@@ -298,7 +295,7 @@ class SessionController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'session_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.session')]),
                 data: ["id" => $id]
             );
 
@@ -307,7 +304,7 @@ class SessionController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'session_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.session')]),
             data: ["id" => $session->id]
         );
     }

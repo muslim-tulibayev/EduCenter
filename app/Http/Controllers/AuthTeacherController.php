@@ -60,7 +60,6 @@ class AuthTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_my_groups',
             data: GroupResource::collection($groups)
         );
     }
@@ -73,14 +72,12 @@ class AuthTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'course_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')])
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_teacher_course',
             data: CourseResource::make($group->course)
         );
     }
@@ -93,7 +90,6 @@ class AuthTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'lessons_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')])
             );
 
@@ -104,7 +100,6 @@ class AuthTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_lessons',
             data: LessonResource::collection($lessons),
             pagination: $lessons
         );

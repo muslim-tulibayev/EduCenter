@@ -15,6 +15,8 @@ return [
     'unauthenticated' => 'Autentifikatsiya qilinmagan',
     'val_distinct' => ':atribut maydonlari alohida elektron pochta qiymatlariga ega bo\'lishi kerak',
     'no_branch' => ':atribut ning filiali mavjud emas',
+    'error' => ':attribute bilan nimadir noto\'g\'ri ketdi',
+    'paid' => 'To\'lov muvaffaqiyatli amalga oshirildi',
 
     'attributes' => [
         'email' => 'Elektron pochta',
@@ -31,6 +33,11 @@ return [
         'branch' => 'Filial',
         'role' => 'Rol',
         'payment' => 'To\'lov',
+        'group' => 'Guruh',
+        'route' => 'Marshrut',
+        'schedule' => 'Jadval',
+        'session' => 'Sessiya',
+        'cashier' => 'Kassir',
     ],
 
 ];

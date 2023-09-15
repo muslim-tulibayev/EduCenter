@@ -54,7 +54,6 @@ class PaymentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_payments',
             data: PaymentResource::collection($payments),
             pagination: $payments
         );
@@ -102,7 +101,6 @@ class PaymentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'payment_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.payment')]),
                 data: ["id" => $id]
             );
@@ -110,7 +108,6 @@ class PaymentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_payment',
             data: PaymentResource::make($payment)
         );
     }
@@ -155,7 +152,6 @@ class PaymentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'payment_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.payment')]),
                 data: ["id" => $id]
             );
@@ -165,7 +161,6 @@ class PaymentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'payment_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.attributes.payment')]),
             data: ["id" => $id]
         );

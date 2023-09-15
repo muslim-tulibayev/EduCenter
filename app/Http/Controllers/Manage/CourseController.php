@@ -36,7 +36,6 @@ class CourseController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    // name: 'unauthorized',
                     message: trans('msg.unauthorized'),
                 );
 
@@ -69,7 +68,6 @@ class CourseController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_courses',
             data: CourseResource::collection($courses),
             pagination: $courses
         );
@@ -130,7 +128,6 @@ class CourseController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'course_created',
             message: trans('msg.created', ['attribute' => __('msg.attributes.course')]),
             data: ["id" => $newCourse->id],
         );
@@ -171,7 +168,6 @@ class CourseController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'course_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')]),
                 data: ["id" => $id]
             );
@@ -179,7 +175,6 @@ class CourseController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_course',
             data: CourseResource::make($course)
         );
     }
@@ -228,7 +223,6 @@ class CourseController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'course_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')]),
                 data: ["id" => $id]
             );
@@ -259,7 +253,6 @@ class CourseController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'course_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.course')]),
             data: ["id" => $course->id]
         );
@@ -300,7 +293,6 @@ class CourseController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'course_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')]),
                 data: ["id" => $id]
             );
@@ -316,7 +308,6 @@ class CourseController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'course_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.attributes.course')]),
             data: ["id" => $course->id]
         );
@@ -330,7 +321,6 @@ class CourseController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'course_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')]),
                 data: ["id" => $id]
             );
@@ -342,7 +332,6 @@ class CourseController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_lessons',
             data: LessonResource::collection($lessons),
             pagination: $lessons
         );

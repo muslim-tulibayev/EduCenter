@@ -15,6 +15,8 @@ return [
     'unauthenticated' => 'Unauthenticated',
     'val_distinct' => ':attribute fields must have distinct email values',
     'no_branch' => ':attribute has no branch',
+    'error' => 'Something went wrong with :attribute',
+    'paid' => 'The payment was made successfully',
 
     'attributes' => [
         'email' => 'Email',
@@ -31,11 +33,11 @@ return [
         'branch' => 'Branch',
         'role' => 'Role',
         'payment' => 'Payment',
-
-
         'group' => 'Group',
         'route' => 'Route',
         'schedule' => 'Schedule',
+        'session' => 'Session',  
+        'cashier' => 'Cashier',  
     ],
 
 ];

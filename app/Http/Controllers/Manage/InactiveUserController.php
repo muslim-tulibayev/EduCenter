@@ -57,7 +57,6 @@ class InactiveUserController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: "get_users",
             data: UserResource::collection($users->items()),
             pagination: $users
         );
@@ -133,7 +132,6 @@ class InactiveUserController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'user_created',
             message: trans('msg.created', ['attribute' => __('msg.inactive_user')]),
             data: ["id" => $newUser->id]
         );
@@ -174,7 +172,6 @@ class InactiveUserController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'user_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.inactive_user')]),
                 data: ["id" => $id]
             );
@@ -182,7 +179,6 @@ class InactiveUserController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'user_found',
             data: UserResource::make($user)
         );
     }
@@ -236,7 +232,6 @@ class InactiveUserController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'user_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.inactive_user')]),
                 data: ["id" => $id]
             );
@@ -273,7 +268,6 @@ class InactiveUserController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'user_updated',
             message: trans('msg.updated', ['attribute' => __('msg.inactive_user')]),
             data: ["id" => $user->id]
         );
@@ -314,7 +308,6 @@ class InactiveUserController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'user_not_found',
                 message: trans('msg.not_found', __('msg.inactive_user')),
                 data: ["id" => $id]
             );
@@ -324,7 +317,6 @@ class InactiveUserController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'user_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.inactive_user')]),
             data: ["id" => $user->id]
         );

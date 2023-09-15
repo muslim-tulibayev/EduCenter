@@ -37,7 +37,6 @@ class ParentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    // name: 'unauthorized',
                     message: trans('msg.unauthorized'),
                 );
 
@@ -49,7 +48,6 @@ class ParentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    // name: 'unauthorized',
                     message: trans('msg.unauthorized'),
                 );
 
@@ -61,7 +59,6 @@ class ParentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    // name: 'unauthorized',
                     message: trans('msg.unauthorized'),
                 );
 
@@ -73,7 +70,6 @@ class ParentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    // name: 'unauthorized',
                     message: trans('msg.unauthorized'),
                 );
 
@@ -85,7 +81,6 @@ class ParentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    // name: 'unauthorized',
                     message: trans('msg.unauthorized'),
                 );
 
@@ -118,7 +113,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_parents',
             data: ParentResource::collection($parents),
             pagination: $parents
         );
@@ -191,7 +185,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_created',
             message: trans('msg.created', ['attribute' => __('msg.attributes.parent')]),
             data: ["id" => $newParent->id]
         );
@@ -232,7 +225,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["id" => $id]
             );
@@ -240,7 +232,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_parent',
             data: ParentResource::make($parent)
         );
     }
@@ -297,7 +288,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["id" => $id]
             );
@@ -341,7 +331,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.parent')]),
             data: ["id" => $parent->id]
         );
@@ -382,7 +371,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["id" => $id]
             );
@@ -398,7 +386,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.attributes.parent')]),
             data: ["id" => $parent->id]
         );
@@ -439,7 +426,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["parent_id" => $parent_id]
             );
@@ -447,7 +433,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_parent_cards',
             data: CardResource::collection($parent->cards)
         );
     }
@@ -494,7 +479,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["parent_id" => $parent_id]
             );
@@ -505,7 +489,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'card_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
                 data: ["card_id" => $card_id]
             );
@@ -513,7 +496,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_parent_card',
             data: CardResource::make($card)
         );
     }
@@ -564,7 +546,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["parent_id" => $parent_id]
             );
@@ -587,7 +568,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_card_created',
             message: trans('msg.created', ['attribute' => __('msg.attributes.card')]),
             data: ["id" => $newCard->id]
         );
@@ -646,7 +626,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["parent_id" => $parent_id]
             );
@@ -657,7 +636,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'card_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
                 data: ["card_id" => $card_id]
             );
@@ -680,7 +658,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_card_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.parent')]),
             data: ["id" => $card->id]
         );
@@ -728,7 +705,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["parent_id" => $parent_id]
             );
@@ -739,7 +715,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'card_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
                 data: ["card_id" => $card_id]
             );
@@ -749,7 +724,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_card_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.attributes.card')]),
             data: ["id" => $card->id]
         );
@@ -790,7 +764,6 @@ class ParentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'parent_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.parent')]),
                 data: ["id" => $parent_id]
             );
@@ -800,7 +773,6 @@ class ParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_parent_students',
             data: StudentResource::collection($students)
         );
     }

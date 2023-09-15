@@ -56,7 +56,6 @@ class GroupController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_groups',
             data: GroupResource::collection($groups),
             pagination: $groups
         );
@@ -134,7 +133,6 @@ class GroupController extends Controller
         return $this->sendResponse(
             success: true,
             status: 201,
-            // name: 'group_created',
             message: trans('msg.created', ['attribute' => __('msg.attributes.group')]),
             data: ["id" => $newGroup->id],
         );
@@ -175,7 +173,6 @@ class GroupController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'group_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.group')]),
                 data: ["id" => $id]
             );
@@ -183,7 +180,6 @@ class GroupController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_group',
             data: GroupResource::make($group)
         );
     }
@@ -239,7 +235,6 @@ class GroupController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'group_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.group')]),
                 data: ["id" => $id]
             );
@@ -280,7 +275,6 @@ class GroupController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'group_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.group')]),
             data: ["id" => $group->id]
         );
@@ -321,7 +315,6 @@ class GroupController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'group_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.group')]),
                 data: ["id" => $id]
             );
@@ -337,7 +330,6 @@ class GroupController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'group_deleted',
             message: trans('msg.deleted', ['attribute' => __('msg.attributes.group')]),
             data: ["id" => $group->id]
         );
@@ -378,7 +370,6 @@ class GroupController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'group_not_found',
                 message: trans('msg.not_found', ['attribute' => __('msg.attributes.group')]),
                 data: ["id" => $group_id]
             );
@@ -388,7 +379,6 @@ class GroupController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_group_students',
             data: StudentResource::collection($students),
             pagination: $students
         );

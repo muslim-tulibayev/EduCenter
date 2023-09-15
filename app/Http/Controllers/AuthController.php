@@ -150,7 +150,6 @@ class AuthController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 422,
-                // name: 'wrong_credentials'
                 message: trans('msg.wrong_credentials')
             );
         }
@@ -159,7 +158,6 @@ class AuthController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 422,
-                // name: 'inactive_user'
                 message: trans('msg.inactive_user')
             );
 
@@ -181,7 +179,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'logged_in',
             data: [
                 "token" => $token,
                 "name" => auth($auth_type)->user()->role->name,
@@ -215,7 +212,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'logged_out'
         );
     }
 
@@ -242,7 +238,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'me',
             data: [
                 // "id": 1,
                 "firstname" => $this->auth_user->firstname,
@@ -330,7 +325,6 @@ class AuthController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                // name: 'user_has_no_branch',
             );
 
         $data = [];
@@ -350,7 +344,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'get_user_branches',
             data: $data
         );
     }
@@ -388,7 +381,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'user_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.user')])
         );
     }
@@ -423,7 +415,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'teacher_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.teacher')])
         );
     }
@@ -459,7 +450,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'parent_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.parent')])
         );
     }
@@ -494,7 +484,6 @@ class AuthController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            // name: 'student_updated',
             message: trans('msg.updated', ['attribute' => __('msg.attributes.student')])
         );
     }

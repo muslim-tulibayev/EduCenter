@@ -114,7 +114,6 @@ Route::any('/login', function () {
     return response()->json([
         "success" => false,
         "status" => 401,
-        // "name" => $name,
         "message" => trans('msg.unauthenticated'),
         "data" => null,
         "pagination" => null,

@@ -38,7 +38,6 @@ class Handler extends ExceptionHandler
             return response()->json([
                 "success" => false,
                 "status" => 404,
-                // "name" => $name,
                 "message" => trans('msg.not_found', ['attribute' => __('msg.attributes.route')]),
                 "data" => null,
                 "pagination" => null,
