@@ -60,7 +60,7 @@ class AssistantTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "get_teachers",
+            // name: "get_teachers",
             data: TeacherResource::collection($teachers),
             pagination: $teachers
         );
@@ -144,7 +144,8 @@ class AssistantTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 201,
-            name: "assistant_teacher_created",
+            // name: "assistant_teacher_created",
+            message: trans('msg.created', ['attribute' => __('msg.attributes.assistant_teacher')]),
             data: ["id" => $newTeacher->id],
         );
     }
@@ -184,14 +185,15 @@ class AssistantTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "assistant_teacher_not_found",
+                // name: "assistant_teacher_not_found",
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.assistant_teacher')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "assistant_teacher_found",
+            // name: "assistant_teacher_found",
             data: TeacherResource::make($teacher)
         );
     }
@@ -242,7 +244,8 @@ class AssistantTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "assistant_teacher_not_found",
+                // name: "assistant_teacher_not_found",
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.assistant_teacher')]),
                 data: ["id" => $id]
             );
 
@@ -293,7 +296,8 @@ class AssistantTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "assistant_teacher_updated",
+            // name: "assistant_teacher_updated",
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.assistant_teacher')]),
             data: ["id" => $id]
         );
     }
@@ -333,7 +337,8 @@ class AssistantTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "assistant_teacher_not_found",
+                // name: "assistant_teacher_not_found",
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.assistant_teacher')]),
                 data: ["id" => $id]
             );
 
@@ -341,8 +346,9 @@ class AssistantTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 400,
-                name: "assistant_teacher_has_groups",
-                data: GroupResource::collection($teacher->groups)
+                // name: "assistant_teacher_has_groups",
+                message: trans('msg.has_groups', ['attribute' => __('msg.attributes.assistant_teacher')]),
+                data: GroupResource::collection($teacher->groups()->with('teacher', 'assistant_teacher', 'course')->get())
             );
 
         $teacher->delete();
@@ -356,7 +362,8 @@ class AssistantTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "assistant_teacher_deleted",
+            // name: "assistant_teacher_deleted",
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.assistant_teacher')]),
             data: ["id" => $id]
         );
     }

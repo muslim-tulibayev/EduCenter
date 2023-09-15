@@ -149,10 +149,16 @@ class Controller extends BaseController
             $this->auth_role = $this->auth_user->role;
 
         // Set user language
-        if ($this->auth_user) {
-            $locale = $this->auth_user->lang;
-            app()->setLocale($locale);
-        }
+        $this->middleware(function ($request, $next) {
+            if ($this->auth_user)
+                app()->setLocale($this->auth_user->lang);
+            else if ($lang = $request->header('Lang'))
+                app()->setLocale($lang);
+            else
+                app()->setLocale('en');
+
+            return $next($request);
+        });
 
         // define user's branch
         if ($checkBranch)
@@ -167,7 +173,8 @@ class Controller extends BaseController
                         return $this->sendResponse(
                             success: false,
                             status: 404,
-                            name: 'user_has_no_branch',
+                            // name: 'user_has_no_branch',
+                            message: trans('msg.no_branch', ['attribute' => __('msg.attributes.' . $this->auth_type)])
                         );
                 } else {
                     $this->auth_branch_id = $branch_header->id;
@@ -177,7 +184,8 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        name: 'unauthorized',
+                        // name: 'unauthorized',
+                        message: trans('msg.unauthorized')
                     );
 
                 return $next($request);
@@ -190,7 +198,8 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        name: 'unauthorized',
+                        // name: 'unauthorized',
+                        message: trans('msg.unauthorized')
                     );
 
                 return $next($request);
@@ -201,7 +210,8 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        name: 'unauthorized',
+                        // name: 'unauthorized',
+                        message: trans('msg.unauthorized')
                     );
 
                 return $next($request);
@@ -212,7 +222,8 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        name: 'unauthorized',
+                        // name: 'unauthorized',
+                        message: trans('msg.unauthorized')
                     );
 
                 return $next($request);
@@ -223,7 +234,8 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        name: 'unauthorized',
+                        // name: 'unauthorized',
+                        message: trans('msg.unauthorized')
                     );
 
                 return $next($request);
@@ -234,7 +246,8 @@ class Controller extends BaseController
                     return $this->sendResponse(
                         success: false,
                         status: 403,
-                        name: 'unauthorized',
+                        // name: 'unauthorized',
+                        message: trans('msg.unauthorized')
                     );
 
                 return $next($request);

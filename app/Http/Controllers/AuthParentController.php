@@ -49,7 +49,7 @@ class AuthParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_my_childrens',
+            // name: 'get_my_childrens',
             data: StudentResource::collection($this->auth_user->students)
         );
     }
@@ -81,7 +81,7 @@ class AuthParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_all_courses',
+            // name: 'get_all_courses',
             data: CourseResource::collection($courses),
             pagination: $courses
         );
@@ -110,7 +110,7 @@ class AuthParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_' . $this->auth_type . '_cards',
+            // name: 'get_' . $this->auth_type . '_cards',
             data: CardResource::collection($this->auth_user->cards)
         );
     }
@@ -163,7 +163,8 @@ class AuthParentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: $this->auth_type . '_card_added',
+            // name: $this->auth_type . '_card_added',
+            message: trans('msg.added', ['attribute' => __('msg.attributes.card')]),
             data: ["id" => $newCard->id]
         );
     }

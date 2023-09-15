@@ -16,7 +16,15 @@ class PaymentResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "student_id" => $this->student_id,
+            "student" => $this->whenLoaded('student', function () {
+                return [
+                    "id" => $this->student->id,
+                    "firstname" => $this->student->firstname,
+                    "lastname" => $this->student->lastname,
+                    // "contact" => $this->student->contact,
+                    "status" => $this->student->status,
+                ];
+            }),
             "type" => $this->type,
             "amount" => $this->amount,
             "created_at" => $this->created_at,

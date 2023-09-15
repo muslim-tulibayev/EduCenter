@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Manage;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Card\CardResource;
 use App\Http\Resources\Student\StudentResource;
+use App\Http\Resources\Student\StudentResourceForSearch;
 use App\Models\Role;
 use App\Models\Stparent;
 use App\Models\Student;
@@ -31,7 +32,8 @@ class StudentController extends Controller
                 $this->sendResponse(
                     success: false,
                     status: 403,
-                    name: 'unauthorized',
+                    // name: 'unauthorized',
+                    message: trans('msg.unauthorized'),
                 );
 
             return $next($request);
@@ -50,7 +52,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    name: 'unauthorized',
+                    // name: 'unauthorized',
+                    message: trans('msg.unauthorized'),
                 );
 
             return $next($request);
@@ -61,7 +64,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    name: 'unauthorized',
+                    // name: 'unauthorized',
+                    message: trans('msg.unauthorized'),
                 );
 
             return $next($request);
@@ -72,7 +76,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    name: 'unauthorized',
+                    // name: 'unauthorized',
+                    message: trans('msg.unauthorized'),
                 );
 
             return $next($request);
@@ -83,7 +88,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    name: 'unauthorized',
+                    // name: 'unauthorized',
+                    message: trans('msg.unauthorized'),
                 );
 
             return $next($request);
@@ -94,7 +100,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 403,
-                    name: 'unauthorized',
+                    // name: 'unauthorized',
+                    message: trans('msg.unauthorized'),
                 );
 
             return $next($request);
@@ -126,7 +133,7 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "all_students",
+            // name: "all_students",
             data: StudentResource::collection($students),
             pagination: $students
         );
@@ -221,11 +228,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 400,
-                    name: 'validation_error',
-                    data: [
-                        "field" => 'emails_combination',
-                        "message" => 'The email fields must contain distinct email values.'
-                    ]
+                    // name: 'validation_error',
+                    message: trans('msg.val_distinct', ['attribute' => __('msg.attributes.email')])
                 );
         }
 
@@ -266,7 +270,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "student_created",
+            // name: "student_created",
+            message: trans('msg.created', ['attribute' => __('msg.attributes.student')]),
             data: ["id" => $newStudent->id],
         );
     }
@@ -306,14 +311,15 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "student_not_found",
+                // name: "student_not_found",
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "student_found",
+            // name: "student_found",
             data: StudentResource::make($student)
         );
     }
@@ -381,7 +387,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "student_not_found",
+                // name: "student_not_found",
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["id" => $id]
             );
 
@@ -429,11 +436,8 @@ class StudentController extends Controller
                 return $this->sendResponse(
                     success: false,
                     status: 400,
-                    name: 'validation_error',
-                    data: [
-                        "field" => 'emails_combination',
-                        "message" => 'The email fields must contain distinct email values.'
-                    ]
+                    // name: 'validation_error',
+                    message: trans('msg.val_distinct', ['attribute' => __('msg.attributes.email')])
                 );
         }
 
@@ -466,7 +470,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "student_updated",
+            // name: "student_updated",
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.student')]),
             data: ["id" => $id]
         );
     }
@@ -506,7 +511,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: "student_not_found",
+                // name: "student_not_found",
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["id" => $id]
             );
 
@@ -515,7 +521,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "student_deleted",
+            // name: "student_deleted",
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.student')]),
             data: ["id" => $id]
         );
     }
@@ -563,8 +570,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: "student_search",
-            data: StudentResource::collection($students)
+            // name: "student_search",
+            data: StudentResourceForSearch::collection($students)
         );
     }
 
@@ -603,14 +610,15 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'student_not_found',
+                // name: 'student_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["student_id" => $student_id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_parent_cards',
+            // name: 'get_student_cards',
             data: CardResource::collection($student->cards)
         );
     }
@@ -657,7 +665,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'student_not_found',
+                // name: 'student_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["student_id" => $student_id]
             );
 
@@ -667,14 +676,15 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'card_not_found',
+                // name: 'card_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
                 data: ["card_id" => $card_id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_student_card',
+            // name: 'get_student_card',
             data: CardResource::make($card)
         );
     }
@@ -725,7 +735,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'student_not_found',
+                // name: 'student_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["student_id" => $student_id]
             );
 
@@ -747,7 +758,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'student_card_created',
+            // name: 'student_card_created',
+            message: trans('msg.created', ['attribute' => __('msg.attributes.card')]),
             data: ["id" => $newCard->id]
         );
     }
@@ -805,7 +817,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'student_not_found',
+                // name: 'student_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["student_id" => $student_id]
             );
 
@@ -815,7 +828,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'card_not_found',
+                // name: 'card_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
                 data: ["card_id" => $card_id]
             );
 
@@ -837,7 +851,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'student_card_updated',
+            // name: 'student_card_updated',
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.card')]),
             data: ["id" => $card->id]
         );
     }
@@ -884,7 +899,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'student_not_found',
+                // name: 'student_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
                 data: ["student_id" => $student_id]
             );
 
@@ -894,7 +910,8 @@ class StudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'card_not_found',
+                // name: 'card_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.card')]),
                 data: ["card_id" => $card_id]
             );
 
@@ -903,7 +920,8 @@ class StudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'student_card_deleted',
+            // name: 'student_card_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.card')]),
             data: ["id" => $card->id]
         );
     }

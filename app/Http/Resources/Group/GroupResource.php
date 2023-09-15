@@ -19,9 +19,31 @@ class GroupResource extends JsonResource
             "name" => $this->name,
             "status" => $this->status,
             "completed_lessons" => $this->completed_lessons,
-            "teacher_id" => $this->teacher_id,
-            "assistant_teacher_id" => $this->assistant_teacher_id,
-            "course_id" => $this->course_id,
+            "teacher" => $this->whenLoaded('teacher', function () {
+                return [
+                    "id" => $this->teacher->id,
+                    "firstname" => $this->teacher->firstname,
+                    "lastname" => $this->teacher->lastname,
+                    // "contact" => $this->teacher->contact,
+                    "status" => $this->teacher->status,
+                ];
+            }),
+            "assistant_teacher" => $this->whenLoaded('assistant_teacher', function () {
+                return [
+                    "id" => $this->assistant_teacher->id,
+                    "firstname" => $this->assistant_teacher->firstname,
+                    "lastname" => $this->assistant_teacher->lastname,
+                    // "contact" => $this->assistant_teacher->contact,
+                    "status" => $this->assistant_teacher->status,
+                ];
+            }),
+            "course" => $this->whenLoaded('course', function () {
+                return [
+                    "id" => $this->course->id,
+                    "name" => $this->course->name,
+                    // $table->unsignedBigInteger('price');
+                ];
+            }),
             // "branch_id" => $this->branch_id,
         ];
     }

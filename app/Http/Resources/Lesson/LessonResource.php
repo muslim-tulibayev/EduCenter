@@ -13,7 +13,13 @@ class LessonResource extends JsonResource
             "id" => $this->id,
             "sequence_number" => $this->sequence_number,
             "name" => $this->name,
-            "course_id" => $this->course_id,
+            "course" => $this->whenLoaded('course', function () {
+                return [
+                    "id" => $this->course->id,
+                    "name" => $this->course->name,
+                    // $table->unsignedBigInteger('price');
+                ];
+            }),
         ];
     }
 }

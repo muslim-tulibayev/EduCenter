@@ -55,11 +55,13 @@ class AuthTeacherController extends Controller
 
     public function groups()
     {
+        $groups = $this->auth_user->groups()->with('teacher', 'assistant_teacher', 'course')->get();
+
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_my_groups',
-            data: GroupResource::collection($this->auth_user->groups)
+            // name: 'get_my_groups',
+            data: GroupResource::collection($groups)
         );
     }
 
@@ -71,13 +73,14 @@ class AuthTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'course_not_found',
+                // name: 'course_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')])
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_teacher_course',
+            // name: 'get_teacher_course',
             data: CourseResource::make($group->course)
         );
     }
@@ -90,7 +93,8 @@ class AuthTeacherController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'lessons_not_found',
+                // name: 'lessons_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')])
             );
 
         $lessons = $group->course->lessons()
@@ -100,7 +104,7 @@ class AuthTeacherController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_lessons',
+            // name: 'get_lessons',
             data: LessonResource::collection($lessons),
             pagination: $lessons
         );

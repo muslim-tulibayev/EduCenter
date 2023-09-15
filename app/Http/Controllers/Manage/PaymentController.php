@@ -17,7 +17,6 @@ class PaymentController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher');
-
         parent::__construct('payments', true);
 
         $this->middleware(function ($request, $next) {
@@ -29,14 +28,33 @@ class PaymentController extends Controller
         });
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/manage/payment",
+     * summary="Get all Payments data",
+     * description="Payment index",
+     * operationId="indexPayment",
+     * tags={"Payment"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
     public function index()
     {
-        $payments = $this->Payment->with('paymentable')->orderByDesc('id')->paginate();
+        $payments = $this->Payment->with('student', 'paymentable')->orderByDesc('id')->paginate();
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_payments',
+            // name: 'get_payments',
             data: PaymentResource::collection($payments),
             pagination: $payments
         );
@@ -49,49 +67,85 @@ class PaymentController extends Controller
     //     ]);
     // }
 
+    /**
+     * @OA\Get(
+     * path="/api/manage/payment/{id}",
+     * summary="Get specific Payment data",
+     * description="Payment show",
+     * operationId="showPayment",
+     * tags={"Payment"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
+
     public function show(string $id)
     {
-        $payment = $this->Payment->with('paymentable')->find($id);
+        $payment = $this->Payment->with('student', 'paymentable')->find($id);
 
         if (!$payment)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'payment_not_found',
+                // name: 'payment_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.payment')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_payment',
+            // name: 'get_payment',
             data: PaymentResource::make($payment)
         );
     }
 
     // public function update(Request $request, string $id)
     // {
-    //     $payment = $this->Payment->find($id);
-
-    //     if (!$payment)
-    //         return $this->sendResponse(
-    //             success: false,
-    //             status: 404,
-    //             name: 'payment_not_found',
-    //             data: ["id" => $id]
-    //         );
-
-    //     $validator = Validator::make($request->all(), [
-    //         $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-    //         $table->enum('type', ['card', 'cash']);
-    //         $table->unsignedBigInteger('amount');
-    //         // $table->morphs('paymentable');
-    //     ]);
-
-    //     // $payment->update([
-
-    //     // ]);
+    // 
     // }
+
+    /**
+     * @OA\Delete(
+     * path="/api/manage/payment/{id}",
+     * summary="Delete specific Payment",
+     * description="Payment delete",
+     * operationId="destroyPayment",
+     * tags={"Payment"},
+     * security={ {"bearerAuth": {} }},
+     *
+     * @OA\Parameter(
+     *    in="path",
+     *    name="id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     *
+     * @OA\Response(
+     *    response=403,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Unauthorized")
+     *        )
+     *     )
+     * )
+     */
 
     public function destroy(string $id)
     {
@@ -101,7 +155,8 @@ class PaymentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'payment_not_found',
+                // name: 'payment_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.payment')]),
                 data: ["id" => $id]
             );
 
@@ -110,7 +165,8 @@ class PaymentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'payment_deleted',
+            // name: 'payment_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.payment')]),
             data: ["id" => $id]
         );
     }

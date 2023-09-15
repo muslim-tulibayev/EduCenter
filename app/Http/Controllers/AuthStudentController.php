@@ -47,11 +47,13 @@ class AuthStudentController extends Controller
 
     public function myCourses()
     {
+        $access_for_courses = $this->auth_user->accessForCourses()->with('course')->get();
+
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_my_courses',
-            data: AccessForCourseResource::collection($this->auth_user->accessForCourses)
+            // name: 'get_my_courses',
+            data: AccessForCourseResource::collection($access_for_courses)
         );
     }
 
@@ -82,7 +84,7 @@ class AuthStudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_all_courses',
+            // name: 'get_all_courses',
             data: CourseResource::collection($courses),
             pagination: $courses
         );
@@ -123,17 +125,19 @@ class AuthStudentController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'lessons_not_found',
+                // name: 'lessons_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')])
             );
 
         $lessons = $accessForCourse->course->lessons()
+            // ->with('course')
             ->orderByRaw('CAST(SUBSTRING_INDEX(sequence_number, " ", 1) AS UNSIGNED) DESC')
             ->paginate();
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_lessons',
+            // name: 'get_lessons',
             data: LessonResource::collection($lessons),
             pagination: $lessons
         );
@@ -163,7 +167,7 @@ class AuthStudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_' . $this->auth_type . '_cards',
+            // name: 'get_' . $this->auth_type . '_cards',
             data: CardResource::collection($this->auth_user->cards)
         );
     }
@@ -218,7 +222,8 @@ class AuthStudentController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: $this->auth_type . '_card_added',
+            // name: $this->auth_type . '_card_added',
+            message: trans('msg.added', ['attribute' => __('msg.attributes.student')]),
             data: ["id" => $newCard->id]
         );
     }

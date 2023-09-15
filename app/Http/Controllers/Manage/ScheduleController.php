@@ -58,7 +58,7 @@ class ScheduleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_schedules',
+            // name: 'get_schedules',
             data: ScheduleResource::collection($schedules),
             pagination: $schedules
         );
@@ -122,7 +122,8 @@ class ScheduleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'schedule_created',
+            // name: 'schedule_created',
+            message: trans('msg.created', ['attribute' => __('msg.attributes.schedule')]),
             data: ["id" => $newSchedule->id],
         );
     }
@@ -163,14 +164,15 @@ class ScheduleController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'schedule_not_found',
+                // name: 'schedule_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.schedule')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_schedule',
+            // name: 'get_schedule',
             data: ScheduleResource::make($schedule),
         );
     }
@@ -221,7 +223,8 @@ class ScheduleController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'schedule_not_found',
+                // name: 'schedule_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.schedule')]),
                 data: ["id" => $id]
             );
 
@@ -251,7 +254,8 @@ class ScheduleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'schedule_updated',
+            // name: 'schedule_updated',
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.schedule')]),
             data: ["id" => $newSchedule->id],
         );
     }
@@ -291,7 +295,8 @@ class ScheduleController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'schedule_not_found',
+                // name: 'schedule_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.schedule')]),
                 data: ["id" => $id]
             );
 
@@ -306,7 +311,8 @@ class ScheduleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'schedule_deleted',
+            // name: 'schedule_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.schedule')]),
             data: ["id" => $id],
         );
     }
@@ -371,7 +377,7 @@ class ScheduleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_schedules_by_filter',
+            // name: 'get_schedules_by_filter',
             data: ScheduleResource::collection($schedules),
             pagination: $schedules
         );

@@ -93,19 +93,19 @@ Route::group(['prefix' => '/manage'], function () {
     Route::apiResource('/course', CourseController::class);
     Route::get('/course/{id}/lessons', [CourseController::class, 'lessons']);
 
-    Route::apiResource('/branch', BranchController::class);
-    Route::apiResource('/lesson', LessonController::class);
 
     Route::apiResource('/group', GroupController::class);
     Route::get('/group/{group}/students', [GroupController::class, 'getStudents']);
 
-    Route::apiResource('/session', SessionController::class);
 
     Route::post('/schedule/by-filter', [ScheduleController::class, 'getSchedulesByFilter']);
     Route::apiResource('/schedule', ScheduleController::class);
 
+    Route::apiResource('/branch', BranchController::class);
+    Route::apiResource('/session', SessionController::class);
+    Route::apiResource('/lesson', LessonController::class)->except(['index']);
     Route::apiResource('/role', RoleController::class);
-    Route::apiResource('/payment', PaymentController::class);
+    Route::apiResource('/payment', PaymentController::class)->except(['store', 'update']);
     // Route::apiResource('/cashier', CashierController::class);
     // Route::apiResource('/card', CardController::class);
 });
@@ -114,7 +114,10 @@ Route::any('/login', function () {
     return response()->json([
         "success" => false,
         "status" => 401,
-        "name" => 'unauthenticated',
+        // "name" => $name,
+        "message" => trans('msg.unauthenticated'),
+        "data" => null,
+        "pagination" => null,
     ]);
 })->name('login');
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Manage;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Lesson\LessonResource;
-use App\Models\Branch;
 use App\Models\Lesson;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
@@ -15,75 +14,10 @@ class LessonController extends Controller
 {
     use SendResponseTrait, SendValidatorMessagesTrait;
 
-    private $Lesson;
-    private $course_id;
-
     public function __construct()
     {
         $this->middleware('auth:api,teacher');
-
         parent::__construct('lessons', true);
-
-        $this->middleware(function ($request, $next) {
-            $this->course_id = $request->header('Course-Id');
-
-            if (!$this->course_id)
-                return $this->sendResponse(
-                    success: false,
-                    status: 400,
-                    name: 'course_required'
-                );
-
-            $course = Branch::find($this->auth_branch_id)
-                ->courses()
-                ->find($this->course_id);
-
-            if (!$course)
-                return $this->sendResponse(
-                    success: false,
-                    status: 404,
-                    name: 'course_not_found'
-                );
-
-            $this->Lesson = $course->lessons();
-
-            return $next($request);
-        });
-    }
-
-    /**
-     * @OA\Get(
-     * path="/api/manage/lesson",
-     * summary="Get all Lessons data",
-     * description="Lesson index",
-     * operationId="indexLesson",
-     * tags={"Lesson"},
-     * security={ {"bearerAuth": {} }},
-     * @OA\Response(
-     *    response=403,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="error", type="string", example="Unauthorized")
-     *        )
-     *     )
-     * )
-     */
-
-    public function index()
-    {
-        // $lessons = $this->Lesson->orderByDesc('sequence_number')->paginate();
-
-        $lessons = $this->Lesson
-            ->orderByRaw('CAST(SUBSTRING_INDEX(sequence_number, " ", 1) AS UNSIGNED) DESC')
-            ->paginate();
-
-        return $this->sendResponse(
-            success: true,
-            status: 200,
-            name: 'get_lessons',
-            data: LessonResource::collection($lessons),
-            pagination: $lessons
-        );
     }
 
     /**
@@ -116,6 +50,7 @@ class LessonController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            "course_id" => 'required|integer|exists:courses,id',
             "sequence_number" => 'required|string',
             "name" => 'required|string',
         ]);
@@ -124,15 +59,16 @@ class LessonController extends Controller
             return $this->sendValidatorMessages($validator);
 
         $newLesson = Lesson::create([
+            'course_id' => $request->course_id,
             'sequence_number' => $request->sequence_number,
             'name' => $request->name,
-            'course_id' => $this->course_id
         ]);
 
         return $this->sendResponse(
             success: true,
             status: 201,
-            name: 'lesson_created',
+            // name: 'lesson_created',
+            message: trans('msg.created', ['attribute' => __('msg.attributes.lesson')]),
             data: ["id" => $newLesson->id]
         );
     }
@@ -166,20 +102,21 @@ class LessonController extends Controller
 
     public function show(string $id)
     {
-        $lesson = $this->Lesson->find($id);
+        $lesson = Lesson::find($id);
 
         if (!$lesson)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'lesson_not_found',
+                // name: 'lesson_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_lesson',
+            // name: 'get_lesson',
             data: LessonResource::make($lesson)
         );
     }
@@ -222,17 +159,19 @@ class LessonController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $lesson = $this->Lesson->find($id);
+        $lesson = Lesson::find($id);
 
         if (!$lesson)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'lesson_not_found',
+                // name: 'lesson_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')]),
                 data: ["id" => $id]
             );
 
         $validator = Validator::make($request->all(), [
+            "course_id" => 'required|integer|exists:courses,id',
             "sequence_number" => 'required|string',
             "name" => 'required|string',
         ]);
@@ -241,15 +180,16 @@ class LessonController extends Controller
             return $this->sendValidatorMessages($validator);
 
         $lesson->update([
+            'course_id' => $request->course_id,
             'sequence_number' => $request->sequence_number,
             'name' => $request->name,
-            // 'course_id' => $this->course_id,
         ]);
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'lesson_updated',
+            // name: 'lesson_updated',
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.lesson')]),
             data: ["id" => $lesson->id]
         );
     }
@@ -283,13 +223,14 @@ class LessonController extends Controller
 
     public function destroy(string $id)
     {
-        $lesson = $this->Lesson->find($id);
+        $lesson = Lesson::find($id);
 
         if (!$lesson)
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'lesson_not_found',
+                // name: 'lesson_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.lesson')]),
                 data: ["id" => $id]
             );
 
@@ -298,8 +239,43 @@ class LessonController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'lesson_deleted',
+            // name: 'lesson_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.lesson')]),
             data: ["id" => $lesson->id]
         );
     }
 }
+
+
+/**
+ * @OA\Get(
+ * path="/api/manage/lesson",
+ * summary="Get all Lessons data",
+ * description="Lesson index",
+ * operationId="indexLesson",
+ * tags={"Lesson"},
+ * security={ {"bearerAuth": {} }},
+ * @OA\Response(
+ *    response=403,
+ *    description="Wrong credentials response",
+ *    @OA\JsonContent(
+ *       @OA\Property(property="error", type="string", example="Unauthorized")
+ *        )
+ *     )
+ * )
+ */
+
+// public function index()
+// {
+//     // $lessons = $this->Lesson->orderByDesc('sequence_number')->paginate();
+//     $lessons = $this->Lesson
+//         ->orderByRaw('CAST(SUBSTRING_INDEX(sequence_number, " ", 1) AS UNSIGNED) DESC')
+//         ->paginate();
+//     return $this->sendResponse(
+//         success: true,
+//         status: 200,
+//         name: 'get_lessons',
+//         data: LessonResource::collection($lessons),
+//         pagination: $lessons
+//     );
+// }

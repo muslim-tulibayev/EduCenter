@@ -9,16 +9,18 @@ trait SendValidatorMessagesTrait
         $res = [];
 
         foreach ($validator->messages()->toArray() as $key => $value)
-            $res[] = [
-                "field" => $key,
-                "message" => $value[0],
-            ];
+            // $res[] = [
+            //     "field" => $key,
+            //     "message" => $value[0],
+            // ];
 
         return response()->json([
             "success" => false,
             "status" => 400,
-            "name" => 'validation_error',
-            "data" => $res,
+            // "name" => 'validation_error',
+            "message" => $value[0],
+            "data" => null,
+            "pagination" => null,
         ]);
     }
 }

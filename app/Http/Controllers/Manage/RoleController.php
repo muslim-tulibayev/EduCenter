@@ -17,7 +17,6 @@ class RoleController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api,teacher');
-
         parent::__construct('roles');
     }
 
@@ -46,7 +45,7 @@ class RoleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_roles',
+            // name: 'get_roles',
             data: RoleResource::collection($roles),
             pagination: $roles
         );
@@ -138,7 +137,8 @@ class RoleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'role_created',
+            // name: 'role_created',
+            message: trans('msg.created', ['attribute' => __('msg.attributes.role')]),
             data: ["id" => $newRole->id],
         );
     }
@@ -178,14 +178,15 @@ class RoleController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'role_not_found',
+                // name: 'role_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.role')]),
                 data: ["id" => $id],
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_role',
+            // name: 'get_role',
             data: RoleResource::make($role),
         );
     }
@@ -252,7 +253,8 @@ class RoleController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'role_not_found',
+                // name: 'role_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.role')]),
                 data: ["id" => $id],
             );
 
@@ -296,7 +298,8 @@ class RoleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'role_updated',
+            // name: 'role_updated',
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.role')]),
             data: ["id" => $role->id],
         );
     }
@@ -336,7 +339,8 @@ class RoleController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'role_not_found',
+                // name: 'role_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.role')]),
                 data: ["id" => $id],
             );
 
@@ -345,7 +349,8 @@ class RoleController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'role_deleted',
+            // name: 'role_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.role')]),
             data: ["id" => $role->id],
         );
     }

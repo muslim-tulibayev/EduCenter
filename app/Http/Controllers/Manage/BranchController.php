@@ -55,7 +55,7 @@ class BranchController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_branch',
+            // name: 'get_branches',
             data: BranchResource::collection($branches),
             pagination: $branches
         );
@@ -117,7 +117,8 @@ class BranchController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'branch_created',
+            // name: 'branch_created',
+            message: trans('msg.created', ['attribute' => __('msg.attributes.branch')]),
             data: ["id" => $newBranch->id],
         );
     }
@@ -157,14 +158,15 @@ class BranchController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'branch_not_found',
+                // name: 'branch_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.branch')]),
                 data: ["id" => $id]
             );
 
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_branch',
+            // name: 'get_branch',
             data: BranchResource::make($branch),
         );
     }
@@ -213,7 +215,8 @@ class BranchController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'branch_not_found',
+                // name: 'branch_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.branch')]),
                 data: ["id" => $id],
             );
 
@@ -239,7 +242,8 @@ class BranchController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'branch_updated',
+            // name: 'branch_updated',
+            message: trans('msg.updated', ['attribute' => __('msg.attributes.branch')]),
             data: ["id" => $branch->id],
         );
     }
@@ -279,7 +283,8 @@ class BranchController extends Controller
             return $this->sendResponse(
                 success: false,
                 status: 404,
-                name: 'branch_not_found',
+                // name: 'branch_not_found',
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.branch')]),
                 data: ["id" => $id],
             );
 
@@ -294,7 +299,8 @@ class BranchController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'branch_deleted',
+            // name: 'branch_deleted',
+            message: trans('msg.deleted', ['attribute' => __('msg.attributes.branch')]),
             data: ["id" => $branch->id],
         );
     }

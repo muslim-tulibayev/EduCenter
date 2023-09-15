@@ -40,7 +40,7 @@ class AuthUserController extends Controller
         return $this->sendResponse(
             success: true,
             status: 200,
-            name: 'get_statistics',
+            // name: 'get_statistics',
             data: "this_statistics_route"
         );
     }
