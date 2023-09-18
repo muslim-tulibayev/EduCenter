@@ -237,6 +237,10 @@ return [
         'branch_id' => 'идентификатор ветки',
         'student_id' => 'идентификатор студента',
         'cashier_id' => 'идентификатор кассира',
+
+        'value' => 'val/ru',
+        'comment' => 'com/ru',
+        'filter' => 'fil/ru',
     ],
 
 ];

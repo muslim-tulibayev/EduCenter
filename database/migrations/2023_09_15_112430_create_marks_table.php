@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('marks', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('value');
+            $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', ['card', 'cash']);
-            $table->unsignedBigInteger('amount');
-            $table->morphs('paymentable');
+            $table->morphs('markable');
+            $table->string('comment');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('marks');
     }
 };

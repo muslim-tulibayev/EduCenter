@@ -8,7 +8,7 @@ return [
     'inactive_user' => 'Доступ запрещен',
     'updated' => ':attribute успешно обновлен',
     'deleted' => ':attribute успешно удален',
-    'not_found' => ':атрибут не найден',
+    'not_found' => ':attribute не найден',
     'added' => ':attribute успешно добавлен',
     'has_groups' => ':attribute имеет группы',
     'unauthorized' => 'Неавторизованный',

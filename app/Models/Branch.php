@@ -52,4 +52,9 @@ class Branch extends Model
     {
         return $this->hasManyThrough(Schedule::class, Room::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

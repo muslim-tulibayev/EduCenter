@@ -70,6 +70,11 @@ use Illuminate\Routing\Controller as BaseController;
  *  ),
  * 
  *  @OA\Tag(
+ *      name = "Exam",
+ *      description = "Exam",
+ *  ),
+ * 
+ *  @OA\Tag(
  *      name = "Lesson",
  *      description = "Lesson",
  *  ),

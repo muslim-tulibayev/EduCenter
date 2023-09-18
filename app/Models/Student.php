@@ -65,6 +65,11 @@ class Student extends Authenticatable implements JWTSubject
         return $this->morphMany(Payment::class, 'paymentable');
     }
 
+    public function marks()
+    {
+        return $this->hasMany(Mark::class);
+    }
+
     // ------------------------------------------------------
 
     public function changes(): MorphMany

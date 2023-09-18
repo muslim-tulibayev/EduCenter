@@ -18,6 +18,8 @@ return [
     'error' => 'Something went wrong with :attribute',
     'paid' => 'The payment was made successfully',
 
+    'st_marked' => 'The student was successfully evaluated.',
+
     'attributes' => [
         'email' => 'Email',
         'user' => 'User',
@@ -37,7 +39,11 @@ return [
         'route' => 'Route',
         'schedule' => 'Schedule',
         'session' => 'Session',  
-        'cashier' => 'Cashier',  
+        'cashier' => 'Cashier',
+
+
+        'exam' => 'Exam',
+        'mark' => 'Mark',
     ],
 
 ];

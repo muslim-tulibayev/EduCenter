@@ -21,6 +21,7 @@ class PaymentFactory extends Factory
     {
         return [
             "student_id" => rand(1, 100),
+            "branch_id" => rand(1, 3),
             "type" => fake()->randomElement(['card', 'cash']),
             "amount" => fake()->randomElement([1000000, 500000, 250000, 1500000]),
             "paymentable_id" => rand(1, 12),

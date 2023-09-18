@@ -330,8 +330,10 @@ class PaymentMethods extends Controller
                 ]);
         }
 
+        //! fix this
         $this->auth_user->paymentable()->create([
             "student_id" => $student->id,
+            "branch_id" => rand(1, 3),
             "type" => $type,
             "amount" => $amount,
         ]);

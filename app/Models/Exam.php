@@ -5,15 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Lesson extends Model
+class Exam extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
-    protected $fillable = [
-        "sequence_number",
+    public $fillable = [
         "name",
         "course_id",
     ];
@@ -23,7 +22,17 @@ class Lesson extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function markable()
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class);
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function markable(): MorphMany
     {
         return $this->morphMany(Mark::class, 'markable');
     }

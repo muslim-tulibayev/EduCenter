@@ -23,6 +23,11 @@ class Course extends Model
         return $this->hasMany(Lesson::class);
     }
 
+    public function exams(): HasMany
+    {
+        return $this->hasMany(Exam::class);
+    }
+
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class);

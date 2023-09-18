@@ -26,18 +26,19 @@ return new class extends Migration
 
             // access for tables (CRUD)
             $table->unsignedTinyInteger('roles')->default(0);
+            $table->unsignedTinyInteger('branches')->default(0);
             $table->unsignedTinyInteger('users')->default(0);
             $table->unsignedTinyInteger('inactive_users')->default(0);
             // $table->unsignedTinyInteger('weekdays')->default(0);
             $table->unsignedTinyInteger('teachers')->default(0);
             $table->unsignedTinyInteger('assistant_teachers')->default(0);
             $table->unsignedTinyInteger('courses')->default(0);
+            $table->unsignedTinyInteger('exams')->default(0);
             $table->unsignedTinyInteger('lessons')->default(0);
             $table->unsignedTinyInteger('groups')->default(0);
             $table->unsignedTinyInteger('students')->default(0);
             $table->unsignedTinyInteger('stparents')->default(0);
             $table->unsignedTinyInteger('sessions')->default(0);
-            $table->unsignedTinyInteger('branches')->default(0);
             $table->unsignedTinyInteger('rooms')->default(0);
             $table->unsignedTinyInteger('schedules')->default(0);
             // $table->unsignedTinyInteger('certificates')->default(0);
@@ -47,6 +48,8 @@ return new class extends Migration
             $table->unsignedTinyInteger('access_for_courses')->default(0);
             $table->unsignedTinyInteger('cards')->default(0);
             $table->unsignedTinyInteger('payments')->default(0);
+            $table->unsignedTinyInteger('marks')->default(0);
+            $table->unsignedTinyInteger('rollcalls')->default(0);
             $table->unsignedTinyInteger('changes')->default(0);
 
             // $table->index(['name']);

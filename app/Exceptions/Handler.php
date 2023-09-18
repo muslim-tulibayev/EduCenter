@@ -34,6 +34,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        //! fix this : set (lan) locale
         if ($exception instanceof NotFoundHttpException) {
             return response()->json([
                 "success" => false,

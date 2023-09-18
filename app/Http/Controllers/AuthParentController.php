@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Payment\PaymentMethods;
+use App\Http\Resources\AccessForCourse\AccessForCourseResource;
 use App\Http\Resources\Card\CardResource;
 use App\Http\Resources\Course\CourseResource;
+use App\Http\Resources\Exam\ExamResourceForStudent;
+use App\Http\Resources\Lesson\LessonResourceForStudent;
+use App\Http\Resources\Mark\MarkResourceForExam;
+use App\Http\Resources\Mark\MarkResourceForLesson;
 use App\Http\Resources\Student\StudentResource;
 use App\Models\Course;
+use App\Models\Exam;
+use App\Models\Lesson;
+use App\Models\Student;
 use App\Traits\SendResponseTrait;
 use App\Traits\SendValidatorMessagesTrait;
 use Illuminate\Http\Request;
@@ -84,6 +92,169 @@ class AuthParentController extends Controller
             pagination: $courses
         );
     }
+
+    public function getCourses(string $id)
+    {
+        $student = $this->auth_user->students()->find($id);
+
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
+                data: ['id' => $id]
+            );
+
+        $access_for_courses = $student->accessForCourses()->with('course')->get();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            data: AccessForCourseResource::collection($access_for_courses)
+        );
+    }
+
+    public function getLessons(string $student_id, string $course_id)
+    {
+        $student = $this->auth_user->students()->find($student_id);
+
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
+                data: ['id' => $student_id]
+            );
+
+        $accessForCourse = $student->accessForCourses()->where('course_id', $course_id)->first();
+
+        if (!$accessForCourse)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')])
+            );
+
+        $lessons = $accessForCourse->course->lessons()
+            ->with(['markable' => function ($query) use ($student) {
+                $query->where('student_id', $student->id);
+            }])
+            ->orderByRaw('CAST(SUBSTRING_INDEX(sequence_number, " ", 1) AS UNSIGNED) DESC')
+            ->paginate();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            data: LessonResourceForStudent::collection($lessons),
+            pagination: $lessons
+        );
+    }
+
+
+    public function getExams(string $student_id, string $course_id)
+    {
+        $student = $this->auth_user->students()->find($student_id);
+
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
+                data: ['id' => $student_id]
+            );
+
+        $accessForCourse = $student->accessForCourses()->where('course_id', $course_id)->first();
+
+        if (!$accessForCourse)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.course')])
+            );
+
+        $exams = $accessForCourse->course->exams()
+            ->with(['markable' => function ($query) use ($student) {
+                $query->where('student_id', $student->id);
+            }])
+            // ->orderByRaw('CAST(SUBSTRING_INDEX(sequence_number, " ", 1) AS UNSIGNED) DESC')
+            ->paginate();
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            data: ExamResourceForStudent::collection($exams),
+            pagination: $exams
+        );
+    }
+
+
+
+    public function getMarkForLesson(string $student_id, string $lesson_id)
+    {
+        $student = $this->auth_user->students()->find($student_id);
+
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
+                data: ['id' => $student_id]
+            );
+
+        $mark = $student->marks()
+            ->with('teacher', 'student', 'markable')
+            ->where('markable_type', Lesson::class)
+            ->where('markable_id', $lesson_id)
+            ->first();
+
+        if (!$mark)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.mark')]),
+                data: ["id" => $lesson_id]
+            );
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            data: MarkResourceForLesson::make($mark),
+        );
+    }
+
+    public function getMarkForExam(string $student_id, string $exam_id)
+    {
+        $student = $this->auth_user->students()->find($student_id);
+
+        if (!$student)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.student')]),
+                data: ['id' => $student_id]
+            );
+
+        $mark = $student->marks()
+            ->with('teacher', 'student', 'markable')
+            ->where('markable_type', Exam::class)
+            ->where('markable_id', $exam_id)
+            ->first();
+
+        if (!$mark)
+            return $this->sendResponse(
+                success: false,
+                status: 404,
+                message: trans('msg.not_found', ['attribute' => __('msg.attributes.mark')]),
+                data: ["id" => $exam_id]
+            );
+
+        return $this->sendResponse(
+            success: true,
+            status: 200,
+            data: MarkResourceForExam::make($mark),
+        );
+    }
+
 
     /**
      * @OA\Get(

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Rollcall;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,12 +22,15 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             StparentSeeder::class,
             StudentSeeder::class,
+            ExamSeeder::class,
             LessonSeeder::class,
             GroupSeeder::class,
             RoomSeeder::class,
             ScheduleSeeder::class,
             CardSeeder::class,
             PaymentSeeder::class,
+            MarkSeeder::class,
+            RollcallSeeder::class,
         ]);
 
         // Certificate::factory(100)->create();
