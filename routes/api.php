@@ -46,8 +46,8 @@ Route::group(['prefix' => '/teacher'], function () {
     Route::get('/my-groups/{id}/lessons', [AuthTeacherController::class, 'lessons']);
     Route::get('/my-groups/{id}/exams', [AuthTeacherController::class, 'exams']);
     Route::get('/my-groups/{id}/students', [AuthTeacherController::class, 'students']);    
-    Route::get('/my-groups/{group_id}/lesson/{lesson_id}/get-mark', [AuthTeacherController::class, 'getMarksforLesson']);
-    Route::get('/my-groups/{group_id}/exam/{exam_id}/get-mark', [AuthTeacherController::class, 'getMarksforExam']);
+    Route::get('/my-groups/{group_id}/lesson/{lesson_id}/get-mark', [AuthTeacherController::class, 'getMarksForLesson']);
+    Route::get('/my-groups/{group_id}/exam/{exam_id}/get-mark', [AuthTeacherController::class, 'getMarksForExam']);
     Route::get('/get-mark/{id}/lesson', [AuthTeacherController::class, 'getMarkForLesson']);
     Route::get('/get-mark/{id}/exam', [AuthTeacherController::class, 'getMarkForExam']);
     Route::post('/set-mark', [AuthTeacherController::class, 'setMark']);
@@ -60,7 +60,7 @@ Route::group(['prefix' => '/parent'], function () {
     Route::get('/my-children/{student_id}/course/{course_id}/lessons', [AuthParentController::class, 'getLessons']);
     Route::get('/my-children/{student_id}/course/{course_id}/exams', [AuthParentController::class, 'getExams']);
     Route::get('/my-children/{student_id}/get-mark/{lesson_id}/lesson', [AuthParentController::class, 'getMarkForLesson']);
-    Route::get('/my-children/{student_id}/get-mark/{lesson_id}/exam', [AuthParentController::class, 'getMarkForExam']);
+    Route::get('/my-children/{student_id}/get-mark/{exam_id}/exam', [AuthParentController::class, 'getMarkForExam']);
     Route::get('/all-courses', [AuthParentController::class, 'allCourses']);
     Route::get('/cashier', [AuthParentController::class, 'cashierId']);
     Route::get('/my-cards', [AuthParentController::class, 'myCards']);

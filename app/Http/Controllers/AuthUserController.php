@@ -30,7 +30,7 @@ class AuthUserController extends Controller
      * @OA\Get(
      * path="/api/user/statistics",
      * summary="statistics",
-     * description="statistics",
+     * description="statistics /api/user/statistics/?filter=day|week|month|year",
      * operationId="authUserStatistics",
      * tags={"AuthUser"},
      * security={ {"bearerAuth": {} }},

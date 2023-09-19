@@ -81,7 +81,7 @@ class AuthParentController extends Controller
 
     public function allCourses()
     {
-        // if ($request->has('branch_filter'))
+        //! write: if ($request->has('branch_filter'))
 
         $courses = Course::orderByDesc('id')->paginate();
 
@@ -92,6 +92,33 @@ class AuthParentController extends Controller
             pagination: $courses
         );
     }
+
+    /**
+     * @OA\Get(
+     * path="/api/parent/my-children/{student_id}/courses",
+     * summary="Get courses",
+     * description="Get courses",
+     * operationId="getCoursesAuthParent",
+     * tags={"AuthParent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="student_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getCourses(string $id)
     {
@@ -113,6 +140,41 @@ class AuthParentController extends Controller
             data: AccessForCourseResource::collection($access_for_courses)
         );
     }
+
+    /**
+     * @OA\Get(
+     * path="/api/parent/my-children/{student_id}/course/{course_id}/lessons",
+     * summary="Get lessons",
+     * description="Get lessons",
+     * operationId="getLessonsAuthParent",
+     * tags={"AuthParent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="student_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="course_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getLessons(string $student_id, string $course_id)
     {
@@ -150,6 +212,40 @@ class AuthParentController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/parent/my-children/{student_id}/course/{course_id}/exams",
+     * summary="Get exams",
+     * description="Get exams",
+     * operationId="getExamsAuthParent",
+     * tags={"AuthParent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="student_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="course_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getExams(string $student_id, string $course_id)
     {
@@ -187,7 +283,40 @@ class AuthParentController extends Controller
         );
     }
 
-
+    /**
+     * @OA\Get(
+     * path="/api/parent/my-children/{student_id}/get-mark/{lesson_id}/lesson",
+     * summary="Get lessons",
+     * description="Get lessons",
+     * operationId="getMarkForLessonAuthParent",
+     * tags={"AuthParent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="student_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="lesson_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getMarkForLesson(string $student_id, string $lesson_id)
     {
@@ -221,6 +350,41 @@ class AuthParentController extends Controller
             data: MarkResourceForLesson::make($mark),
         );
     }
+
+    /**
+     * @OA\Get(
+     * path="/api/parent/my-children/{student_id}/get-mark/{exam_id}/exams",
+     * summary="Get examss",
+     * description="Get examss",
+     * operationId="getMarkForExamsAuthParent",
+     * tags={"AuthParent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="student_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="exam_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getMarkForExam(string $student_id, string $exam_id)
     {

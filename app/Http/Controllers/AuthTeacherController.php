@@ -47,6 +47,7 @@ class AuthTeacherController extends Controller
      * operationId="authMyGroups",
      * tags={"AuthTeacher"},
      * security={ {"bearerAuth": {} }},
+     * 
      * @OA\Response(
      *    response=401,
      *    description="Unauthenticated",
@@ -68,6 +69,33 @@ class AuthTeacherController extends Controller
             pagination: $groups
         );
     }
+
+    /**
+     * @OA\Get(
+     * path="/api/teacher/my-groups/{group_id}/lessons",
+     * summary="Get lessons",
+     * description="Get lessons",
+     * operationId="lessonsAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="group_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function lessons(string $id)
     {
@@ -92,6 +120,33 @@ class AuthTeacherController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/teacher/my-groups/{group_id}/exams",
+     * summary="Get exams",
+     * description="Get exams",
+     * operationId="examsAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="group_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
+
     public function exams(string $id)
     {
         $group = $this->MyGroups->find($id);
@@ -115,6 +170,33 @@ class AuthTeacherController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/teacher/my-groups/{group_id}/students",
+     * summary="Get students",
+     * description="Get students",
+     * operationId="studentsAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="group_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
+
     public function students(string $id)
     {
         $group = $this->MyGroups->find($id);
@@ -137,6 +219,37 @@ class AuthTeacherController extends Controller
             pagination: $students
         );
     }
+
+    /**
+     * @OA\Post(
+     * path="/api/teacher/set-mark",
+     * summary="Set mark",
+     * description="Set mark",
+     * operationId="setMarkAuthTeacher",
+     * tags={"AuthTeacher"},
+     * 
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"value", "student_id", "type", "id", "comment"},
+     *       @OA\Property(property="value", type="integer", example=1),
+     *       @OA\Property(property="student_id", type="integer", example=1),
+     *       @OA\Property(property="type", type="string", example="lesson|exam"),
+     *       @OA\Property(property="id", type="integer", example=1),
+     *       @OA\Property(property="comment", type="string", example="There is some bugs"),
+     *    ),
+     * ),
+     * 
+     * @OA\Response(
+     *    response=422,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
+     *        )
+     *     )
+     * )
+     */
 
     public function setMark(Request $request)
     {
@@ -181,7 +294,42 @@ class AuthTeacherController extends Controller
         );
     }
 
-    public function getMarksforLesson(string $group_id, string $lesson_id)
+    /**
+     * @OA\Get(
+     * path="/api/teacher/my-groups/{group_id}/lesson/{lesson_id}/get-mark",
+     * summary="Get marks for lessons",
+     * description="Get marks",
+     * operationId="getMarksForLessonAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="group_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="lesson_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getMarksForLesson(string $group_id, string $lesson_id)
     {
         $group = $this->MyGroups->find($group_id);
         if (!$group)
@@ -218,7 +366,42 @@ class AuthTeacherController extends Controller
         );
     }
 
-    public function getMarksforExam(string $group_id, string $exam_id)
+    /**
+     * @OA\Get(
+     * path="/api/teacher/my-groups/{group_id}/exam/{exam_id}/get-mark",
+     * summary="Get marks for exams",
+     * description="Get marks",
+     * operationId="getMarksForExamAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="group_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="lesson_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
+
+    public function getMarksForExam(string $group_id, string $exam_id)
     {
         $group = $this->MyGroups->find($group_id);
         if (!$group)
@@ -255,6 +438,32 @@ class AuthTeacherController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/teacher/get-mark/{mark_id}/lesson",
+     * summary="Get mark for lesson",
+     * description="Get marks",
+     * operationId="getMarkForLessonAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="mark_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getMarkForLesson(string $id)
     {
@@ -282,6 +491,33 @@ class AuthTeacherController extends Controller
             data: MarkResourceForLesson::make($mark)
         );
     }
+
+    /**
+     * @OA\Get(
+     * path="/api/teacher/get-mark/{mark_id}/exam",
+     * summary="Get mark for exam",
+     * description="Get marks",
+     * operationId="getMarkForExamAuthTeacher",
+     * tags={"AuthTeacher"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="mark_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getMarkforExam(string $id)
     {
