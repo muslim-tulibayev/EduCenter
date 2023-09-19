@@ -83,7 +83,7 @@ class AuthStudentController extends Controller
 
     public function allCourses()
     {
-        // if ($request->has('branch_filter'))
+        //! write: if ($request->has('branch_filter'))
 
         $courses = Course::orderByDesc('id')->paginate();
 
@@ -97,7 +97,7 @@ class AuthStudentController extends Controller
 
     /**
      * @OA\Get(
-     * path="/api/student/course/{id}/lessons",
+     * path="/api/student/course/{course_id}/lessons",
      * summary="CourseLessons",
      * description="CourseLessons",
      * operationId="authCourseLessons",
@@ -106,7 +106,7 @@ class AuthStudentController extends Controller
      * 
      * @OA\Parameter(
      *    in="path",
-     *    name="id",
+     *    name="course_id",
      *    required=true,
      *    description="ID to fetch the targeted campaigns.",
      *    @OA\Schema(type="string")
@@ -148,6 +148,32 @@ class AuthStudentController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     * path="/api/student/course/{course_id}/exams",
+     * summary="CourseExams",
+     * description="CourseExams",
+     * operationId="authCourseExams",
+     * tags={"AuthStudent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="course_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function exams(string $id)
     {
@@ -176,8 +202,32 @@ class AuthStudentController extends Controller
         );
     }
 
-
-
+    /**
+     * @OA\Get(
+     * path="/api/student/get-mark/{mark_id}/lesson",
+     * summary="Get mark for lesson",
+     * description="getMarkForLesson",
+     * operationId="getMarkForLessonAuthStudent",
+     * tags={"AuthStudent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="mark_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getMarkForLesson(string $id)
     {
@@ -199,6 +249,33 @@ class AuthStudentController extends Controller
             data: MarkResourceForLesson::make($mark),
         );
     }
+
+    /**
+     * @OA\Get(
+     * path="/api/student/get-mark/{mark_id}/exam",
+     * summary="Get mark for exam",
+     * description="getMarkForExam",
+     * operationId="getMarkForExamAuthStudent",
+     * tags={"AuthStudent"},
+     * security={ {"bearerAuth": {} }},
+     * 
+     * @OA\Parameter(
+     *    in="path",
+     *    name="mark_id",
+     *    required=true,
+     *    description="ID to fetch the targeted campaigns.",
+     *    @OA\Schema(type="string")
+     * ),
+     * 
+     * @OA\Response(
+     *    response=401,
+     *    description="Unauthenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="error", type="string", example="Unauthenticated")
+     *        )
+     *     )
+     * )
+     */
 
     public function getMarkForExam(string $id)
     {
