@@ -73,7 +73,7 @@ class PaymentMethods extends Controller
         $course = Course::find($request->course_id);
         $rec_create = $this->receiptsCreate($course);
 
-        //! fix this
+        // TODO
         if (isset($rec_create->error))
             return $this->sendResponse(
                 success: false,
@@ -88,7 +88,7 @@ class PaymentMethods extends Controller
             $card->card_token
         );
 
-        //! fix this
+        // TODO
         if (isset($rec_pay->error))
             return $this->sendResponse(
                 success: false,
@@ -131,7 +131,7 @@ class PaymentMethods extends Controller
 
         $rec_create = $this->receiptsCreate($course);
 
-        //! fix this
+        // TODO
         if (isset($rec_create->error))
             return $this->sendResponse(
                 success: false,
@@ -146,7 +146,7 @@ class PaymentMethods extends Controller
             $card->card_token
         );
 
-        //! fix this
+        // TODO
         if (isset($rec_pay->error))
             return $this->sendResponse(
                 success: false,
@@ -193,7 +193,7 @@ class PaymentMethods extends Controller
 
         $rec_create = $this->receiptsCreate($course);
 
-        //! fix this
+        // TODO
         if (isset($rec_create->error))
             return $this->sendResponse(
                 success: false,
@@ -208,7 +208,7 @@ class PaymentMethods extends Controller
             $card->card_token
         );
 
-        //! fix this
+        // TODO
         if (isset($rec_pay->error))
             return $this->sendResponse(
                 success: false,
@@ -330,7 +330,7 @@ class PaymentMethods extends Controller
                 ]);
         }
 
-        //! fix this
+        // TODO
         $this->auth_user->paymentable()->create([
             "student_id" => $student->id,
             "branch_id" => rand(1, 3),

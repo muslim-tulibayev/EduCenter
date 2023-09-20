@@ -320,7 +320,7 @@ class AuthController extends Controller
 
     public function branches()
     {
-        //! fix: now for only users
+        // TODO - now for only users
         if (!count($this->auth_user->branches) || $this->auth_type !== 'api')
             return $this->sendResponse(
                 success: false,

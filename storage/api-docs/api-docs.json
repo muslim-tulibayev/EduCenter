@@ -949,7 +949,7 @@
                 ]
             }
         },
-        "/api/student/course/{id}/lessons": {
+        "/api/student/course/{course_id}/lessons": {
             "get": {
                 "tags": [
                     "AuthStudent"
@@ -959,7 +959,139 @@
                 "operationId": "authCourseLessons",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "course_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/course/{course_id}/exams": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "CourseExams",
+                "description": "CourseExams",
+                "operationId": "authCourseExams",
+                "parameters": [
+                    {
+                        "name": "course_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/get-mark/{mark_id}/lesson": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "Get mark for lesson",
+                "description": "getMarkForLesson",
+                "operationId": "getMarkForLessonAuthStudent",
+                "parameters": [
+                    {
+                        "name": "mark_id",
+                        "in": "path",
+                        "description": "ID to fetch the targeted campaigns.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Unauthenticated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/student/get-mark/{mark_id}/exam": {
+            "get": {
+                "tags": [
+                    "AuthStudent"
+                ],
+                "summary": "Get mark for exam",
+                "description": "getMarkForExam",
+                "operationId": "getMarkForExamAuthStudent",
+                "parameters": [
+                    {
+                        "name": "mark_id",
                         "in": "path",
                         "description": "ID to fetch the targeted campaigns.",
                         "required": true,

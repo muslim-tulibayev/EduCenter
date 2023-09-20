@@ -8,7 +8,7 @@ trait SendValidatorMessagesTrait
     {
         $res = [];
 
-        //! fix this
+        // TODO
         foreach ($validator->messages()->toArray() as $key => $value)
             return response()->json([
                 "success" => false,
